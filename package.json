@@ -1,0 +1,19 @@
+{
+  "name": "YogaWithAdrieneBot",
+  "version": "0.0.1",
+  "description": "Gives you distraction-free yoga classes",
+  "keywords": [],
+  "author": "Ilya Belsky <ilya@belsky.in>",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "13.x"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "telegraf": "^3.37.0"
+  }
+}
