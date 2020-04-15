@@ -20,7 +20,7 @@ bot.use(async (ctx, next) => {
 const greetings = [
   [0.0, '⏳ _Coming soon…_'],
   [2.2, '⌛ _Really soon, in a week or so._'],
-  [3.5, 'Meantime, pick some video from the [April playlist](https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM).'],
+  [3.5, 'Meantime, pick some video from the [playlist](https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM).'],
 ]
 
 bot.command('/start', ctx => {
@@ -49,5 +49,6 @@ bot.launch({
     port: PORT
   }
 })
+console.info("Launch 🚀")
 
 

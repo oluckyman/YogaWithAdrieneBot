@@ -7,7 +7,9 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "deploy": "node index.js",
+    "start": "nodemon --exec \"heroku local\" --signal SIGTERM",
+    "tunnel": "ssh -R 80:localhost:5000 ywa-bot@ssh.localhost.run"
   },
   "engines": {
     "node": "13.x"
@@ -16,5 +18,8 @@
     "dotenv": "^8.2.0",
     "lodash": "^4.17.15",
     "telegraf": "^3.37.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
   }
 }
