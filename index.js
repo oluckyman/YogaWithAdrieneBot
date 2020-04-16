@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const YAML = require('json-to-pretty-yaml')
 const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
 
@@ -13,6 +14,19 @@ bot.use(async (ctx, next) => {
   console.log('---------')
   if (_.get(ctx.update, 'message.from.username') !== 'oluckyman') {
     console.info(ctx.update)
+    // Log the message
+    if (ctx.update.message) {
+      const toChat = process.env.LOG_CHAT_ID
+      const fromChat = ctx.update.message.chat.id
+      const messageId = ctx.update.message.message_id
+      ctx
+        .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
+        .then(res => {
+          const username = ctx.update.message.from.username
+          const html = YAML.stringify(ctx.update.message)
+          ctx.telegram.sendMessage(toChat, `@${username}\n${html}`, { disable_notification: true })
+        })
+    }
   } else { console.log('just me') }
   console.log('Response time: %sms', ms)
 })
