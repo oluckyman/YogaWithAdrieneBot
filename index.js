@@ -2,6 +2,7 @@ const _ = require('lodash')
 const YAML = require('json-to-pretty-yaml')
 const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
+const fs = require('fs').promises
 
 dotenv.config()
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -12,7 +13,7 @@ bot.use(async (ctx, next) => {
   await next()
   const ms = new Date() - start
   console.log('---------')
-  if (_.get(ctx.update, 'message.from.username') !== 'oluckyman') {
+  if (_.get(ctx.update, 'message.from.id') !== process.env.ADMIN_ID) {
     console.info(ctx.update)
     // Log the message
     if (ctx.update.message) {
@@ -31,13 +32,13 @@ bot.use(async (ctx, next) => {
   console.log('Response time: %sms', ms)
 })
 
-const greetings = [
-  [0.0, '⏳ _Coming soon…_'],
-  [2.2, '⌛ _Really soon, in a week or so._'],
-  [3.5, 'Meantime, pick some video from the playlist:\nhttps://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'],
-]
 
 bot.command('/start', ctx => {
+  const greetings = [
+    [0.0, '⏳ _Coming soon…_'],
+    [2.2, '⌛ _Really soon, in a week or so._'],
+    [3.5, 'Meantime, pick some video from the playlist:\nhttps://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'],
+  ]
   const sendGreeting = i => {
     if (i >= greetings.length) return
     const message = greetings[i][1]
@@ -50,6 +51,7 @@ bot.command('/start', ctx => {
   }
   sendGreeting(0)
 });
+
 
 bot.command('/help', ctx => {
   ctx.replyWithHTML(`
@@ -64,7 +66,20 @@ bot.command('/help', ctx => {
 })
 
 
+bot.command('/today', async ctx => {
+  const day = new Date().getDate()
+  ctx.replyWithMarkdown(`Looking the video for *Day ${day}*`)
+    .then(() => fs.readFile('calendar.json', 'utf8'))
+    .then(txt => JSON.parse(txt))
+    .then(json => {
+      const url = json[day - 1].videoUrl
+      ctx.reply(`▶️ ${url}`)
+    })
+})
+
+
 bot.on('text', (ctx) => ctx.replyWithMarkdown('_Coming soon👨‍💻_'))
+
 
 
 const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
