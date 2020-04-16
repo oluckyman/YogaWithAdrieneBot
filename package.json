@@ -8,8 +8,7 @@
   "main": "index.js",
   "scripts": {
     "deploy": "node index.js",
-    "start": "nodemon --exec \"heroku local\" --signal SIGTERM",
-    "tunnel": "ssh -R 80:localhost:5000 ywa-bot@ssh.localhost.run"
+    "start": "nodemon --exec \"heroku local\" --signal SIGTERM"
   },
   "engines": {
     "node": "13.x"

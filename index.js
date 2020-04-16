@@ -37,18 +37,33 @@ bot.command('/start', ctx => {
   sendGreeting(0)
 });
 
+bot.command('/help', ctx => {
+  ctx.replyWithHTML(`
+<b>Yoga With Adriene</b> bot helps you get to yoga videos without friction and distractions.
 
-bot.on('text', (ctx) => ctx.reply('… still working, give me some time👨‍💻'))
+Commands:
+/today - Get today's video from <a href="https://yogawithadriene.com/calendar/">the calendar</a>
+/help - This message🙊
 
-
-const { PORT = 5000, HOST, WEBHOOK_SECRET } = process.env
-
-bot.launch({
-  webhook: {
-    domain: `https://${HOST}/${WEBHOOK_SECRET}`,
-    port: PORT
-  }
+👋 <i>Say hi to the author <a href="t.me/oluckyman">Ilyá Belsky</a></i>
+`, { disable_web_page_preview: true })
 })
-console.info("Launch 🚀")
 
 
+bot.on('text', (ctx) => ctx.reply('… still working, give me some time please👨‍💻'))
+
+
+const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
+
+if (NODE_ENV === 'production') {
+  bot.launch({
+    webhook: {
+      domain: `https://${HOST}/${WEBHOOK_SECRET}`,
+      port: PORT
+    }
+  })
+  console.info("Launch webhook 🚀")
+} else {
+  bot.launch()
+  console.info("Launch polling 🚀")
+}

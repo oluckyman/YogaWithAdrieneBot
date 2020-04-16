@@ -2,14 +2,7 @@
 
 ## Run locally
 
-The bot sets up webhook, so the machine should be exposed to internet.  
-I use localhost.run service for that. The public hostname should be stored in `.env` file.
-
-Starts the tunnel 
-
-```
-npm run tunnel
-```
+The bot sets up webhook on heroku but for local development uses long polling.
 
 Runs `heroku local` and watches the changes.
 
