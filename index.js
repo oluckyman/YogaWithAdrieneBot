@@ -77,6 +77,16 @@ if (NODE_ENV === 'production') {
     }
   })
   console.info("Launch webhook 🚀")
+
+  // Prevent app from sleeping
+  const request = require('request');
+  const ping = () => request(`https://${HOST}/ping`, (error, response, body) => {
+      error && console.log('error:', error);
+      body && console.log('body:', body);
+      setTimeout(ping, 1000 * 60 * 25)
+  });
+  console.log('Ping myself 👈')
+  ping()
 } else {
   bot.launch()
   console.info("Launch polling 🚀")

@@ -17,6 +17,7 @@
     "dotenv": "^8.2.0",
     "json-to-pretty-yaml": "^1.2.2",
     "lodash": "^4.17.15",
+    "request": "^2.88.2",
     "telegraf": "^3.37.0"
   },
   "devDependencies": {
