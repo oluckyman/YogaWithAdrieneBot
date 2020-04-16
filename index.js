@@ -41,9 +41,9 @@ bot.command('/help', ctx => {
   ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get to yoga videos without friction and distractions.
 
-Commands:
-/today - Get today's video from <a href="https://yogawithadriene.com/calendar/">the calendar</a>
-/help - This message🙊
+<b>Commands</b>
+<b>/today</b> Today's video from <a href="https://yogawithadriene.com/calendar/">the calendar 📅</a>
+<b>/help</b> This message🙊
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, { disable_web_page_preview: true })
