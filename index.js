@@ -20,7 +20,7 @@ bot.use(async (ctx, next) => {
 const greetings = [
   [0.0, '⏳ _Coming soon…_'],
   [2.2, '⌛ _Really soon, in a week or so._'],
-  [3.5, 'Meantime, pick some video from the [playlist](https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM).'],
+  [3.5, 'Meantime, pick some video from the playlist:\nhttps://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'],
 ]
 
 bot.command('/start', ctx => {
@@ -45,12 +45,12 @@ Commands:
 /today - Get today's video from <a href="https://yogawithadriene.com/calendar/">the calendar</a>
 /help - This message🙊
 
-👋 <i>Say hi to the author <a href="t.me/oluckyman">Ilyá Belsky</a></i>
+👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, { disable_web_page_preview: true })
 })
 
 
-bot.on('text', (ctx) => ctx.reply('… still working, give me some time please👨‍💻'))
+bot.on('text', (ctx) => ctx.replyWithMarkdown('_Coming soon👨‍💻_'))
 
 
 const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
