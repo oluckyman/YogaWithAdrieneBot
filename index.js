@@ -12,8 +12,8 @@ bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
-  console.log('---------')
-  if (_.get(ctx.update, 'message.from.id') !== process.env.ADMIN_ID) {
+  if (_.get(ctx.update, 'message.from.id') != process.env.ADMIN_ID) {
+    console.log('------------------')
     console.info(ctx.update)
     // Log the message
     if (ctx.update.message) {
@@ -28,8 +28,8 @@ bot.use(async (ctx, next) => {
           ctx.telegram.sendMessage(toChat, `@${username}\n${html}`, { disable_notification: true })
         })
     }
-  } else { console.log('just me') }
-  console.log('Response time: %sms', ms)
+    console.log('Response time: %sms', ms)
+  } else { console.log('👨‍💻 me working…') }
 })
 
 
@@ -78,7 +78,7 @@ bot.command('/today', async ctx => {
 })
 
 
-bot.on('text', (ctx) => ctx.replyWithMarkdown('_Coming soon👨‍💻_'))
+bot.on('text', (ctx) => ctx.replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*'))
 
 
 
