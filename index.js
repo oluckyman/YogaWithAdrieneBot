@@ -7,6 +7,9 @@ const fs = require('fs').promises
 dotenv.config()
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
+const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/03/Apr.-2020-Yoga-Calendar.png'
+const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
+const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'
 
 bot.use(async (ctx, next) => {
   const start = new Date()
@@ -43,7 +46,6 @@ bot.command('/start', ctx => {
     [3.0, 'With _less_ friction the are _more_ chances your healty habit will *thrive*.'],
     [4.0, 'So, _hope on something comfy and let’s get started!_'],
     [3.0, 'Send */today* command to get the video.'],
-    // [3.5, 'Meantime, pick some video from the playlist:\nhttps://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'],
   ]
   const sendGreeting = i => {
     if (i >= greetings.length) return
@@ -59,19 +61,23 @@ bot.command('/start', ctx => {
 });
 
 
+// @BotFather: See what this bot can do for you
 bot.command('/help', ctx => {
   ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get to yoga videos without friction and distractions.
 
 <b>Commands</b>
-<b>/today</b> Today’s video from <a href="https://yogawithadriene.com/calendar/">the calendar 📅</a>
-<b>/help</b> This message🙊
+• <b>/today</b>’s video from the calendar ▶️
+• <b>/calendar</b> of the month and YouTube playlist 🗓
+• <b>/about</b> this bot and Yoga With Adriene 🤔
+• <b>/help</b> <i>me help you</i> 🙊
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, { disable_web_page_preview: true })
 })
 
 
+// @BotFather: Get today’s video from the yoga calendar
 bot.command('/today', async ctx => {
   const day = new Date().getDate()
   ctx.replyWithMarkdown(`Looking the video for *Day ${day}*`)
@@ -84,8 +90,10 @@ bot.command('/today', async ctx => {
 })
 
 
+// @BotFather: Review the month’s calendar
 bot.command('/calendar', ctx => {
-  ctx.replyWithMarkdown(`⏳ _Coming soon…_`)
+  const day = new Date().getDate()
+  ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
 })
 
 
