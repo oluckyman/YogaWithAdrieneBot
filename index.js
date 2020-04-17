@@ -40,7 +40,7 @@ bot.command('/start', ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice.'],
-    [3.5, 'It gives you */today’s* video from *YWA /calendar*.'],
+    [3.5, 'It gives you */today*’s video from *YWA /calendar*.'],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
     [3.0, 'With _less_ friction the are _more_ chances your healthy habit will *thrive*.'],
@@ -61,7 +61,7 @@ bot.command('/start', ctx => {
 });
 
 
-// @BotFather: See what this bot can do for you
+// @BotFather: help - See what this bot can do for you
 bot.command('/help', ctx => {
   ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
@@ -69,15 +69,15 @@ bot.command('/help', ctx => {
 <b>Commands</b>
 • <b>/today</b>’s video from the calendar ▶️
 • <b>/calendar</b> of the month and YouTube playlist 🗓
-• <b>/about</b> this bot and Yoga With Adriene 🤔
-• <b>/help</b> <i>me help you</i> 🙊
+• <b>/help</b> — <i>shows this message</i>📍
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, { disable_web_page_preview: true })
+// • <b>/about</b> this bot and Yoga With Adriene 🤔
 })
 
 
-// @BotFather: Get today’s video from the yoga calendar
+// @BotFather: today - Get today’s video from the yoga calendar
 bot.command('/today', async ctx => {
   const day = new Date().getDate()
   ctx.replyWithMarkdown(`Looking the video for *Day ${day}*`)
@@ -90,7 +90,7 @@ bot.command('/today', async ctx => {
 })
 
 
-// @BotFather: Review the month’s calendar
+// @BotFather: calendar - Review the month’s calendar
 bot.command('/calendar', ctx => {
   const day = new Date().getDate()
   ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
