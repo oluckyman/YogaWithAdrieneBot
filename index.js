@@ -40,10 +40,10 @@ bot.command('/start', ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice.'],
-    [3.5, 'It gives you */today’s* video directly from *YWA /calendar*.'],
+    [3.5, 'It gives you */today’s* video from *YWA /calendar*.'],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
-    [3.0, 'With _less_ friction the are _more_ chances your healty habit will *thrive*.'],
+    [3.0, 'With _less_ friction the are _more_ chances your healthy habit will *thrive*.'],
     [4.0, 'So, _hope on something comfy and let’s get started!_'],
     [3.0, 'Send */today* command to get the video.'],
   ]
@@ -64,7 +64,7 @@ bot.command('/start', ctx => {
 // @BotFather: See what this bot can do for you
 bot.command('/help', ctx => {
   ctx.replyWithHTML(`
-<b>Yoga With Adriene</b> bot helps you get to yoga videos without friction and distractions.
+<b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
 
 <b>Commands</b>
 • <b>/today</b>’s video from the calendar ▶️
