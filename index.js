@@ -97,7 +97,7 @@ bot.command('/calendar', ctx => {
 })
 
 
-bot.on('text', (ctx) => ctx.replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*'))
+// bot.on('text', (ctx) => ctx.replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*'))
 // Or just keep writing whatever on your mind. I'll consider it as feedback.
 // Got it. • Ok • Roger that • ...
 
