@@ -19,17 +19,27 @@ bot.use(async (ctx, next) => {
     console.log('------------------')
     console.info(ctx.update)
     // Log the message
+    const toChat = process.env.LOG_CHAT_ID
     if (ctx.update.message) {
-      const toChat = process.env.LOG_CHAT_ID
       const fromChat = ctx.update.message.chat.id
       const messageId = ctx.update.message.message_id
       ctx
         .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
         .then(res => {
-          const username = ctx.update.message.from.username
-          const html = YAML.stringify(ctx.update.message)
-          ctx.telegram.sendMessage(toChat, `@${username}\n${html}`, { disable_notification: true })
+          const { username, first_name } = ctx.update.message.from
+          const text = ctx.update.message.text
+          const payload = _.omit(ctx.update.message, [
+            'from.username',
+            'date',
+            ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
+            'text'
+          ])
+          const html = YAML.stringify(payload)
+          ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
         })
+    } else {
+      const html = YAML.stringify(ctx.update)
+      ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
     }
     console.log('Response time: %sms', ms)
   } else { console.log('👨‍💻 me working…') }
