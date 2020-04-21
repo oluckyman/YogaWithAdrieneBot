@@ -129,13 +129,14 @@ bot.command('/calendar', ctx => {
 
 async function replyWithToday(ctx) {
   const messages = [
-    'Spend your time _practicing_ yoga rather than _choosing_ it',
-    'Give your time to _YourSelf_ rather than to _YouTube_',
-    '_Find what feels good_',
+    '💬 Spend your time _practicing_ yoga rather than _choosing_ it',
+    '💬 Give your time to _YourSelf_ rather than to _YouTube_',
+    '😌 _Find what feels good_',
   ];
-  const msg = await ctx.replyWithMarkdown(_.sample(messages))
-
-  await pauseForA(1)
+  const [msg] = await Promise.all([
+    ctx.replyWithMarkdown(_.sample(messages)),
+    pauseForA(2) // give some time to read the message
+  ])
   const day = new Date().getDate()
   const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
