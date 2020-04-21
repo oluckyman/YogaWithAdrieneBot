@@ -48,6 +48,17 @@ bot.use(async (ctx, next) => {
           const html = YAML.stringify(payload)
           ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
         })
+    } else if (ctx.update.callback_query) {
+      const { username, first_name } = ctx.update.callback_query.from
+      const payload = _.omit(ctx.update.callback_query, [
+        'from.username',
+        'message',
+        'chat_instance',
+        'data',
+      ])
+      const text = ctx.update.callback_query.data
+      const html = YAML.stringify(payload)
+      ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
     } else {
       const html = YAML.stringify(ctx.update)
       ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
@@ -76,7 +87,7 @@ bot.command('/start', ctx => {
     ctx
       .reply(message, Extra.markdown()
         .markup(m => isLastMessage ?
-          m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', '/today')]) : m
+          m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
         )
       )
       .then(() => {
@@ -129,7 +140,7 @@ async function replyToday(ctx) {
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
-bot.action(/\/today/, ctx => {
+bot.action(/cb:today/, ctx => {
   ctx.answerCbQuery('Looking for today’s video…')
   // ctx.editMessageReplyMarkup() // remove the button
   replyToday(ctx)
@@ -139,7 +150,6 @@ bot.action(/\/today/, ctx => {
 
 const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
   .caption(`*/today* is *Day ${new Date().getDate()}*`)
-  // \n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`)
   .markdown()
   .markup(m => m.inlineKeyboard([
     m.urlButton('YWA Calendar', calendarYWAUrl),
