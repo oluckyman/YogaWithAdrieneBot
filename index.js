@@ -31,8 +31,9 @@ bot.use(async (ctx, next) => {
           const payload = _.omit(ctx.update.message, [
             'from.username',
             'date',
+            'text',
             ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
-            'text'
+            _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
           ])
           const html = YAML.stringify(payload)
           ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
@@ -89,13 +90,18 @@ bot.command('/help', ctx => {
 
 // @BotFather: today - Get today’s video from the yoga calendar
 bot.command('/today', async ctx => {
+  const messages = [
+    'Spend your time _practicing_ yoga rather than _choosing_ it',
+    'Give your time to _YourSelf_ rather than to _YouTube_',
+    '_Find what feels good_',
+  ];
   const day = new Date().getDate()
-  ctx.replyWithMarkdown(`Looking the video for *Day ${day}*`)
+  ctx.replyWithMarkdown(_.sample(messages))
     .then(() => fs.readFile('calendar.json', 'utf8'))
     .then(txt => JSON.parse(txt))
     .then(json => {
       const url = json[day - 1].videoUrl
-      ctx.reply(`▶️ ${url}`)
+      ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`)
     })
 })
 
