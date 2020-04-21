@@ -89,8 +89,13 @@ bot.command('/start', ctx => {
 });
 
 
-bot.command('/help', ctx => {
-  ctx.replyWithHTML(`
+const menu = {
+  today: '▶️ Today’s yoga video',
+  calendar: '🗓 Calendar',
+  help: '💁 Help',
+}
+
+const replyHelp = ctx => ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
 
 <b>Commands</b>
@@ -99,35 +104,14 @@ bot.command('/help', ctx => {
 • <b>/help</b> — <i>shows this message</i>📍
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
-`, { disable_web_page_preview: true })
+`, Extra.webPreview(false))
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
-})
+bot.hears(menu.help, replyHelp)
+bot.command('/help', replyHelp)
 
 
-bot.command('/today', replyWithToday)
 
-bot.action(/\/today/, ctx => {
-  ctx.answerCbQuery('Looking for today’s video…')
-  // ctx.editMessageReplyMarkup() // remove the button
-  replyWithToday(ctx)
-})
-
-
-bot.command('/calendar', ctx => {
-  const day = new Date().getDate()
-  ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
-})
-
-
-// bot.on('text', (ctx) => ctx
-//   .replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*', {
-//     reply_markup: Markup
-//       .keyboard(['/today'])
-//       .resize()
-//   }))
-
-
-async function replyWithToday(ctx) {
+async function replyToday(ctx) {
   const messages = [
     '💬 Spend your time _practicing_ yoga rather than _choosing_ it',
     '💬 Give your time to _YourSelf_ rather than to _YouTube_',
@@ -141,7 +125,38 @@ async function replyWithToday(ctx) {
   const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => json[day - 1].videoUrl)
-  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`)
+  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra
+    .markup(menuKeboard)
+  )
+}
+bot.command('/today', replyToday)
+bot.hears(menu.today, replyToday)
+bot.action(/\/today/, ctx => {
+  ctx.answerCbQuery('Looking for today’s video…')
+  // ctx.editMessageReplyMarkup() // remove the button
+  replyToday(ctx)
+})
+
+
+
+const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
+  .caption(`*/today* is *Day ${new Date().getDate()}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`)
+  .markdown()
+)
+bot.command('/calendar', replyCalendar)
+bot.hears(menu.calendar, replyCalendar)
+
+
+// bot.on('text', (ctx) => ctx
+//   .replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*', {
+//     reply_markup: Markup
+//       .keyboard(['/today'])
+//       .resize()
+//   }))
+
+
+function menuKeboard(m) {
+  return m.resize().keyboard([menu.today, menu.calendar, menu.help])
 }
 
 function pauseForA(sec) {
