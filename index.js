@@ -125,9 +125,7 @@ async function replyToday(ctx) {
   const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => json[day - 1].videoUrl)
-  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra
-    .markup(menuKeboard)
-  )
+  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
@@ -140,8 +138,13 @@ bot.action(/\/today/, ctx => {
 
 
 const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
-  .caption(`*/today* is *Day ${new Date().getDate()}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`)
+  .caption(`*/today* is *Day ${new Date().getDate()}*`)
+  // \n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`)
   .markdown()
+  .markup(m => m.inlineKeyboard([
+    m.urlButton('YWA Calendar', calendarYWAUrl),
+    m.urlButton('YouTube playlist', calendarYouTubeUrl),
+  ], { columns: 1 }))
 )
 bot.command('/calendar', replyCalendar)
 bot.hears(menu.calendar, replyCalendar)
