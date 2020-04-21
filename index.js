@@ -2,6 +2,8 @@ const _ = require('lodash')
 const YAML = require('json-to-pretty-yaml')
 const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
+const Markup = require('telegraf/markup')
+const Extra = require('telegraf/extra')
 const fs = require('fs').promises
 
 dotenv.config()
@@ -19,7 +21,11 @@ bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
-  if (_.get(ctx.update, 'message.from.id') != process.env.ADMIN_ID) {
+  const isAdmin = [
+      _.get(ctx.update, 'message.from.id'),
+      _.get(ctx.update, 'callback_query.from.id'),
+    ].includes(+process.env.ADMIN_ID)
+  if (!isAdmin) {
     console.log('------------------')
     console.info(ctx.update)
     // Log the message
@@ -55,28 +61,34 @@ bot.command('/start', ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice.'],
-    [3.5, 'It gives you */today*’s video from *YWA /calendar*.'],
+    [3.5, 'It gives you */today*’s yoga video from *YWA /calendar*.'],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
     [3.0, 'With _less_ friction the are _more_ chances your healthy habit will *thrive*.'],
     [4.0, 'So, _hope on something comfy and let’s get started!_'],
-    [3.0, 'Send */today* command to get the video.'],
+    // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
   const sendGreeting = i => {
     if (i >= greetings.length) return
     const message = greetings[i][1]
     const delaySec = _.get(greetings, [i + 1, 0])
-    ctx.replyWithMarkdown(message).then(() => {
-      if (delaySec !== undefined) {
-        setTimeout(() => sendGreeting(i + 1), delaySec * 1000)
-      }
-    })
+    const isLastMessage = i === greetings.length - 1
+    ctx
+      .reply(message, Extra.markdown()
+        .markup(m => isLastMessage ?
+          m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', '/today')]) : m
+        )
+      )
+      .then(() => {
+        if (delaySec !== undefined) {
+          setTimeout(() => sendGreeting(i + 1), delaySec * 1000)
+        }
+      })
   }
   sendGreeting(0)
 });
 
 
-// @BotFather: help - See what this bot can do for you
 bot.command('/help', ctx => {
   ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
@@ -92,29 +104,50 @@ bot.command('/help', ctx => {
 })
 
 
-// @BotFather: today - Get today’s video from the yoga calendar
-bot.command('/today', async ctx => {
+bot.command('/today', replyWithToday)
+
+bot.action(/\/today/, ctx => {
+  ctx.answerCbQuery('Looking for today’s video…')
+  // ctx.editMessageReplyMarkup() // remove the button
+  replyWithToday(ctx)
+})
+
+
+bot.command('/calendar', ctx => {
+  const day = new Date().getDate()
+  ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
+})
+
+
+// bot.on('text', (ctx) => ctx
+//   .replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*', {
+//     reply_markup: Markup
+//       .keyboard(['/today'])
+//       .resize()
+//   }))
+
+
+async function replyWithToday(ctx) {
   const messages = [
     'Spend your time _practicing_ yoga rather than _choosing_ it',
     'Give your time to _YourSelf_ rather than to _YouTube_',
     '_Find what feels good_',
   ];
+  const msg = await ctx.replyWithMarkdown(_.sample(messages))
+
+  await pauseForA(1)
   const day = new Date().getDate()
-  ctx.replyWithMarkdown(_.sample(messages))
-    .then(() => fs.readFile('calendar.json', 'utf8'))
+  const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
-    .then(json => {
-      const url = json[day - 1].videoUrl
-      ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`)
-    })
-})
+    .then(json => json[day - 1].videoUrl)
+  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`)
+}
+
+function pauseForA(sec) {
+  return new Promise(r => setTimeout(r, sec * 1000))
+}
 
 
-// @BotFather: calendar - Review the month’s calendar
-bot.command('/calendar', ctx => {
-  const day = new Date().getDate()
-  ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
-})
 
 bot.telegram.setMyCommands([{
   command: 'today', description: 'Get today’s video from the yoga calendar'
@@ -124,9 +157,6 @@ bot.telegram.setMyCommands([{
   command: 'help', description: 'See what this bot can do for you'
 }])
 
-// bot.on('text', (ctx) => ctx.replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*'))
-// Or just keep writing whatever on your mind. I'll consider it as feedback.
-// Got it. • Ok • Roger that • ...
 
 
 const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
