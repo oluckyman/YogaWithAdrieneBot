@@ -11,6 +11,10 @@ const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/03
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'
 
+bot.catch((err, ctx) => {
+  console.error(`⚠️ ${ctx.updateType}`, err)
+})
+
 bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
