@@ -116,6 +116,13 @@ bot.command('/calendar', ctx => {
   ctx.replyWithPhoto(calendarImageUrl, { caption: `*/today* is *Day ${day}*\n • [YWA calendar](${calendarYWAUrl})\n • [YouTube playlist](${calendarYouTubeUrl})`, parse_mode: 'markdown' })
 })
 
+bot.telegram.setMyCommands([{
+  command: 'today', description: 'Get today’s video from the yoga calendar'
+}, {
+  command: 'calendar', description: 'Review the month’s calendar'
+}, {
+  command: 'help', description: 'See what this bot can do for you'
+}])
 
 // bot.on('text', (ctx) => ctx.replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*'))
 // Or just keep writing whatever on your mind. I'll consider it as feedback.
