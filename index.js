@@ -46,7 +46,8 @@ bot.use(async (ctx, next) => {
             _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
           ])
           const html = YAML.stringify(payload)
-          ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+          const name = username ? `@${username}` : first_name
+          ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
         })
     } else if (ctx.update.callback_query) {
       const { username, first_name } = ctx.update.callback_query.from
