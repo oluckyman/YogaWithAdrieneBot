@@ -123,6 +123,8 @@ bot.command('/help', replyHelp)
 
 
 
+const oneOf = messages => _.sample(_.sample(messages))
+
 async function replyToday(ctx) {
   const messages = [
     ['💬 Spend your time _practicing_ yoga rather than _picking_ it'],
@@ -133,7 +135,7 @@ async function replyToday(ctx) {
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
   const [msg] = await Promise.all([
-    ctx.replyWithMarkdown(_.sample(_.sample(messages))),
+    ctx.replyWithMarkdown(oneOf(messages)),
     pauseForA(2) // give some time to read the message
   ])
   const day = new Date().getDate()
@@ -164,12 +166,28 @@ bot.command('/calendar', replyCalendar)
 bot.hears(menu.calendar, replyCalendar)
 
 
+
+const praise = new RegExp('[👍❤️]')
+const thanksMessages = [
+  [...'😌😛'], // smiles
+  [...'🥰💚🤗'], // love
+  [...'🙏👌'], // gestures
+]
+async function replyThankYou(ctx) {
+  await pauseForA(2)
+  return ctx.replyWithMarkdown(oneOf(thanksMessages))
+}
+bot.hears(praise, replyThankYou)
+
+
+
 // bot.on('text', (ctx) => ctx
 //   .replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*', {
 //     reply_markup: Markup
 //       .keyboard(['/today'])
 //       .resize()
 //   }))
+
 
 
 function menuKeboard(m) {
