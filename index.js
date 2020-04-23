@@ -125,12 +125,15 @@ bot.command('/help', replyHelp)
 
 async function replyToday(ctx) {
   const messages = [
-    '💬 Spend your time _practicing_ yoga rather than _choosing_ it',
-    '💬 Give your time to _YourSelf_ rather than to _YouTube_',
-    '😌 _Find what feels good_',
+    ['💬 Spend your time _practicing_ yoga rather than _picking_ it'],
+    ['💬 Give your time to _YourSelf_ rather than to _YouTube_'],
+    ['😌 _Find what feels good_'],
+    ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
+    [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
+    [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
   const [msg] = await Promise.all([
-    ctx.replyWithMarkdown(_.sample(messages)),
+    ctx.replyWithMarkdown(_.sample(_.sample(messages))),
     pauseForA(2) // give some time to read the message
   ])
   const day = new Date().getDate()
