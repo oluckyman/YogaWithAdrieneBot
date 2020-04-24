@@ -5,8 +5,27 @@ const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const fs = require('fs').promises
-
 dotenv.config()
+
+const Firestore = require('@google-cloud/firestore')
+const firestore = new Firestore({
+  projectId: process.env.GOOGLE_APP_PROJECT_ID,
+  credentials: {
+    private_key: process.env.GOOGLE_APP_PRIVATE_KEY.split('\\n').join('\n'),
+    client_email: process.env.GOOGLE_APP_CLIENT_EMAIL,
+  }
+})
+
+const setFirstContact = ({ user }) => {
+  firestore
+    .collection('users')
+    .doc(`id${user.id}`)
+    .set({
+      ...user,
+      first_contact_at: new Date()
+    })
+}
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/03/Apr.-2020-Yoga-Calendar.png'
@@ -98,6 +117,9 @@ bot.command('/start', ctx => {
       })
   }
   sendGreeting(0)
+  setFirstContact({
+    user: _.get(ctx.update, 'message.from'),
+  })
 });
 
 
