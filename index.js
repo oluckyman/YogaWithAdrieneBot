@@ -26,6 +26,10 @@ const setFirstContact = ({ user }) => {
     })
 }
 
+const getNowWatching = videoUrl => {
+  return 17;
+}
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
 const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/03/Apr.-2020-Yoga-Calendar.png'
@@ -164,7 +168,16 @@ async function replyToday(ctx) {
   const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => json[day - 1].videoUrl)
-  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
+  const nowWatching = await getNowWatching(url)
+  await ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
+
+  // Show who's practicing right now
+  //
+  const yogi1 = [...'😝🤪🤪🤪😑😑😅😅😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😇☺️☺️☺️😊😌😌😌😊😊😬😴🦄']
+  const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
+  const yogi = yogi1
+  const people = nowWatching > 30 ? nowWatching : _.range(nowWatching).map(() => _.sample(yogi)).join('')
+  await ctx.replyWithMarkdown(`Practicing right now:\n${people}`)
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
