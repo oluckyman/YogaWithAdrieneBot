@@ -26,8 +26,17 @@ const setFirstContact = ({ user }) => {
     })
 }
 
-const getNowWatching = videoUrl => {
-  return 17;
+const getNowWatching = async videoUrl => {
+  const videoId = videoUrl.replace(/.*\?v=/, '')
+  const doc = await firestore
+    .collection('videos')
+    .doc(videoId)
+    .get()
+
+  if (doc.exists) { // check that the doc exists
+    return doc.data().nowWatching
+  }
+  return null;
 }
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -168,16 +177,18 @@ async function replyToday(ctx) {
   const url = await fs.readFile('calendar.json', 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => json[day - 1].videoUrl)
-  const nowWatching = await getNowWatching(url)
   await ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
 
   // Show who's practicing right now
   //
-  const yogi1 = [...'😝🤪🤪🤪😑😑😅😅😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😇☺️☺️☺️😊😌😌😌😊😊😬😴🦄']
-  const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
-  const yogi = yogi1
-  const people = nowWatching > 30 ? nowWatching : _.range(nowWatching).map(() => _.sample(yogi)).join('')
-  await ctx.replyWithMarkdown(`Practicing right now:\n${people}`)
+  const nowWatching = await getNowWatching(url)
+  if (nowWatching) {
+    const yogi1 = [...'😝🤪🤪🤪😑😑😅😅😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😇☺️☺️☺️😊😌😌😌😊😊😬😴🦄']
+    const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
+    const yogi = yogi1
+    const people = nowWatching > 30 ? nowWatching : _.range(nowWatching).map(() => _.sample(yogi)).join('')
+    await ctx.replyWithMarkdown(`Doing this video right now:\n${people}`)
+  }
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
