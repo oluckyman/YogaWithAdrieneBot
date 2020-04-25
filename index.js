@@ -17,13 +17,19 @@ const firestore = new Firestore({
 })
 
 const setFirstContact = ({ user }) => {
-  firestore
-    .collection('users')
-    .doc(`id${user.id}`)
-    .set({
-      ...user,
-      first_contact_at: new Date()
-    })
+  const userDoc = firestore.collection('users').doc(`id${user.id}`)
+  userDoc.get().then(doc => {
+    if (!doc.exists) {
+      userDoc.set({
+        ...user,
+        first_contact_at: new Date()
+      })
+    }
+  })
+}
+
+const logEvent = update => {
+  return firestore.collection('logs').add(update)
 }
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -66,7 +72,7 @@ bot.use(async (ctx, next) => {
           ])
           const html = YAML.stringify(payload)
           const name = username ? `@${username}` : first_name
-          ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
         })
     } else if (ctx.update.callback_query) {
       const { username, first_name } = ctx.update.callback_query.from
@@ -83,12 +89,13 @@ bot.use(async (ctx, next) => {
       const html = YAML.stringify(ctx.update)
       ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
     }
+    await logEvent(ctx.update)
     console.log('Response time: %sms', ms)
   } else { console.log('👨‍💻 me working…') }
 })
 
 
-bot.command('/start', ctx => {
+bot.command('/start', async ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice.'],
