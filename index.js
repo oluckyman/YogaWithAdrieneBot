@@ -156,10 +156,12 @@ const oneOf = messages => _.sample(_.sample(messages))
 
 async function replyToday(ctx) {
   const messages = [
-    ['💬 Spend your time _practicing_ yoga rather than _picking_ it'],
-    ['💬 Give your time to _YourSelf_ rather than to _YouTube_'],
-    ['😌 _Find what feels good_'],
+    ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
+    ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
+    ['😌 _Find what feels good_'],
+    ['🐍 _Long healthy neck_'],
+    ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
