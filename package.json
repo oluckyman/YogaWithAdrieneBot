@@ -15,13 +15,16 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^3.7.4",
+    "bluebird": "^3.7.2",
     "d3-time-format": "^2.2.3",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "json-to-pretty-yaml": "^1.2.2",
     "lodash": "^4.17.15",
+    "number-to-emoji": "^1.0.0",
     "request": "^2.88.2",
-    "telegraf": "^3.37.0"
+    "telegraf": "^3.37.0",
+    "written-number": "^0.9.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
