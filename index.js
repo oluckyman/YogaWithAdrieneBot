@@ -4,6 +4,13 @@ const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
+const { timeFormat } = require('d3-time-format')
+const Promise = require("bluebird")
+const { toEmoji } = require('number-to-emoji')
+const writtenNumber = require('written-number')
+
+
+
 const fs = require('fs').promises
 dotenv.config()
 
@@ -155,7 +162,17 @@ bot.command('/help', replyHelp)
 const oneOf = messages => _.sample(_.sample(messages))
 
 async function replyToday(ctx) {
-  const messages = [
+  const month = timeFormat('%m')(new Date())
+  const day = new Date().getDate()
+  // const [month, day] = ['05', 22]
+
+  const urls = await fs.readFile(`calendars/${month}.json`, 'utf8')
+    .then(txt => JSON.parse(txt))
+    .then(json => _.filter(json, { day }).map(d => d.videoUrl))
+
+  // Send pre-video message
+  //
+  const messages = urls.length > 1 ? [[`*${_.capitalize(writtenNumber(urls.length))} videos today*`]] : [
     ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
     ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
@@ -165,15 +182,24 @@ async function replyToday(ctx) {
     [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
-  const [msg] = await Promise.all([
+  await Promise.all([
     ctx.replyWithMarkdown(oneOf(messages)),
     pauseForA(2) // give some time to read the message
   ])
-  const day = new Date().getDate()
-  const url = await fs.readFile('calendar.json', 'utf8')
-    .then(txt => JSON.parse(txt))
-    .then(json => json[day - 1].videoUrl)
-  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
+
+
+  // Send videos
+  //
+  let message = `${toEmoji(day)}`
+  Promise.each(urls, (url, i) => {
+    let part = ''
+    if (urls.length > 1) {
+      part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
+    }
+    return ctx.replyWithMarkdown(`${message}${part} [${url}](${url})`,
+      i === urls.length - 1 ? Extra.markup(menuKeboard) : undefined
+    )
+  })
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
