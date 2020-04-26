@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^3.7.4",
+    "d3-time-format": "^2.2.3",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "json-to-pretty-yaml": "^1.2.2",

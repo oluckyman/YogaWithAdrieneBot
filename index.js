@@ -4,6 +4,8 @@ const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
+const { timeFormat } = require('d3-time-format')
+
 const fs = require('fs').promises
 dotenv.config()
 
@@ -169,11 +171,12 @@ async function replyToday(ctx) {
     ctx.replyWithMarkdown(oneOf(messages)),
     pauseForA(2) // give some time to read the message
   ])
+  const month = timeFormat('%m')(new Date())
   const day = new Date().getDate()
-  const url = await fs.readFile('calendar.json', 'utf8')
+  const url = await fs.readFile(`calendars/${month}.json`, 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => json[day - 1].videoUrl)
-  ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
+  ctx.replyWithMarkdown(`▶️ *Day ${day}* [${url}](${url})`, Extra.markup(menuKeboard))
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
