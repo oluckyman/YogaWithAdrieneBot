@@ -4,6 +4,13 @@ const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
 const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
+const { timeFormat } = require('d3-time-format')
+const Promise = require("bluebird")
+const { toEmoji } = require('number-to-emoji')
+const writtenNumber = require('written-number')
+
+
+
 const fs = require('fs').promises
 dotenv.config()
 
@@ -17,26 +24,19 @@ const firestore = new Firestore({
 })
 
 const setFirstContact = ({ user }) => {
-  firestore
-    .collection('users')
-    .doc(`id${user.id}`)
-    .set({
-      ...user,
-      first_contact_at: new Date()
-    })
+  const userDoc = firestore.collection('users').doc(`id${user.id}`)
+  userDoc.get().then(doc => {
+    if (!doc.exists) {
+      userDoc.set({
+        ...user,
+        first_contact_at: new Date()
+      })
+    }
+  })
 }
 
-const getNowWatching = async videoUrl => {
-  const videoId = videoUrl.replace(/.*\?v=/, '')
-  const doc = await firestore
-    .collection('videos')
-    .doc(videoId)
-    .get()
-
-  if (doc.exists) { // check that the doc exists
-    return doc.data().nowWatching
-  }
-  return null;
+const logEvent = update => {
+  return firestore.collection('logs').add(update)
 }
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -79,7 +79,7 @@ bot.use(async (ctx, next) => {
           ])
           const html = YAML.stringify(payload)
           const name = username ? `@${username}` : first_name
-          ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
         })
     } else if (ctx.update.callback_query) {
       const { username, first_name } = ctx.update.callback_query.from
@@ -96,12 +96,13 @@ bot.use(async (ctx, next) => {
       const html = YAML.stringify(ctx.update)
       ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
     }
+    await logEvent(ctx.update)
     console.log('Response time: %sms', ms)
   } else { console.log('👨‍💻 me working…') }
 })
 
 
-bot.command('/start', ctx => {
+bot.command('/start', async ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice.'],
@@ -161,34 +162,44 @@ bot.command('/help', replyHelp)
 const oneOf = messages => _.sample(_.sample(messages))
 
 async function replyToday(ctx) {
-  const messages = [
-    ['💬 Spend your time _practicing_ yoga rather than _picking_ it'],
-    ['💬 Give your time to _YourSelf_ rather than to _YouTube_'],
-    ['😌 _Find what feels good_'],
+  const month = timeFormat('%m')(new Date())
+  const day = new Date().getDate()
+  // const [month, day] = ['05', 22]
+
+  const urls = await fs.readFile(`calendars/${month}.json`, 'utf8')
+    .then(txt => JSON.parse(txt))
+    .then(json => _.filter(json, { day }).map(d => d.videoUrl))
+
+  // Send pre-video message
+  //
+  const messages = urls.length > 1 ? [[`*${_.capitalize(writtenNumber(urls.length))} videos today*`]] : [
+    ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
+    ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
+    ['😌 _Find what feels good_'],
+    ['🐍 _Long healthy neck_'],
+    ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
-  const [msg] = await Promise.all([
+  await Promise.all([
     ctx.replyWithMarkdown(oneOf(messages)),
     pauseForA(2) // give some time to read the message
   ])
-  const day = new Date().getDate()
-  const url = await fs.readFile('calendar.json', 'utf8')
-    .then(txt => JSON.parse(txt))
-    .then(json => json[day - 1].videoUrl)
-  await ctx.replyWithMarkdown(`▶️ *Day ${day}* ${url}`, Extra.markup(menuKeboard))
 
-  // Show who's practicing right now
+
+  // Send videos
   //
-  const nowWatching = await getNowWatching(url)
-  if (nowWatching) {
-    const yogi1 = [...'😝🤪🤪🤪😑😑😅😅😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😇☺️☺️☺️😊😌😌😌😊😊😬😴🦄']
-    const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
-    const yogi = yogi1
-    const people = nowWatching > 30 ? nowWatching : _.range(nowWatching).map(() => _.sample(yogi)).join('')
-    await ctx.replyWithMarkdown(`Doing this video right now:\n${people}`)
-  }
+  let message = `${toEmoji(day)}`
+  Promise.each(urls, (url, i) => {
+    let part = ''
+    if (urls.length > 1) {
+      part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
+    }
+    return ctx.replyWithMarkdown(`${message}${part} [${url}](${url})`,
+      i === urls.length - 1 ? Extra.markup(menuKeboard) : undefined
+    )
+  })
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
