@@ -110,7 +110,7 @@ bot.command('/start', async ctx => {
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
     [3.0, 'With _less_ friction the are _more_ chances your healthy habit will *thrive*.'],
-    [4.0, 'So, _hope on something comfy and let’s get started!_'],
+    [4.0, '_So, hop into something comfy and let’s get started!_'],
     // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
   const sendGreeting = i => {
