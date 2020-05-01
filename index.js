@@ -41,9 +41,9 @@ const logEvent = update => {
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/03/Apr.-2020-Yoga-Calendar.png'
+const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png'
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
-const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy9eeFCGMO7dJNX4TZuQ1VM'
+const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH'
 
 bot.catch((err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
