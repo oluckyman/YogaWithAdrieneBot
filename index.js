@@ -2,13 +2,12 @@ const _ = require('lodash')
 const YAML = require('json-to-pretty-yaml')
 const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
-const Markup = require('telegraf/markup')
 const Extra = require('telegraf/extra')
 const { timeFormat } = require('d3-time-format')
 const Promise = require("bluebird")
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
-
+const getNowWatching = require('./nowWatching')
 
 
 const fs = require('fs').promises
@@ -34,6 +33,7 @@ const setFirstContact = ({ user }) => {
     }
   })
 }
+
 
 const logEvent = update => {
   return firestore.collection('logs').add(update)
@@ -110,7 +110,7 @@ bot.command('/start', async ctx => {
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
     [3.0, 'With _less_ friction the are _more_ chances your healthy habit will *thrive*.'],
-    [4.0, 'So, _hope on something comfy and let’s get started!_'],
+    [4.0, '_So, hop into something comfy and let’s get started!_'],
     // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
   const sendGreeting = i => {
@@ -166,38 +166,39 @@ async function replyToday(ctx) {
   const day = new Date().getDate()
   // const [month, day] = ['05', 22]
 
-  const urls = await fs.readFile(`calendars/${month}.json`, 'utf8')
+  const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
     .then(txt => JSON.parse(txt))
-    .then(json => _.filter(json, { day }).map(d => d.videoUrl))
+    .then(json => _.filter(json, { day }).map(v => ({ ...v, month, id: v.videoUrl.replace(/.*?v=/, '') })))
 
   // Send pre-video message
   //
-  const messages = urls.length > 1 ? [[`*${_.capitalize(writtenNumber(urls.length))} videos today*`]] : [
-    ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
-    ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
-    ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
-    ['😌 _Find what feels good_'],
-    ['🐍 _Long healthy neck_'],
-    ['🧘‍♀️ _Sukhasana_ – easy pose'],
-    [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
-    [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
-  ];
+  let message
+  if (videos.length > 1) {
+    message = `*${_.capitalize(writtenNumber(videos.length))} videos today*`
+  } else {
+    video = _.first(videos)
+    const nowWatching = await getNowWatching(firestore, video)
+    if (nowWatching) {
+      message = nowWatchingMessage(nowWatching)
+    } else {
+      message = preVideoMessage()
+    }
+  }
   await Promise.all([
-    ctx.replyWithMarkdown(oneOf(messages)),
-    pauseForA(2) // give some time to read the message
+    ctx.replyWithMarkdown(message),
+    pauseForA(1) // give some time to read the message
   ])
-
 
   // Send videos
   //
-  let message = `${toEmoji(day)}`
-  Promise.each(urls, (url, i) => {
+  message = `${toEmoji(day)}`
+  Promise.each(videos, ({ videoUrl }, i) => {
     let part = ''
-    if (urls.length > 1) {
+    if (videos.length > 1) {
       part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
     }
-    return ctx.replyWithMarkdown(`${message}${part} [${url}](${url})`,
-      i === urls.length - 1 ? Extra.markup(menuKeboard) : undefined
+    return ctx.replyWithMarkdown(`${message}${part} [${videoUrl}](${videoUrl})`,
+      i === videos.length - 1 ? Extra.markup(menuKeboard) : undefined
     )
   })
 }
@@ -209,6 +210,42 @@ bot.action(/cb:today/, ctx => {
   replyToday(ctx)
 })
 
+// Show who's practicing right now
+//
+function nowWatchingMessage(nowWatching) {
+  const yogi1 = [...'😝🤪🤪🤪😑😑😅😅😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
+  // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
+  const yogi = yogi1
+  const people = _.range(nowWatching).map(() => _.sample(yogi)).join('')
+  const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
+  const messages = nowWatching > 20 ? [
+    `*${nowWatching} people* started this video a minute ago`
+  ] : nowWatching > 2 ? [
+    `*${_.capitalize(number)} folks* started this video a minute ago\n${people}`,
+    `Practice in sync with *${number} people*\n${people}`,
+    `Join *${number} brave souls*, they’ve just started\n${people}`,
+  ] : nowWatching === 2 ? [
+    `Make a trio with these *two*, they started a minute ago: ${people}`,
+  ] : [
+    '*One person* hit play a minute ago, make a company!',
+    'Someone on the planet just started this video',
+  ]
+  return _.sample(messages)
+}
+
+function preVideoMessage() {
+  const messages = [
+    ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
+    ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
+    ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
+    ['😌 _Find what feels good_'],
+    ['🐍 _Long healthy neck_'],
+    ['🧘‍♀️ _Sukhasana_ – easy pose'],
+    [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
+    [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
+  ];
+  return oneOf(messages)
+}
 
 
 const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
