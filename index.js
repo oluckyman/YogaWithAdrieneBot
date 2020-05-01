@@ -149,7 +149,7 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 <b>Commands</b>
 • <b>/today</b>’s video from the calendar ▶️
 • <b>/calendar</b> of the month and YouTube playlist 🗓
-• <b>/help</b> — <i>shows this message</i>📍
+• <b>/help</b> — <i>this message</i>📍
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, Extra.webPreview(false))
@@ -186,18 +186,19 @@ async function replyToday(ctx) {
   }
   await Promise.all([
     ctx.replyWithMarkdown(message),
-    pauseForA(1) // give some time to read the message
+    pauseForA(2) // give some time to read the message
   ])
 
   // Send videos
   //
   message = `${toEmoji(day)}`
-  Promise.each(videos, ({ videoUrl }, i) => {
+  Promise.each(videos, ({ id }, i) => {
     let part = ''
     if (videos.length > 1) {
       part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
     }
-    return ctx.replyWithMarkdown(`${message}${part} [${videoUrl}](${videoUrl})`,
+    const videoUrl = shortUrl(id)
+    return ctx.replyWithMarkdown(`${message}${part} ${videoUrl}`,
       i === videos.length - 1 ? Extra.markup(menuKeboard) : undefined
     )
   })
@@ -209,6 +210,10 @@ bot.action(/cb:today/, ctx => {
   // ctx.editMessageReplyMarkup() // remove the button
   replyToday(ctx)
 })
+
+function shortUrl(id) {
+  return `youtu.be/${id}`
+}
 
 // Show who's practicing right now
 //
