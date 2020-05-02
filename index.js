@@ -45,9 +45,23 @@ const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/04
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH'
 
-bot.catch((err, ctx) => {
+bot.catch(async (err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
+  return reportError({ ctx, where: 'Unhandled', error: err })
 })
+async function reportError({ ctx, error, where }) {
+  const toChat = process.env.LOG_CHAT_ID
+  const errorMessage = `🐞${error}\n👉${where}\n🤖${JSON.stringify(ctx.update, null, 2)}`
+  await ctx.telegram.sendMessage(toChat, errorMessage)
+
+  await ctx.reply('Oops… sorry, something went wrong 😬')
+  await pauseForA(1)
+  await ctx.replyWithMarkdown('Don’t hesitate to ping [the author](t.me/oluckyman) to get it fixed', Extra.webPreview(false))
+  await pauseForA(2)
+  await ctx.replyWithMarkdown('Meantime try the */calendar*…')
+  await pauseForA(.7)
+  return ctx.replyWithMarkdown('_…if it’s working 😅_')
+}
 
 bot.use(async (ctx, next) => {
   const start = new Date()
@@ -203,11 +217,7 @@ async function replyToday(ctx) {
     )
   }).catch(async e => {
     console.error('Problem with videos', e)
-    await ctx.reply('Oops, sorry, something went wrong 😬')
-    await pauseForA(1)
-    await ctx.replyWithMarkdown('Don’t hesitate to ping [the author](t.me/oluckyman) to get it fixed')
-    await pauseForA(1)
-    return ctx.replyWithMarkdown('Meantime try the */calendar*')
+    return reportError({ ctx, where: 'sending /today videos', error: e })
   })
 }
 bot.command('/today', replyToday)
