@@ -192,15 +192,22 @@ async function replyToday(ctx) {
   // Send videos
   //
   message = `${toEmoji(day)}`
-  Promise.each(videos, ({ id }, i) => {
+  return Promise.each(videos, ({ id }, i) => {
     let part = ''
     if (videos.length > 1) {
       part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
     }
     const videoUrl = shortUrl(id)
-    return ctx.replyWithMarkdown(`${message}${part} ${videoUrl}`,
+    return ctx.reply(`${message}${part} ${videoUrl}`,
       i === videos.length - 1 ? Extra.markup(menuKeboard) : undefined
     )
+  }).catch(async e => {
+    console.error('Problem with videos', e)
+    await ctx.reply('Oops, sorry, something went wrong 😬')
+    await pauseForA(1)
+    await ctx.replyWithMarkdown('Don’t hesitate to ping [the author](t.me/oluckyman) to get it fixed')
+    await pauseForA(1)
+    return ctx.replyWithMarkdown('Meantime try the */calendar*')
   })
 }
 bot.command('/today', replyToday)
