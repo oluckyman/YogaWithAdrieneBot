@@ -36,7 +36,7 @@ const setFirstContact = ({ user }) => {
 
 
 const logEvent = update => {
-  return firestore.collection('logs').add(update)
+  return firestore.collection('logs').add({ json: JSON.stringify(update), date: new Date() })
 }
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -49,10 +49,11 @@ bot.catch(async (err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err })
 })
-async function reportError({ ctx, error, where }) {
+async function reportError({ ctx, error, where, quiet = false }) {
   const toChat = process.env.LOG_CHAT_ID
   const errorMessage = `🐞${error}\n👉${where}\n🤖${JSON.stringify(ctx.update, null, 2)}`
   await ctx.telegram.sendMessage(toChat, errorMessage)
+  if (quiet) { return }
 
   await ctx.reply('Oops… sorry, something went wrong 😬')
   await pauseForA(1)
@@ -67,52 +68,57 @@ bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
-  const isAdmin = [
+  try {
+    const isAdmin = [
       _.get(ctx.update, 'message.from.id'),
       _.get(ctx.update, 'callback_query.from.id'),
     ].includes(+process.env.ADMIN_ID)
-  if (!isAdmin) {
-    console.log('------------------')
-    console.info(ctx.update)
-    // Log the message
-    const toChat = process.env.LOG_CHAT_ID
-    if (ctx.update.message) {
-      const fromChat = ctx.update.message.chat.id
-      const messageId = ctx.update.message.message_id
-      ctx
-        .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
-        .then(res => {
-          const { username, first_name } = ctx.update.message.from
-          const text = ctx.update.message.text
-          const payload = _.omit(ctx.update.message, [
-            'from.username',
-            'date',
-            'text',
-            ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
-            _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
-          ])
-          const html = YAML.stringify(payload)
-          const name = username ? `@${username}` : first_name
-          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
-        })
-    } else if (ctx.update.callback_query) {
-      const { username, first_name } = ctx.update.callback_query.from
-      const payload = _.omit(ctx.update.callback_query, [
-        'from.username',
-        'message',
-        'chat_instance',
-        'data',
-      ])
-      const text = ctx.update.callback_query.data
-      const html = YAML.stringify(payload)
-      ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
-    } else {
-      const html = YAML.stringify(ctx.update)
-      ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
-    }
-    await logEvent(ctx.update)
-    console.log('Response time: %sms', ms)
-  } else { console.log('👨‍💻 me working…') }
+    if (!isAdmin) {
+      console.log('------------------')
+      console.info(ctx.update)
+      // Log the message
+      const toChat = process.env.LOG_CHAT_ID
+      if (ctx.update.message) {
+        const fromChat = ctx.update.message.chat.id
+        const messageId = ctx.update.message.message_id
+        ctx
+          .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
+          .then(res => {
+            const { username, first_name } = ctx.update.message.from
+            const text = ctx.update.message.text
+            const payload = _.omit(ctx.update.message, [
+              'from.username',
+              'date',
+              'text',
+              ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
+              _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
+            ])
+            const html = YAML.stringify(payload)
+            const name = username ? `@${username}` : first_name
+            return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+          })
+      } else if (ctx.update.callback_query) {
+        const { username, first_name } = ctx.update.callback_query.from
+        const payload = _.omit(ctx.update.callback_query, [
+          'from.username',
+          'message',
+          'chat_instance',
+          'data',
+        ])
+        const text = ctx.update.callback_query.data
+        const html = YAML.stringify(payload)
+        ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+      } else {
+        const html = YAML.stringify(ctx.update)
+        ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
+      }
+      await logEvent(ctx.update)
+      console.log('Response time: %sms', ms)
+    } else { console.log('👨‍💻 me working…') }
+  } catch (e) {
+    console.error('🐛 Error logging', e)
+    return reportError({ ctx, where: 'logging middleware', error: e, quiet: true })
+  }
 })
 
 
