@@ -175,55 +175,70 @@ bot.command('/help', replyHelp)
 
 const oneOf = messages => _.sample(_.sample(messages))
 
+const getPart = i => {
+  const partSymbols = ['🅰️', '🅱️', '❤️', '🧡', '💛', '💚', '💙', '💜']
+  return i < partSymbols.length ? partSymbols[i] : `*[${i + 1}]*`
+}
+
 async function replyToday(ctx) {
   const month = timeFormat('%m')(new Date())
   const day = new Date().getDate()
+  const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
 
   const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
     .then(txt => JSON.parse(txt))
-    .then(json => _.filter(json, { day }).map(v => ({ ...v, month, id: v.videoUrl.replace(/.*?v=/, '') })))
+    .then(json => _.filter(json, { day })
+      .filter((v, i) => !part || i === +part)
+      .map(v => ({ ...v, month, id: v.videoUrl.replace(/.*?v=/, '') }))
+    )
+  // videos.push(videos[0])
 
-  // Send pre-video message
-  //
-  let message
   if (videos.length > 1) {
-    message = `*${_.capitalize(writtenNumber(videos.length))} videos today*`
+    // Ask which one to show now
+    // TODO: show duration here when I have single source of truth
+    const videosList = videos.map((v, i) => `${getPart(i)} *${v.title}*`).join('\n')
+    const message = `${_.capitalize(writtenNumber(videos.length))} videos today\n\n` +
+      `${videosList}`
+    return ctx.replyWithMarkdown(message, Extra
+      .markup(m =>
+        m.inlineKeyboard(videos.map((v, i) => m.callbackButton(getPart(i), `cb:today${i}`)))
+      )
+    )
   } else {
-    video = _.first(videos)
+    const video = _.first(videos)
     const nowWatching = await getNowWatching(firestore, video)
+    let message
     if (nowWatching) {
       message = nowWatchingMessage(nowWatching)
     } else {
       message = preVideoMessage()
     }
-  }
-  await Promise.all([
-    ctx.replyWithMarkdown(message),
-    pauseForA(2) // give some time to read the message
-  ])
+    await Promise.all([
+      ctx.replyWithMarkdown(message),
+      pauseForA(2) // give some time to read the message
+    ])
 
-  // Send videos
-  //
-  message = `${toEmoji(day)}`
-  return Promise.each(videos, ({ id }, i) => {
-    let part = ''
-    if (videos.length > 1) {
-      part = i < 2 ? ['🅰️', '🅱️'][i] : `*${String.fromCharCode('A'.charCodeAt(0) + i)}*`
+    try {
+      const partSymbol = part ? getPart(+part) : ''
+      const videoUrl = shortUrl(video.id)
+      message = `${toEmoji(day)}`
+      return ctx.reply(`${message}${partSymbol} ${videoUrl}`, Extra.markup(menuKeboard))
+    } catch (e) {
+      console.error(`Error with ${message}${partSymbol} ${videoUrl}`, e)
+      return reportError({ ctx, where: 'sending /today video', error: e })
     }
-    const videoUrl = shortUrl(id)
-    return ctx.reply(`${message}${part} ${videoUrl}`,
-      i === videos.length - 1 ? Extra.markup(menuKeboard) : undefined
-    )
-  }).catch(async e => {
-    console.error('Problem with videos', e)
-    return reportError({ ctx, where: 'sending /today videos', error: e })
-  })
+  }
 }
 bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
-bot.action(/cb:today/, ctx => {
-  ctx.answerCbQuery('Looking for today’s video…')
+bot.action(/cb:today(?<part>\d+)?/, ctx => {
+  const part = ctx.match.groups.part
+  if (part !== undefined) {
+    ctx.answerCbQuery('Getting the video for you…')
+  } else {
+    ctx.answerCbQuery('Looking for today’s video…')
+  }
   // ctx.editMessageReplyMarkup() // remove the button
   replyToday(ctx)
 })
