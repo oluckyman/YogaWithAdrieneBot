@@ -1,6 +1,5 @@
 const _ = require('lodash')
 
-
 const pad = (num) => `${num}`.padStart(2, '0')
 
 const N = 60

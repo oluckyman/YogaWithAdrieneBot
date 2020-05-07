@@ -64,16 +64,17 @@ async function reportError({ ctx, error, where, silent = false }) {
   return ctx.replyWithMarkdown('_…if it’s working 😅_')
 }
 
+const isAdmin = ctx => [
+    _.get(ctx.update, 'message.from.id'),
+    _.get(ctx.update, 'callback_query.from.id'),
+  ].includes(+process.env.ADMIN_ID)
+
 bot.use(async (ctx, next) => {
   const start = new Date()
   await next()
   const ms = new Date() - start
   try {
-    const isAdmin = [
-      _.get(ctx.update, 'message.from.id'),
-      _.get(ctx.update, 'callback_query.from.id'),
-    ].includes(+process.env.ADMIN_ID)
-    if (!isAdmin) {
+    if (!isAdmin(ctx)) {
       console.log('------------------')
       console.info(ctx.update)
       // Log the message
@@ -215,6 +216,7 @@ async function replyToday(ctx) {
       )
     )
   } else {
+    // Send the video and pre-video message
     const video = _.first(videos)
     const nowWatching = await getNowWatching(firestore, video)
     let message
@@ -228,6 +230,10 @@ async function replyToday(ctx) {
         ctx.replyWithMarkdown(message),
         pauseForA(2) // give some time to read the message
       ])
+      // show how the message looks in botlog
+      if (!isAdmin(ctx)) {
+        ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, message)
+      }
     } catch (e) {
       console.error(`Error with pre-video message "${message}"`, e)
       await reportError({ ctx, where: '/today: pre-video message', error: e, silent: true })
