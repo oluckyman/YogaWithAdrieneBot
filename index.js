@@ -49,11 +49,11 @@ bot.catch(async (err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err })
 })
-async function reportError({ ctx, error, where, quiet = false }) {
+async function reportError({ ctx, error, where, silent = false }) {
   const toChat = process.env.LOG_CHAT_ID
   const errorMessage = `🐞${error}\n👉${where}\n🤖${JSON.stringify(ctx.update, null, 2)}`
   await ctx.telegram.sendMessage(toChat, errorMessage)
-  if (quiet) { return }
+  if (silent) { return }
 
   await ctx.reply('Oops… sorry, something went wrong 😬')
   await pauseForA(1)
@@ -117,7 +117,7 @@ bot.use(async (ctx, next) => {
     } else { console.log('👨‍💻 me working…') }
   } catch (e) {
     console.error('🐛 Error logging', e)
-    return reportError({ ctx, where: 'logging middleware', error: e, quiet: true })
+    return reportError({ ctx, where: 'logging middleware', error: e, silent: true })
   }
 })
 
@@ -223,10 +223,15 @@ async function replyToday(ctx) {
     } else {
       message = preVideoMessage()
     }
-    await Promise.all([
-      ctx.replyWithMarkdown(message),
-      pauseForA(2) // give some time to read the message
-    ])
+    try {
+      await Promise.all([
+        ctx.replyWithMarkdown(message),
+        pauseForA(2) // give some time to read the message
+      ])
+    } catch (e) {
+      console.error(`Error with pre-video message "${message}"`, e)
+      await reportError({ ctx, where: '/today: pre-video message', error: e, silent: true })
+    }
 
     try {
       const partSymbol = part ? getPart(+part) : ''
@@ -235,7 +240,7 @@ async function replyToday(ctx) {
       return ctx.reply(`${message}${partSymbol} ${videoUrl}`, Extra.markup(menuKeboard))
     } catch (e) {
       console.error(`Error with ${message}${partSymbol} ${videoUrl}`, e)
-      return reportError({ ctx, where: 'sending /today video', error: e })
+      return reportError({ ctx, where: '/today: the video link', error: e })
     }
   }
 }
