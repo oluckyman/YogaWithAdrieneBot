@@ -192,7 +192,7 @@ const getPart = i => {
 
 async function replyToday(ctx) {
   const month = timeFormat('%m')(new Date())
-  const day = new Date().getDate()
+  const day = ctx.state.day || new Date().getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
 
@@ -219,6 +219,7 @@ async function replyToday(ctx) {
     // Send the video and pre-video message
     const video = _.first(videos)
     const nowWatching = await getNowWatching(firestore, video)
+    console.log({ nowWatching })
     let message
     if (nowWatching) {
       message = nowWatchingMessage(nowWatching)
@@ -250,8 +251,12 @@ async function replyToday(ctx) {
     }
   }
 }
-bot.command('/today', replyToday)
 bot.hears(menu.today, replyToday)
+bot.command('/today', ctx => {
+  const text = ctx.update.message.text
+  ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
+  replyToday(ctx)
+})
 bot.action(/cb:today(?<part>\d+)?/, ctx => {
   const part = ctx.match.groups.part
   if (part !== undefined) {
