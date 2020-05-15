@@ -126,7 +126,7 @@ bot.use(async (ctx, next) => {
 bot.command('/start', async ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
-    [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel union.'],
+    [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel Union.'],
     [3.5, 'It gives you */today*’s yoga video from *YWA /calendar* and shows how much people have started this yoga right now.'],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
@@ -158,6 +158,8 @@ bot.command('/start', async ctx => {
   setFirstContact({
     user: _.get(ctx.update, 'message.from'),
   })
+  // Dunno if it's needed ¯\_(ツ)_/¯
+  return Promise.resolve()
 });
 
 
@@ -227,7 +229,6 @@ async function replyToday(ctx) {
     } else {
       message = preVideoMessage()
     }
-    // TODO: debug why now Watchin does not shows in /today for me!!!1 wieereid!
     try {
       await Promise.all([
         ctx.replyWithMarkdown(message),
@@ -237,18 +238,21 @@ async function replyToday(ctx) {
       if (!isAdmin(ctx)) {
         ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, message)
       }
+      console.log(message)
     } catch (e) {
       console.error(`Error with pre-video message "${message}"`, e)
       await reportError({ ctx, where: '/today: pre-video message', error: e, silent: true })
     }
 
     try {
+      message = 'oops 🐩' // so it can be used in catch (e) block
       const partSymbol = part ? getPart(+part) : ''
       const videoUrl = shortUrl(video.id)
-      message = `${toEmoji(day)}`
-      return ctx.reply(`${message}${partSymbol} ${videoUrl}`, Extra.markup(menuKeboard))
+      message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
+      console.log(message)
+      return ctx.reply(message, Extra.markup(menuKeboard))
     } catch (e) {
-      console.error(`Error with ${message}${partSymbol} ${videoUrl}`, e)
+      console.error(`Error with video link: ${message}`, e)
       return reportError({ ctx, where: '/today: the video link', error: e })
     }
   }
@@ -257,7 +261,7 @@ bot.hears(menu.today, replyToday)
 bot.command('/today', ctx => {
   const text = ctx.update.message.text
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
-  replyToday(ctx)
+  return replyToday(ctx)
 })
 bot.action(/cb:today(?<part>\d+)?/, ctx => {
   const part = ctx.match.groups.part
@@ -267,7 +271,7 @@ bot.action(/cb:today(?<part>\d+)?/, ctx => {
     ctx.answerCbQuery('Looking for today’s video…')
   }
   // ctx.editMessageReplyMarkup() // remove the button
-  replyToday(ctx)
+  return replyToday(ctx)
 })
 
 function shortUrl(id) {
