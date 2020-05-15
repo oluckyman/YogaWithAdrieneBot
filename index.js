@@ -195,6 +195,7 @@ async function replyToday(ctx) {
   const day = ctx.state.day || new Date().getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
+  console.log('replyToday', {month, day, part})
 
   const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
     .then(txt => JSON.parse(txt))
@@ -210,6 +211,7 @@ async function replyToday(ctx) {
     const videosList = videos.map((v, i) => `${getPart(i)} *${v.title}*`).join('\n')
     const message = `${_.capitalize(writtenNumber(videos.length))} videos today\n` +
       `${videosList}`
+    console.log(message)
     return ctx.replyWithMarkdown(message, Extra
       .markup(m =>
         m.inlineKeyboard(videos.map((v, i) => m.callbackButton(getPart(i), `cb:today${i}`)))
