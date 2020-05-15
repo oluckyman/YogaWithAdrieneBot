@@ -208,7 +208,7 @@ async function replyToday(ctx) {
     // Ask which one to show now
     // TODO: show duration here when I have single source of truth
     const videosList = videos.map((v, i) => `${getPart(i)} *${v.title}*`).join('\n')
-    const message = `${_.capitalize(writtenNumber(videos.length))} videos today\n\n` +
+    const message = `${_.capitalize(writtenNumber(videos.length))} videos today\n` +
       `${videosList}`
     return ctx.replyWithMarkdown(message, Extra
       .markup(m =>
@@ -219,13 +219,13 @@ async function replyToday(ctx) {
     // Send the video and pre-video message
     const video = _.first(videos)
     const nowWatching = await getNowWatching(firestore, video)
-    console.log({ nowWatching })
     let message
     if (nowWatching) {
       message = nowWatchingMessage(nowWatching)
     } else {
       message = preVideoMessage()
     }
+    // TODO: debug why now Watchin does not shows in /today for me!!!1 wieereid!
     try {
       await Promise.all([
         ctx.replyWithMarkdown(message),
@@ -275,7 +275,7 @@ function shortUrl(id) {
 // Show who's practicing right now
 //
 function nowWatchingMessage(nowWatching) {
-  const yogi1 = [...'😝🤪😑😑😅😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
+  const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = yogi1
   const people = _.range(nowWatching).map(() => _.sample(yogi)).join('')
