@@ -164,7 +164,7 @@ bot.command('/start', async ctx => {
 
 
 const menu = {
-  today: '▶️ Today’s yoga video',
+  today: '▶️ Today’s yoga',
   calendar: '🗓 Calendar',
   help: '💁 Help',
 }
@@ -257,6 +257,7 @@ async function replyToday(ctx) {
     }
   }
 }
+bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
 bot.hears(menu.today, replyToday)
 bot.command('/today', ctx => {
   const text = ctx.update.message.text
