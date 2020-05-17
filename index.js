@@ -334,7 +334,7 @@ bot.hears(menu.calendar, replyCalendar)
 
 
 
-const praise = new RegExp('[👍❤️]')
+const praise = new RegExp('[🙏👍❤️]|thank', 'i')
 const thanksMessages = [
   [...'😌😛'], // smiles
   [...'🥰💚🤗'], // love
