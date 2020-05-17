@@ -71,12 +71,16 @@ const isAdmin = ctx => [
 
 bot.use(async (ctx, next) => {
   const start = new Date()
+
+  if (!isAdmin(ctx)) {
+    console.log('👉 New Request ---')
+    console.info(ctx.update)
+  } else { console.log('👨‍💻 me working…') }
+
   await next()
   const ms = new Date() - start
   try {
     if (!isAdmin(ctx)) {
-      console.log('------------------')
-      console.info(ctx.update)
       // Log the message
       const toChat = process.env.LOG_CHAT_ID
       if (ctx.update.message) {
@@ -115,7 +119,7 @@ bot.use(async (ctx, next) => {
       }
       await logEvent(ctx.update)
       console.log('Response time: %sms', ms)
-    } else { console.log('👨‍💻 me working…') }
+    }
   } catch (e) {
     console.error('🐛 Error logging', e)
     return reportError({ ctx, where: 'logging middleware', error: e, silent: true })
