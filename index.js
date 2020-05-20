@@ -130,7 +130,7 @@ bot.use(async (ctx, next) => {
 bot.command('/start', async ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
-    [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel united with others.'],
+    [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.'],
     [3.5, 'It gives you */today*’s yoga video from the */calendar* and shows how many people have started this video right now.'],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
@@ -294,18 +294,21 @@ function nowWatchingMessage(nowWatching) {
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = yogi1
-  const people = _.range(nowWatching).map(() => _.sample(yogi)).join('')
+  const emojis = _.range(nowWatching).map(() => _.sample(yogi)).join('')
   const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
-  const messages = nowWatching > 20 ? [
-    `*${nowWatching} people* started this video a minute ago`
+  const messages = nowWatching > 25 ? [
+    `*${number} people* started this video within the last minute`,
+    `*${number} folks* started this video within the last minute`,
+    `Practice in sync with *${number} people*`,
+    `Join *${number} brave souls*, they’ve just started`,
   ] : nowWatching > 2 ? [
-    `*${_.capitalize(number)} folks* started this video a minute ago\n${people}`,
-    `Practice in sync with *${number} people*\n${people}`,
-    `Join *${number} brave souls*, they’ve just started\n${people}`,
+    `*${_.capitalize(number)} folks* started this video within the last minute\n${emojis}`,
+    `Practice in sync with *${number} people*\n${emojis}`,
+    `Join *${number} brave souls*, they’ve just started\n${emojis}`,
   ] : nowWatching === 2 ? [
-    `Make a trio with these *two*, they started a minute ago: ${people}`,
+    `Make a trio with these *two*, they started within the last minute: ${emojis}`,
   ] : [
-    '*One person* hit play a minute ago, make a company!',
+    '*One person* hit play within the last minute, make a company!',
     'Someone on the planet just started this video',
   ]
   return _.sample(messages)
