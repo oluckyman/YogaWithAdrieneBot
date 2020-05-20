@@ -179,6 +179,7 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 <b>Commands</b>
 • <b>/today</b>’s video from the calendar ▶️
 • <b>/calendar</b> of the month and YouTube playlist 🗓
+• <b>/feedback</b> is always welcome 💬
 • <b>/help</b> — <i>this message</i>📍
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
@@ -187,6 +188,10 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 bot.hears(menu.help, replyHelp)
 bot.command('/help', replyHelp)
 
+
+bot.command('/feedback', ctx => ctx.replyWithMarkdown(`
+Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
+`))
 
 
 const oneOf = messages => _.sample(_.sample(messages))
@@ -371,6 +376,8 @@ bot.telegram.setMyCommands([{
   command: 'today', description: 'Get today’s video from the yoga calendar'
 }, {
   command: 'calendar', description: 'Review the month’s calendar'
+}, {
+  command: 'feedback', description: 'Ask a question or share an idea'
 }, {
   command: 'help', description: 'See what this bot can do for you'
 }])
