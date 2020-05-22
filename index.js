@@ -308,8 +308,8 @@ function nowWatchingMessage(nowWatching) {
   ] : nowWatching === 2 ? [
     `Make a trio with these *two*, they started within the last minute: ${emojis}`,
   ] : [
-    '*One person* hit play within the last minute, make a company!',
-    'Someone on the planet just started this video',
+    '*One person* hit play within the last minute, make a duo!',
+    'Someone on the planet just started this video, keep them company!',
   ]
   return _.sample(messages)
 }
