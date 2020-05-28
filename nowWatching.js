@@ -6,7 +6,7 @@ const N = 60
 
 module.exports = async (firestore, { id, month, day }) => {
   const videoName = `${pad(month)}_${pad(day)}_${id}`
-  const viewDeltas = await firestore.doc(`videos/${videoName}/viewCounts/latest`).get()
+  const viewDeltas = await firestore.doc(`videos/${videoName}/viewCounts/latest_2`).get()
     .then(doc => doc.data())
     .then(({ log }) => log.map((d, i) => i === 0 ? 0 : d.viewCount - log[i-1].viewCount))
     .catch(e => {
