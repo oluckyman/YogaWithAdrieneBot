@@ -13,6 +13,9 @@ const getNowWatching = require('./nowWatching')
 const fs = require('fs').promises
 dotenv.config()
 
+// const now = new Date('2020-06-01')
+const now = new Date()
+
 const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
@@ -41,9 +44,15 @@ const logEvent = update => {
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-const calendarImageUrl = 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png'
+const calendarImageUrl = {
+  5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
+  6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
+}[now.getMonth() + 1]
+const calendarYouTubeUrl = {
+  5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
+  6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
+}[now.getMonth() + 1]
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
-const calendarYouTubeUrl = 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH'
 
 bot.catch(async (err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
@@ -330,7 +339,7 @@ function preVideoMessage() {
 
 
 const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
-  .caption(`*/today* is *Day ${new Date().getDate()}*`)
+  .caption(`*/today* is *Day ${now.getDate()}*`)
   .markdown()
   .markup(m => m.inlineKeyboard([
     m.urlButton('YWA Calendar', calendarYWAUrl),
