@@ -211,8 +211,8 @@ const getPart = i => {
 }
 
 async function replyToday(ctx) {
-  const month = timeFormat('%m')(new Date())
-  const day = ctx.state.day || new Date().getDate()
+  const month = timeFormat('%m')(now)
+  const day = ctx.state.day || now.getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
   console.log('replyToday', {month, day, part})

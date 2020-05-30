@@ -6,16 +6,19 @@ const N = 60
 
 module.exports = async (firestore, { id, month, day }) => {
   const videoName = `${pad(month)}_${pad(day)}_${id}`
-  const viewDeltas = await firestore.doc(`videos/${videoName}/viewCounts/latest_2`).get()
+  const isJune = videoName.startsWith('06')
+  const latest = isJune ? 'latest' : 'latest_2'
+  const viewDeltas = await firestore.doc(`videos/${videoName}/viewCounts/${latest}`).get()
     .then(doc => doc.data())
     .then(({ log }) => log.map((d, i) => i === 0 ? 0 : d.viewCount - log[i-1].viewCount))
     .catch(e => {
       console.error(`🐛 video ${videoName}: ${e}`)
       return []
     })
-  // insert odd minutes because the log tracks every 2 minutes
+  // insert missing minutes because the log tracks every 2 minutes (or 10 starting from June)
   // and smoothing algorithm expects every minute
-  const viewDeltasPerMinute = _.flatMap(viewDeltas.map(d => ([d, 0])))
+  const logPeriod = isJune ? 10 : 2
+  const viewDeltasPerMinute = _.flatMap(viewDeltas.map(d => Array.of(d, ..._.range(logPeriod - 1).fill(0))))
   const smoothDeltas = gaussianSmoothing(viewDeltasPerMinute, N)
   console.log({ videoName, smoo: _.takeRight(smoothDeltas, 5) })
   return Math.round(_.last(smoothDeltas))
