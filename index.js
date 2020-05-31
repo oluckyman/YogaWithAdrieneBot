@@ -351,7 +351,7 @@ bot.hears(menu.calendar, replyCalendar)
 
 
 
-const praise = new RegExp('[🙏👍❤️]|thank', 'i')
+const praise = new RegExp('[🙏❤️🧡💛💚💙💜👍❤️]|thank', 'i')
 const thanksMessages = [
   [...'😌😛'], // smiles
   [...'🥰💚🤗'], // love
@@ -359,7 +359,13 @@ const thanksMessages = [
 ]
 async function replyThankYou(ctx) {
   await pauseForA(2)
-  return ctx.replyWithMarkdown(oneOf(thanksMessages))
+  const thankYou = oneOf(thanksMessages)
+  // show how the message looks in botlog
+  if (!isAdmin(ctx)) {
+    ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, thankYou)
+    console.log(thankYou)
+  }
+  return ctx.replyWithMarkdown(thankYou)
 }
 bot.hears(praise, replyThankYou)
 
