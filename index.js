@@ -14,7 +14,7 @@ const fs = require('fs').promises
 dotenv.config()
 
 // const now = new Date('2020-06-01')
-const now = new Date()
+const now = () => new Date()
 
 const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
@@ -47,11 +47,11 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 const calendarImageUrl = {
   5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
   6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
-}[now.getMonth() + 1]
+}[now().getMonth() + 1]
 const calendarYouTubeUrl = {
   5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
   6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
-}[now.getMonth() + 1]
+}[now().getMonth() + 1]
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 bot.catch(async (err, ctx) => {
@@ -211,8 +211,8 @@ const getPart = i => {
 }
 
 async function replyToday(ctx) {
-  const month = timeFormat('%m')(now)
-  const day = ctx.state.day || now.getDate()
+  const month = timeFormat('%m')(now())
+  const day = ctx.state.day || now().getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
   console.log('replyToday', {month, day, part})
@@ -339,7 +339,7 @@ function preVideoMessage() {
 
 
 const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
-  .caption(`*/today* is *Day ${now.getDate()}*`)
+  .caption(`*/today* is *Day ${now().getDate()}*`)
   .markdown()
   .markup(m => m.inlineKeyboard([
     m.urlButton('YWA Calendar', calendarYWAUrl),
