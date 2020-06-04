@@ -20,7 +20,7 @@ module.exports = async (firestore, { id, month, day }) => {
   const logPeriod = isJune ? 10 : 2
   const viewDeltasPerMinute = _.flatMap(viewDeltas.map(d => Array.of(d, ..._.range(logPeriod - 1).fill(0))))
   const smoothDeltas = gaussianSmoothing(viewDeltasPerMinute, N)
-  console.log({ videoName, smoo: _.takeRight(smoothDeltas, 5) })
+  // console.log({ videoName, smoo: _.takeRight(smoothDeltas, 5) })
   return Math.round(_.last(smoothDeltas))
 }
 
