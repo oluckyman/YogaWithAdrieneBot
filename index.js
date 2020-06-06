@@ -285,7 +285,7 @@ async function replyToday(ctx) {
     .then(txt => JSON.parse(txt))
     .then(json => _.filter(json, { day })
       .filter((v, i) => !part || i === +part)
-      .map(v => ({ ...v, month, id: v.videoUrl.replace(/.*?v=/, '') }))
+      .map(v => ({ ...v, month }))
     )
   // videos.push(videos[0])
 
