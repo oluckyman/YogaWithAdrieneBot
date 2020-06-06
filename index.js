@@ -55,8 +55,10 @@ const calendarYouTubeUrl = {
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 bot.catch(async (err, ctx) => {
+  // do not show error message to user if the main action was successful
+  const silent = _.get(ctx, 'state.success')
   console.error(`⚠️ ${ctx.updateType}`, err)
-  return reportError({ ctx, where: 'Unhandled', error: err })
+  return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
 async function reportError({ ctx, error, where, silent = false }) {
   const toChat = process.env.LOG_CHAT_ID
@@ -231,6 +233,7 @@ bot.command('/start', async ctx => {
       })
   }
   sendGreeting(0)
+  // TODO: rewrite it to `await` chain and set `state.success` at the end
   return setFirstContact({
     user: _.get(ctx.update, 'message.from'),
   })
@@ -254,6 +257,7 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, Extra.webPreview(false))
+.then(() => ctx.state.success = true)
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
 bot.hears(menu.help, replyHelp)
 bot.command('/help', replyHelp)
@@ -261,7 +265,7 @@ bot.command('/help', replyHelp)
 
 bot.command('/feedback', ctx => ctx.replyWithMarkdown(`
 Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
-`))
+`).then(() => ctx.state.success = true))
 
 
 const oneOf = messages => _.sample(_.sample(messages))
@@ -300,7 +304,7 @@ async function replyToday(ctx) {
       .markup(m =>
         m.inlineKeyboard(videos.map((v, i) => m.callbackButton(getPart(i), `cb:today${i}`)))
       )
-    )
+    ).then(() => ctx.state.success = true)
   } else {
     // Send the video and pre-video message
     const video = _.first(videos)
@@ -332,7 +336,7 @@ async function replyToday(ctx) {
       const videoUrl = shortUrl(video.id)
       message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
       console.log(message)
-      return ctx.reply(message, Extra.markup(menuKeboard))
+      return ctx.reply(message, Extra.markup(menuKeboard)).then(() => ctx.state.success = true)
     } catch (e) {
       console.error(`Error with video link: ${message}`, e)
       return reportError({ ctx, where: '/today: the video link', error: e })
@@ -409,7 +413,7 @@ const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
     m.urlButton('YWA Calendar', calendarYWAUrl),
     m.urlButton('YouTube playlist', calendarYouTubeUrl),
   ], { columns: 1 }))
-)
+).then(() => ctx.state.success = true)
 bot.command('/calendar', replyCalendar)
 bot.hears(menu.calendar, replyCalendar)
 
@@ -429,7 +433,7 @@ async function replyThankYou(ctx) {
     ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, thankYou)
     console.log(thankYou)
   }
-  return ctx.replyWithMarkdown(thankYou)
+  return ctx.replyWithMarkdown(thankYou).then(() => ctx.state.success = true)
 }
 bot.hears(praise, replyThankYou)
 
