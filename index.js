@@ -8,6 +8,8 @@ const Promise = require("bluebird")
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 const getNowWatching = require('./nowWatching')
+const longPractice = require('./longPractice')
+const { pauseForA } = require('./utils')
 
 
 const fs = require('fs').promises
@@ -200,6 +202,7 @@ bot.use(async (ctx, next) => {
   }
 })
 
+bot.use(longPractice)
 
 bot.command('/start', async ctx => {
   const greetings = [
@@ -450,10 +453,6 @@ bot.hears(praise, replyThankYou)
 
 function menuKeboard(m) {
   return m.resize().keyboard([menu.today, menu.calendar, menu.help])
-}
-
-function pauseForA(sec) {
-  return new Promise(r => setTimeout(r, sec * 1000))
 }
 
 
