@@ -466,8 +466,8 @@ bot.telegram.setMyCommands([{
   command: 'today', description: 'Get today’s video from the yoga calendar'
 }, {
   command: 'calendar', description: 'Review the month’s calendar'
-}, {
-  command: 'feedback', description: 'Ask a question or share an idea'
+// }, {
+//   command: 'feedback', description: 'Ask a question or share an idea'
 }, {
   command: 'help', description: 'See what this bot can do for you'
 }])
