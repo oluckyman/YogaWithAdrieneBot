@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { timeFormat } = require('d3-time-format')
-const { pauseForA } = require('./utils')
+const { pauseForA, reportError } = require('./utils')
 const fs = require('fs').promises
 
 const now = () => new Date()

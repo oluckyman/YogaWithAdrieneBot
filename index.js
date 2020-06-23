@@ -9,7 +9,8 @@ const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 const getNowWatching = require('./nowWatching')
 const longPractice = require('./longPractice')
-const { pauseForA } = require('./utils')
+const setupJourneys = require('./journeys')
+const { pauseForA, reportError } = require('./utils')
 
 
 const fs = require('fs').promises
@@ -62,20 +63,6 @@ bot.catch(async (err, ctx) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
-async function reportError({ ctx, error, where, silent = false }) {
-  const toChat = process.env.LOG_CHAT_ID
-  const errorMessage = `🐞${error}\n👉${where}\n🤖${JSON.stringify(ctx.update, null, 2)}`
-  await ctx.telegram.sendMessage(toChat, errorMessage)
-  if (silent) { return }
-
-  await ctx.reply('Oops… sorry, something went wrong 😬')
-  await pauseForA(1)
-  await ctx.replyWithMarkdown('Don’t hesitate to ping [the author](t.me/oluckyman) to get it fixed', Extra.webPreview(false))
-  await pauseForA(2)
-  await ctx.replyWithMarkdown('Meantime try the */calendar*…')
-  await pauseForA(.7)
-  return ctx.replyWithMarkdown('_…if it’s working 😅_')
-}
 
 const isAdmin = ctx => [
     _.get(ctx.update, 'message.from.id'),
@@ -101,7 +88,7 @@ bot.use(async (ctx, next) => {
         const messageId = ctx.update.message.message_id
         ctx
           .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
-          .then(res => {
+          .then(() => {
             const { username, first_name } = ctx.update.message.from
             const text = ctx.update.message.text
             const payload = _.omit(ctx.update.message, [
@@ -420,11 +407,14 @@ const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
   .markup(m => m.inlineKeyboard([
     m.urlButton('YWA Calendar', calendarYWAUrl),
     m.urlButton('YouTube playlist', calendarYouTubeUrl),
-  ], { columns: 1 }))
+    m.callbackButton('30 Days of Yoga series', 'cb:journeys')
+  ], { columns: 2 }))
 ).then(() => ctx.state.success = true)
 bot.command('/calendar', replyCalendar)
 bot.hears(menu.calendar, replyCalendar)
 
+
+setupJourneys(bot)
 
 
 const praise = new RegExp('[🙏❤️🧡💛💚💙💜👍❤️]|thank', 'i')
