@@ -1,14 +1,16 @@
 const _ = require('lodash')
 const Extra = require('telegraf/extra')
 const journeys = require('./journeys.json')
-const { reportError } = require('./utils')
+const { reportError, getUser } = require('./utils')
 
 module.exports = function setupJourneys(bot) {
   bot.command('/journeys', replyJourneys)
   bot.action('cb:journeys', replyJourneys)
 
-  bot.action(/cb:journey:start:(?<year>\d+)?/, replyJourneyStart)
-  bot.action(/cb:journey:(?<year>\d+)?/, replyJourney)
+  bot.action(/cb:journey:(?<year>\d+)$/, replyJourney)
+  bot.action(/cb:journey:(?<year>\d+):join$/, replyJourneyJoin)
+  bot.action(/cb:journey:(?<year>\d+):start$/, replyJourneyStart)
+  // bot.action(/cb:journey:(?<year>\d+):(?<command>.*)$/, replyJourneyJoin)
 }
 
 
@@ -42,12 +44,13 @@ async function replyJourney(ctx) {
   const [minYear, maxYear] = [2015, 2020]
   const [prevLoop, nextLoop] = [year === minYear, year === maxYear]
   const [prevYear, nextYear] = [prevLoop ? maxYear : year - 1, nextLoop ? minYear : year + 1]
-  const [prevArrow, nextArrow] = [prevLoop ? '↪️' : '⬅️', nextLoop ? '↩️' : '➡️']
+  // const [prevArrow, nextArrow] = [prevLoop ? '↪️' : '⬅️', nextLoop ? '↩️' : '➡️']
+  const [prevArrow, nextArrow] = [prevLoop ? '↪️' : '←️', nextLoop ? '↩️' : '→️']
   const [prevBtn, nextBtn] = [[prevArrow, prevYear], [nextYear, nextArrow]].map(arr => arr.join(' '))
 
   const keyboard = m => m.inlineKeyboard([
     m.callbackButton(`${prevBtn}`, `cb:journey:${prevYear}`),
-    m.callbackButton('Start', `cb:journey:start:${year}`),
+    m.callbackButton('Join', `cb:journey:${year}:join`),
     m.callbackButton(`${nextBtn}`, `cb:journey:${nextYear}`),
   ], { columns: 3 })
 
@@ -82,6 +85,62 @@ async function replyJourney(ctx) {
 }
 
 
-function replyJourneyStart(ctx) {
-  console.log('confirmation screen here')
+async function replyJourneyJoin(ctx) {
+  const year = +ctx.match.groups.year
+  const journey = journeys.find(c => +c.year === year)
+  const { title, description, thumb } = journey
+  const more = '*When you join a journey*' +
+    '\n• Your */calendar* will be set to this journey for the next 30 days' +
+    '\n• */today*\'s yoga will be taken from the journey playlist.' +
+    '\n*TODO:* _explain better how it works_'
+  const caption = `*${title} • ${year}*\n${description}\n${more}`
+  const chatId = ctx.update.callback_query.from.id
+  const messageId = ctx.update.callback_query.message.message_id
+  const media = {
+    type: 'photo',
+    media: thumb,
+    caption,
+  }
+  const keyboard = m => m.inlineKeyboard([
+    m.callbackButton('Start the Journey!', `cb:journey:${year}:start`),
+    m.callbackButton('Back', `cb:journey:${year}`),
+  ], { columns: 1 })
+
+  let sent
+  try {
+    sent = await ctx.telegram.editMessageMedia(chatId, messageId, null, media, Extra
+      .markdown()
+      .markup(keyboard)
+    ).then(() => ctx.state.success = true)
+  } catch (e) {
+    console.error('🤔 Paging journeys: too many queires?', e)
+    return reportError({ ctx, where: 'paging journeys', error: e, silent: true })
+  }
+  return sent
+}
+
+
+async function replyJourneyStart(ctx) {
+  // const year = +ctx.match.groups.year
+  // const journey = journeys.find(c => +c.year === year)
+  // const { title, description, thumb } = journey
+  // const user = getUser(ctx)
+  // console.log(user)
+  // 1. get user doc by user.id
+  // const userDoc = ctx.firestore.collection('users').doc(`id${user.id}`)
+
+  // TODO:
+  // firestore:
+  // user.journey = year
+  // user.joinedAt = new Date()
+  // remove the journey message
+  // send /calendar command
+
+  // await userDoc.get().then(async doc => {
+  //   if (!doc.exists) {
+  //     console.log(`dunno this user ${user.id}`)
+  //     return // TODO: what async and what not?
+  //   }
+  //   console.log('TODO: set')
+  // })
 }

@@ -10,7 +10,7 @@ const writtenNumber = require('written-number')
 const getNowWatching = require('./nowWatching')
 const longPractice = require('./longPractice')
 const setupJourneys = require('./journeys')
-const { pauseForA, reportError } = require('./utils')
+const { pauseForA, reportError, getUser } = require('./utils')
 
 
 const fs = require('fs').promises
@@ -68,6 +68,13 @@ const isAdmin = ctx => [
     _.get(ctx.update, 'message.from.id'),
     _.get(ctx.update, 'callback_query.from.id'),
   ].includes(+process.env.ADMIN_ID)
+
+bot.use((ctx, next) => {
+  // TODO: figure out how to put database into bot context properly
+  // For now just injecting it here
+  ctx.firestore = firestore
+  return next()
+})
 
 bot.use(async (ctx, next) => {
   const start = new Date()
@@ -136,9 +143,7 @@ bot.use(async (ctx, next) => {
     console.log(`Checking if I should send a link to chart to user?`)
 
     // TODO: need a bullet-proof get-user method
-    const user = ctx.update.message ?
-      ctx.update.message.from :
-      ctx.update.callback_query.from
+    const user = getUser(ctx)
 
     // 1. get user doc by user.id
     const userDoc = firestore.collection('users').doc(`id${user.id}`)
