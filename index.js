@@ -9,6 +9,7 @@ const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 const getNowWatching = require('./nowWatching')
 const longPractice = require('./longPractice')
+const setupCalendar = require('./calendar')
 const setupJourneys = require('./journeys')
 const { pauseForA, reportError, getUser } = require('./utils')
 
@@ -16,8 +17,7 @@ const { pauseForA, reportError, getUser } = require('./utils')
 const fs = require('fs').promises
 dotenv.config()
 
-// const now = new Date('2020-06-01')
-const now = () => new Date()
+
 
 const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
@@ -47,15 +47,12 @@ const logEvent = update => {
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
-const calendarImageUrl = {
-  5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
-  6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
-}[now().getMonth() + 1]
-const calendarYouTubeUrl = {
-  5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
-  6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
-}[now().getMonth() + 1]
-const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
+bot.menu = {
+  today: '▶️ Today’s yoga',
+  calendar: '🗓 Calendar',
+  help: '💁 Help',
+}
+
 
 bot.catch(async (err, ctx) => {
   // do not show error message to user if the main action was successful
@@ -73,9 +70,15 @@ bot.use((ctx, next) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
   ctx.firestore = firestore
+
+
+  // const now = new Date('2020-06-01')
+  ctx.now = new Date()
   return next()
 })
 
+// Logger
+//
 bot.use(async (ctx, next) => {
   const start = new Date()
 
@@ -133,6 +136,8 @@ bot.use(async (ctx, next) => {
   }
 })
 
+// Annoncement
+//
 bot.use(async (ctx, next) => {
   await next()
   try {
@@ -196,6 +201,8 @@ bot.use(async (ctx, next) => {
 
 bot.use(longPractice)
 
+// /strat
+//
 bot.command('/start', async ctx => {
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
@@ -234,13 +241,6 @@ bot.command('/start', async ctx => {
   })
 });
 
-
-const menu = {
-  today: '▶️ Today’s yoga',
-  calendar: '🗓 Calendar',
-  help: '💁 Help',
-}
-
 const replyHelp = ctx => ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
 
@@ -254,7 +254,7 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 `, Extra.webPreview(false))
 .then(() => ctx.state.success = true)
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
-bot.hears(menu.help, replyHelp)
+bot.hears(bot.menu.help, replyHelp)
 bot.command('/help', replyHelp)
 
 
@@ -274,8 +274,8 @@ async function replyToday(ctx) {
   // I use it in announcement middleware to react only on today commands
   ctx.state.command = "today"
 
-  const month = timeFormat('%m')(now())
-  const day = ctx.state.day || now().getDate()
+  const month = timeFormat('%m')(ctx.now)
+  const day = ctx.state.day || ctx.now.getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
   console.log('replyToday', {month, day, part})
@@ -344,7 +344,7 @@ async function replyToday(ctx) {
   }
 }
 bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
-bot.hears(menu.today, replyToday)
+bot.hears(bot.menu.today, replyToday)
 bot.command('/today', ctx => {
   const text = ctx.update.message.text
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
@@ -405,19 +405,7 @@ function preVideoMessage() {
   return oneOf(messages)
 }
 
-
-const replyCalendar = ctx => ctx.replyWithPhoto(calendarImageUrl, Extra
-  .caption(`*/today* is *Day ${now().getDate()}*`)
-  .markdown()
-  .markup(m => m.inlineKeyboard([
-    m.urlButton('YWA Calendar', calendarYWAUrl),
-    m.urlButton('YouTube playlist', calendarYouTubeUrl),
-    m.callbackButton('30 Days of Yoga series', 'cb:journeys')
-  ], { columns: 2 }))
-).then(() => ctx.state.success = true)
-bot.command('/calendar', replyCalendar)
-bot.hears(menu.calendar, replyCalendar)
-
+setupCalendar(bot)
 
 setupJourneys(bot)
 
@@ -452,7 +440,7 @@ bot.hears(praise, replyThankYou)
 
 
 function menuKeboard(m) {
-  return m.resize().keyboard([menu.today, menu.calendar, menu.help])
+  return m.resize().keyboard([bot.menu.today, bot.menu.calendar, bot.menu.help])
 }
 
 
