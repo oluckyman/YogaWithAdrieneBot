@@ -3,7 +3,7 @@ const Extra = require('telegraf/extra')
 const journeys = require('./journeys.json')
 const { reportError, getUser } = require('./utils')
 
-module.exports = function setupJourneys(bot) {
+function setupJourneys(bot) {
   bot.command('/journeys', replyJourneys)
   bot.action('cb:journeys', replyJourneys)
 
@@ -13,6 +13,7 @@ module.exports = function setupJourneys(bot) {
   // bot.action(/cb:journey:(?<year>\d+):(?<command>.*)$/, replyJourneyJoin)
 }
 
+const getJourney = year => journeys.find(c => +c.year === +year)
 
 function replyJourneys(ctx) {
   // TODO: add message that you can subscribe to a email version and receive
@@ -37,7 +38,7 @@ function replyJourneys(ctx) {
 // reuse previous message when paging
 async function replyJourney(ctx) {
   const year = +ctx.match.groups.year
-  const journey = journeys.find(c => +c.year === year)
+  const journey = getJourney(year)
   const { title, description, thumb } = journey
   const caption = `*${title} • ${year}*\n${description}`
 
@@ -87,7 +88,7 @@ async function replyJourney(ctx) {
 
 async function replyJourneyJoin(ctx) {
   const year = +ctx.match.groups.year
-  const journey = journeys.find(c => +c.year === year)
+  const journey = getJourney(year)
   const { title, description, thumb } = journey
   const more = '*When you join a journey*' +
     '\n• Your */calendar* will be set to this journey for the next 30 days' +
@@ -143,4 +144,9 @@ async function replyJourneyStart(ctx) {
   //   }
   //   console.log('TODO: set')
   // })
+}
+
+module.exports = {
+  setupJourneys,
+  getJourney,
 }

@@ -10,7 +10,7 @@ const writtenNumber = require('written-number')
 const getNowWatching = require('./nowWatching')
 const longPractice = require('./longPractice')
 const setupCalendar = require('./calendar')
-const setupJourneys = require('./journeys')
+const { setupJourneys } = require('./journeys')
 const { pauseForA, reportError, getUser } = require('./utils')
 
 
@@ -72,7 +72,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
 
-  // const now = new Date('2020-06-01')
+  // ctx.now = new Date('2020-07-20')
   ctx.now = new Date()
   return next()
 })
