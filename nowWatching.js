@@ -1,34 +1,39 @@
 const _ = require('lodash')
+const dayjs = require('dayjs')
 
-const pad = (num) => `${num}`.padStart(2, '0')
+const pad = num => `${num}`.padStart(2, '0')
 
-const N = 60
-
-module.exports = async (firestore, { id, month, day }) => {
-  const videoName = `${pad(month)}_${pad(day)}_${id}`
-  const isJune = videoName.startsWith('06')
-  const latest = isJune ? 'latest' : 'latest_2'
-  const viewDeltas = await firestore.doc(`videos/${videoName}/viewCounts/${latest}`).get()
+module.exports = async function nowWatching(firestore, { id, year = 2020, month, day }) {
+  const videoName = `${year}_${pad(month)}_${pad(day)}_${id}`
+  console.log({ videoName })
+  const logs = await firestore.doc(`videos/${videoName}/viewCounts/latest`).get()
     .then(doc => doc.data())
-    .then(({ log }) => log.map((d, i) => i === 0 ? 0 : d.viewCount - log[i-1].viewCount))
+    .then(({ log }) => log.map(d => ({ ...d, date: d.date.toDate() })))
     .catch(e => {
       console.error(`🐛 video ${videoName}: ${e}`)
       return []
     })
-  // insert missing minutes because the log tracks every 2 minutes (or 10 starting from June)
-  // and smoothing algorithm expects every minute
-  const logPeriod = isJune ? 10 : 2
-  const viewDeltasPerMinute = _.flatMap(viewDeltas.map(d => Array.of(d, ..._.range(logPeriod - 1).fill(0))))
-  const smoothDeltas = gaussianSmoothing(viewDeltasPerMinute, N)
-  // console.log({ videoName, smoo: _.takeRight(smoothDeltas, 5) })
+  const timeAgo = dayjs(new Date()).subtract(7, 'hour').toDate()
+  const minutes = 30
+  const latestLogs = logs.filter(d => d.date > timeAgo)
+  // TODO: normalize latest logs as it done in https://observablehq.com/d/f2717223f121bb62
+  // Now it can wait because the logs has the same period: every 30 mins
+  // Also it could show some errors if the logs are not evenly distributed (due to manual trackViews calls)
+
+  // removing the first item as it has delta = 0 and can affect the curve
+  const viewDeltas = _.tail(latestLogs.map((d, i, arr) => ({
+    ...d,
+    delta: i ? d.viewCount - arr[i - 1].viewCount : 0
+  })))
+  const smoothDeltas = gaussianSmoothing(viewDeltas.map(d => d.delta), 3.5).map(d => d / minutes)
   return Math.round(_.last(smoothDeltas))
 }
 
 
 function applyKernel(points, w) {
   const precision = 1e-6
-  const values = new Float64Array(points.length).fill(0),
-    total = new Float64Array(points.length).fill(0);
+  const values = new Float64Array(points.length).fill(0)
+  const total = new Float64Array(points.length).fill(0)
   let p = 1;
   for (let d = 0; p > precision; d++) {
     p = w(d);
@@ -50,7 +55,7 @@ function applyKernel(points, w) {
 }
 
 
-function gaussianSmoothing(values, N) {
-  const r = 2 / N;
+function gaussianSmoothing(values, n) {
+  const r = 2 / n;
   return applyKernel(values, d => Math.exp(-((r * d) ** 2)));
 }

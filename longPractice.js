@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { timeFormat } = require('d3-time-format')
-const { pauseForA } = require('./utils')
+const { pauseForA, reportError } = require('./utils')
 const fs = require('fs').promises
 
 const now = () => new Date()
@@ -40,7 +40,7 @@ async function longPractice(ctx, next) {
     // 3. Check if the user was notified today already
     // TODO: add this check some day
 
-    // 4. Notify 
+    // 4. Notify
     //
     let dura = video.duration
     if (dura <= 55) {
