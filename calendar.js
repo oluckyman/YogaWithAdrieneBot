@@ -7,10 +7,12 @@ const { getJourney } = require('./journeys')
 const calendarImageUrl = now => ({
   5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
   6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
+  7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
 }[now.getMonth() + 1])
 const calendarYouTubeUrl = now => ({
   5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
   6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
+  7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
 }[now.getMonth() + 1])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
@@ -36,7 +38,7 @@ const replyCalendar = async ctx => {
       }
     }
   })
-  
+
   if (journey) {
     // User's Journey calendar
     //
@@ -61,7 +63,7 @@ const replyCalendar = async ctx => {
       .markup(m => m.inlineKeyboard([
         m.urlButton('YWA Calendar', calendarYWAUrl),
         m.urlButton('YouTube playlist', calendarYouTubeUrl(ctx.now)),
-        m.callbackButton('30 Days of Yoga series', 'cb:journeys')
+        // m.callbackButton('30 Days of Yoga series', 'cb:journeys')
       ], { columns: 2 }))
     ).then(() => ctx.state.success = true)
   }
