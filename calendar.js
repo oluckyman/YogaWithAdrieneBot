@@ -25,8 +25,9 @@ const replyCalendar = async ctx => {
       return
     }
     const latestJourney = _.maxBy(doc.data().journeys, j => j.startedAt)
-    const dayOfJourney = latestJourney && dayjs(ctx.now).diff(latestJourney.startedAt.toDate(), 'day') + 1
-    if (dayOfJourney && dayOfJourney <= 30) {
+    const dayOfJourney = latestJourney && -dayjs(latestJourney.startedAt.toDate()).startOf('day').diff(ctx.now, 'day')
+
+    if (_.isNumber(dayOfJourney) && dayOfJourney <= 30) {
       const { playlist, calendar, thumb } = getJourney(latestJourney.journey)
       return {
         today: dayOfJourney,
