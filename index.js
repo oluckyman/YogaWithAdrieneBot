@@ -410,23 +410,35 @@ setupCalendar(bot)
 setupJourneys(bot)
 
 
-const praise = new RegExp('[🙏❤️🧡💛💚💙💜👍❤️]|thank', 'i')
+const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️]|thank)'
+const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
+// eslint-disable-next-line no-misleading-character-class
+const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')
 const thanksMessages = [
   [...'😌😛'], // smiles
   [...'🥰💚🤗'], // love
-  [...'🙏👌'], // gestures
+  [...'🙏'], // gestures
 ]
-async function replyThankYou(ctx) {
-  await pauseForA(2)
-  const thankYou = oneOf(thanksMessages)
+const greetMessages = [
+  [...'👋']
+]
+async function replySmalltalk(ctx) {
+  await pauseForA(1)
+  await ctx.replyWithChatAction('typing')
+  await pauseForA(1)
+  let messagesToReply = thanksMessages
+  if (ctx.match.groups.greet) {
+    messagesToReply = greetMessages
+  }
+  const reply = oneOf(messagesToReply)
   // show how the message looks in botlog
   if (!isAdmin(ctx)) {
-    ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, thankYou)
-    console.log(thankYou)
+    ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, reply)
+    console.log(reply)
   }
-  return ctx.replyWithMarkdown(thankYou).then(() => ctx.state.success = true)
+  return ctx.replyWithMarkdown(reply).then(() => ctx.state.success = true)
 }
-bot.hears(praise, replyThankYou)
+bot.hears(smallTalkMessage, replySmalltalk)
 
 
 
