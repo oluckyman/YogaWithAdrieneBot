@@ -24,23 +24,25 @@ async function logger(ctx, next) {
       if (ctx.update.message) {
         const fromChat = ctx.update.message.chat.id
         const messageId = ctx.update.message.message_id
-        ctx
-          .forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
-          .then(() => {
-            if (!isNewUser) return
-            const { username, first_name } = ctx.update.message.from
-            const text = ctx.update.message.text
-            const payload = _.omit(ctx.update.message, [
-              'from.username',
-              'date',
-              'text',
-              ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
-              _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
-            ])
-            const html = YAML.stringify(payload)
-            const name = username ? `@${username}` : first_name
-            return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
-          })
+        await ctx.forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
+        if (isNewUser) {
+          const { username, first_name } = ctx.update.message.from
+          const text = ctx.update.message.text
+          const payload = _.omit(ctx.update.message, [
+            'from.username',
+            'date',
+            'text',
+            ctx.update.message.from.id === ctx.update.message.chat.id ? 'chat' : '',
+            _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
+          ])
+          const html = YAML.stringify(payload)
+          const name = username ? `@${username}` : first_name
+          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+        } else if (!ctx.state.command) {
+          // User said something which is not a command,
+          // log the user id and message id, so I can answer
+          return ctx.telegram.sendMessage(toChat, `💬 ${fromChat} ${messageId}`, { disable_notification: true })
+        }
       } else if (ctx.update.callback_query) {
         const { username, first_name } = ctx.update.callback_query.from
         const text = ctx.update.callback_query.data

@@ -7,6 +7,7 @@ const Promise = require("bluebird")
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 const logger = require('./logger')
+const chat = require('./chat')
 const getNowWatching = require('./nowWatching')
 const longPractice = require('./longPractice')
 const setupCalendar = require('./calendar')
@@ -72,6 +73,10 @@ bot.use((ctx, next) => {
 //
 bot.use(logger)
 
+
+// Chat
+//
+bot.use(chat)
 
 // Annoncement
 //
@@ -193,6 +198,7 @@ const replyHelp = ctx => ctx.replyWithHTML(`
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `, Extra.webPreview(false))
 .then(() => ctx.state.success = true)
+.then(() => ctx.state.command = 'help')
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
 bot.hears(bot.menu.help, replyHelp)
 bot.command('/help', replyHelp)

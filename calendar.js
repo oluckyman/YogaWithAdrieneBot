@@ -19,6 +19,7 @@ const calendarYouTubeUrl = now => ({
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 const replyCalendar = async ctx => {
+  ctx.state.command = 'calendar'
   // Check if user is on a Journey?
   //
   const user = getUser(ctx)
