@@ -1,11 +1,20 @@
+const _ = require('lodash')
 const Extra = require('telegraf/extra')
 
 function pauseForA(sec) {
   return new Promise(r => setTimeout(r, sec * 1000)) // eslint-disable-line no-promise-executor-return
 }
 
+
+const isAdmin = ctx => [
+  _.get(ctx.update, 'message.from.id'),
+  _.get(ctx.update, 'callback_query.from.id'),
+].includes(+process.env.ADMIN_ID)
+
+
 // TODO: need a bullet-proof get-user method
 const getUser = ctx => ctx.update.message ? ctx.update.message.from : ctx.update.callback_query.from
+
 
 async function reportError({ ctx, error, where, silent = false }) {
   const toChat = process.env.LOG_CHAT_ID
@@ -22,8 +31,10 @@ async function reportError({ ctx, error, where, silent = false }) {
   return ctx.replyWithMarkdown('_…if it’s working 😅_')
 }
 
+
 module.exports = {
   pauseForA,
   reportError,
   getUser,
+  isAdmin,
 }
