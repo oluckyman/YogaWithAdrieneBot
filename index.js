@@ -141,6 +141,9 @@ bot.use(longPractice)
 // /strat
 //
 bot.command('/start', async ctx => {
+  // I use it in the logger to do verbose log for new users
+  ctx.state.command = "start"
+
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
     [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.'],
@@ -259,7 +262,11 @@ async function replyToday(ctx) {
       ])
       // show how the message looks in botlog
       if (!isAdmin(ctx)) {
-        ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, message)
+        // eslint-disable-next-line require-atomic-updates
+        ctx.state.logQueue = [
+          ...ctx.state.logQueue || [],
+          message
+        ]
       }
       console.log(message)
     } catch (e) {
@@ -370,7 +377,11 @@ async function replySmalltalk(ctx) {
   const reply = oneOf(messagesToReply)
   // show how the message looks in botlog
   if (!isAdmin(ctx)) {
-    ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, reply)
+    // eslint-disable-next-line require-atomic-updates
+    ctx.state.logQueue = [
+      ...ctx.state.logQueue || [],
+      reply
+    ]
     console.log(reply)
   }
   return ctx.replyWithMarkdown(reply).then(() => ctx.state.success = true)
