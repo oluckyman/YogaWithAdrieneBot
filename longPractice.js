@@ -3,8 +3,6 @@ const { timeFormat } = require('d3-time-format')
 const { pauseForA, reportError } = require('./utils')
 const fs = require('fs').promises
 
-const now = () => new Date()
-
 async function longPractice(ctx, next) {
   await next()
 
@@ -17,8 +15,11 @@ async function longPractice(ctx, next) {
     // 2. If there is a long practice tomorrow
     //
     // TODO: extract into a common module and cover with tests
-    const month = timeFormat('%m')(now())
-    const day = now().getDate() + 1
+    const tomorrow = new Date(ctx.now)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const month = timeFormat('%m')(tomorrow)
+    const day = tomorrow.getDate()
+
     // TODO: cache parsed month playlist
     const video = await fs.readFile(`calendars/${month}.json`, 'utf8')
       .then(txt => JSON.parse(txt))
