@@ -65,7 +65,7 @@ bot.use((ctx, next) => {
 
 
   ctx.now = new Date()
-  // ctx.now = new Date('2020-09-01')
+  // ctx.now = new Date('2020-09-10')
   return next()
 })
 

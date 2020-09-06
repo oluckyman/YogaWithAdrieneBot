@@ -32,7 +32,7 @@ async function longPractice(ctx, next) {
       return
     }
 
-    const threshold = 38
+    const threshold = 35
     if (video.duration <= threshold) {
       // Do nothing, it's a normal video
       return
@@ -45,14 +45,14 @@ async function longPractice(ctx, next) {
     //
     let dura = video.duration
     if (dura <= 55) {
-      dura = `${dura} mins`
+      dura = `${dura} minutes`
     } else if (dura <= 70) {
       dura = 'about a hour'
     } else {
       dura = 'more than a hour'
     }
     await pauseForA(1)
-    const message = `👉 Note, _tomorrow's_ video will be long: _${dura}_`
+    const message = `👉 Note, tomorrow's video will be long: _${dura}_`
     console.log(message)
     return ctx.replyWithMarkdown(message)
   } catch (e) {
