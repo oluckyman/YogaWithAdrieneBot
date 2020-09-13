@@ -1,4 +1,4 @@
-# Yoga With Adriene Bot
+# [Yoga With Adriene Bot](http://t.me/YogaWithAdrieneBot)
 
 ## Run locally
 
