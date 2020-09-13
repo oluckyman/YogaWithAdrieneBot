@@ -162,24 +162,26 @@ bot.command('/start', async ctx => {
     [4.0, '_So, hop into something comfy, and let’s get started!_'],
     // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
-  const sendGreeting = i => {
+  const sendGreeting = async i => {
     if (i >= greetings.length) return
     const message = greetings[i][1]
     const delaySec = _.get(greetings, [i + 1, 0])
     const isLastMessage = i === greetings.length - 1
-    ctx
+    await ctx
       .reply(message, Extra.markdown()
         .markup(m => isLastMessage ?
           m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
         )
       )
-      .then(() => {
-        if (delaySec !== undefined) {
-          setTimeout(() => sendGreeting(i + 1), delaySec * 1000)
-        }
-      })
+    if (delaySec !== undefined) {
+      await ctx.replyWithChatAction('typing')
+      await pauseForA(delaySec)
+      await sendGreeting(i + 1)
+    }
   }
-  sendGreeting(0)
+  await ctx.replyWithChatAction('typing')
+  await pauseForA(1)
+  await sendGreeting(0)
   // TODO: rewrite it to `await` chain and set `state.success` at the end
   return setFirstContact({
     user: _.get(ctx.update, 'message.from'),
@@ -234,7 +236,7 @@ async function replyToday(ctx) {
     )
   // videos.push(videos[0])
   if (videos.length === 0) {
-    const message = `Here should be a link to the video, but there isn’t 🤷\n` +
+    const message = `Here should be the link to the video, but there isn’t 🤷\n` +
       `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
     return ctx.replyWithMarkdown(message).then(() => ctx.state.success = true)
   }
