@@ -360,19 +360,20 @@ setupCalendar(bot)
 setupJourneys(bot)
 
 
-const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️]|thank)'
+const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️😍🥰😘]|thank)'
 const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
 // eslint-disable-next-line no-misleading-character-class
 const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')
 const thanksMessages = [
-  [...'😌😛'], // smiles
+  [...'😌☺️😉'], // smiles
   [...'🥰💚🤗'], // love
   [...'🙏'], // gestures
 ]
 const greetMessages = [
   [...'👋']
 ]
-async function replySmalltalk(ctx) {
+async function replySmallTalk(ctx) {
+  ctx.state.command = 'smallTalk'
   await pauseForA(1)
   await ctx.replyWithChatAction('typing')
   await pauseForA(1)
@@ -392,17 +393,7 @@ async function replySmalltalk(ctx) {
   }
   return ctx.replyWithMarkdown(reply).then(() => ctx.state.success = true)
 }
-bot.hears(smallTalkMessage, replySmalltalk)
-
-
-
-// bot.on('text', (ctx) => ctx
-//   .replyWithMarkdown('Hmm… Not sure what do you mean 🤔\nTry */today* or check out */help*', {
-//     reply_markup: Markup
-//       .keyboard(['/today'])
-//       .resize()
-//   }))
-
+bot.hears(smallTalkMessage, replySmallTalk)
 
 
 function menuKeboard(m) {
