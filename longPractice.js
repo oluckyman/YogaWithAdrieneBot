@@ -40,6 +40,15 @@ async function longPractice(ctx, next) {
 
     // 3. Check if the user was notified today already
     // TODO: add this check some day
+    // XXX: while there is no such check, prevent sending notification twice
+    // when there is two practices for a day
+    const part = _.get(ctx, 'match.groups.part')
+    if (part) {
+      // user picked a specific video from the parts menu, it means he saw /today command
+      // and the longPractice note already
+      return;
+    }
+
 
     // 4. Notify
     //
