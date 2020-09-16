@@ -21,7 +21,7 @@
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "json-to-pretty-yaml": "^1.2.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "number-to-emoji": "^1.0.0",
     "request": "^2.88.2",
     "telegraf": "^3.37.0",
