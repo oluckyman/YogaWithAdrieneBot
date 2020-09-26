@@ -65,7 +65,7 @@ bot.use((ctx, next) => {
 
 
   ctx.now = new Date()
-  // ctx.now = new Date('2020-09-10')
+  // ctx.now = new Date('2020-09-27')
   return next()
 })
 
@@ -250,7 +250,10 @@ async function replyToday(ctx) {
     console.log(message)
     return ctx.replyWithMarkdown(message, Extra
       .markup(m =>
-        m.inlineKeyboard(videos.map((v, i) => m.callbackButton(getPart(i), `cb:today${i}`)))
+        m.inlineKeyboard(videos.map((v, i) => m.callbackButton(
+          `${getPart(i)} ${Math.ceil(v.duration / 5) * 5} min.`,
+          `cb:today${i}`
+        )))
       )
     ).then(() => ctx.state.success = true)
   } else {
