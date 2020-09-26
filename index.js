@@ -360,7 +360,7 @@ function nowWatchingMessage(nowWatching) {
 
 function preVideoMessage() {
   const messages = [
-    ['💬 Spend time _practicing_ yoga rather than _picking_ it'],
+    ['💬 Spend time _practicing_ yoga rather than _scrolling it'],
     ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],
