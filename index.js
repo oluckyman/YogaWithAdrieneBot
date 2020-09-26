@@ -254,11 +254,11 @@ async function replyToday(ctx) {
         .map(v => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`).join('\n')
       message = `FWFG video today\n${videosList}`
       buttons = m => videos
-        .map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today${i}`))
+        .map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
     } else {
       videosList = videos.map((v, i) => `${getPart(i)} ${v.title}`).join('\n')
       message = `${_.capitalize(writtenNumber(videos.length))} videos today\n${videosList}`
-      buttons = m => videos.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today${i}`))
+      buttons = m => videos.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
     console.log(message)
     return ctx
@@ -316,8 +316,9 @@ bot.command('/today', ctx => {
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
   return replyToday(ctx)
 })
-bot.action(/cb:today(?<part>\d+)?/, ctx => {
+bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, ctx => {
   const part = ctx.match.groups.part
+  ctx.state.day = +_.get(ctx, 'match.groups.day', 0)
   if (part !== undefined) {
     ctx.answerCbQuery('Getting the video for you…')
   } else {
