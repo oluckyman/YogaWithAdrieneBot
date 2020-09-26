@@ -213,6 +213,9 @@ Write _or tell or show_ what’s on your mind in the chat, and I’ll consider i
 
 const oneOf = messages => _.sample(_.sample(messages))
 
+// Consider videos without id as FWFG videos
+const isFWFG = v => !v.id
+
 const getPart = i => {
   const partSymbols = ['🅰️', '🅱️', '❤️', '🧡', '💛', '💚', '💙', '💜']
   return i < partSymbols.length ? partSymbols[i] : `*[${i + 1}]*`
@@ -231,35 +234,40 @@ async function replyToday(ctx) {
   const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
     .then(txt => JSON.parse(txt))
     .then(json => _.filter(json, { day })
-      .filter((v, i) => !part || i === +part)
       .map(v => ({ ...v, month }))
     )
-  // videos.push(videos[0])
+  const isFWFGDay = _.some(videos, isFWFG)
+
   if (videos.length === 0) {
     const message = `Here should be the link to the video, but there isn’t 🤷\n` +
       `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
     return ctx.replyWithMarkdown(message).then(() => ctx.state.success = true)
   }
 
-  if (videos.length > 1) {
+  if (!part && videos.length > 1) {
     // Ask which one to show now
-    // TODO: show duration here when I have single source of truth
-    const videosList = videos.map((v, i) => `${getPart(i)} *${v.title}*`).join('\n')
-    const message = `${_.capitalize(writtenNumber(videos.length))} videos today\n` +
-      `${videosList}`
+    let videosList
+    let message
+    let buttons
+    if (isFWFGDay) {
+      videosList = videos
+        .map(v => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`).join('\n')
+      message = `FWFG video today\n${videosList}`
+      buttons = m => videos
+        .map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today${i}`))
+    } else {
+      videosList = videos.map((v, i) => `${getPart(i)} ${v.title}`).join('\n')
+      message = `${_.capitalize(writtenNumber(videos.length))} videos today\n${videosList}`
+      buttons = m => videos.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today${i}`))
+    }
     console.log(message)
-    return ctx.replyWithMarkdown(message, Extra
-      .markup(m =>
-        m.inlineKeyboard(videos.map((v, i) => m.callbackButton(
-          `${getPart(i)} ${Math.ceil(v.duration / 5) * 5} min.`,
-          `cb:today${i}`
-        )))
-      )
-    ).then(() => ctx.state.success = true)
+    return ctx
+      .replyWithMarkdown(message, Extra.markup(m => m.inlineKeyboard(buttons(m))))
+      .then(() => ctx.state.success = true)
   } else {
     // Send the video and pre-video message
-    const video = _.first(videos)
-    const nowWatching = await getNowWatching(firestore, video)
+    const video = _.filter(videos, (v, i) => !part || i === +part)[0]
+    const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
     let message
     if (nowWatching) {
       message = nowWatchingMessage(nowWatching)
@@ -287,8 +295,11 @@ async function replyToday(ctx) {
 
     try {
       message = 'oops 🐩' // so it can be used in catch (e) block
-      const partSymbol = part ? getPart(+part) : ''
-      const videoUrl = shortUrl(video.id)
+      const partSymbol = isFWFGDay ?
+        isFWFG(video) ? '🖤' : '❤️' :
+        part ? getPart(+part) : ''
+
+      const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
       message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
       console.log(message)
       return ctx.reply(message, Extra.markup(menuKeboard)).then(() => ctx.state.success = true)
