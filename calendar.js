@@ -10,6 +10,7 @@ const calendarImageUrl = now => ({
   7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
   8: 'https://yogawithadriene.com/wp-content/uploads/2020/07/YWA-August-2020-Yoga-calendar.png',
   9: 'https://yogawithadriene.com/wp-content/uploads/2020/08/YWA-September-2020-Yoga-Calendar-1.png',
+  10: 'https://yogawithadriene.com/wp-content/uploads/2020/09/Oct.-2020-Yoga-Calendar-.png',
 }[now.getMonth() + 1])
 const calendarYouTubeUrl = now => ({
   5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
@@ -17,6 +18,7 @@ const calendarYouTubeUrl = now => ({
   7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
   8: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwbGrEZWxUbSmjdpEzRT1TC',
   9: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwJ37AOvztr5NA0LUciJqoD',
+  10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyfM2YN1BndQWyKAWIXdvLz',
 }[now.getMonth() + 1])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
