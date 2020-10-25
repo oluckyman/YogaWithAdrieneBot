@@ -239,7 +239,7 @@ async function replyToday(ctx) {
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
-    const message = `Here should be the link to the video, but there isn’t 🤷\n` +
+    const message = `Here should be a link to the video, but there isn’t 🤷\n` +
       `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
     return ctx.replyWithMarkdown(message).then(() => ctx.state.success = true)
   }
