@@ -7,7 +7,7 @@ const Extra = require('telegraf/extra')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeFormat... Remove this comment to see the full error message
 const { timeFormat } = require('d3-time-format')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Promise'.
-const Promise = require("bluebird")
+const Promise = require('bluebird')
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'logger'.
@@ -24,12 +24,9 @@ const { setupJourneys } = require('./journeys')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
 const { pauseForA, reportError, getUser, isAdmin } = require('./utils')
 
-
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs').promises
 dotenv.config()
-
-
 
 const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
@@ -38,23 +35,20 @@ const firestore = new Firestore({
     // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     private_key: process.env.GOOGLE_APP_PRIVATE_KEY.split('\\n').join('\n'),
     client_email: process.env.GOOGLE_APP_CLIENT_EMAIL,
-  }
+  },
 })
 
-const setFirstContact = ({
-  user
-}: any) => {
+const setFirstContact = ({ user }: any) => {
   const userDoc = firestore.collection('users').doc(`id${user.id}`)
   return userDoc.get().then((doc: any) => {
     if (!doc.exists) {
       return userDoc.set({
         ...user,
-        first_contact_at: new Date()
+        first_contact_at: new Date(),
       })
     }
-  });
+  })
 }
-
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
@@ -63,7 +57,6 @@ bot.menu = {
   calendar: '🗓 Calendar',
   help: '💁 Help',
 }
-
 
 bot.catch(async (err: any, ctx: any) => {
   // do not show error message to user if the main action was successful
@@ -77,7 +70,6 @@ bot.use((ctx: any, next: any) => {
   // For now just injecting it here
   ctx.firestore = firestore
 
-
   ctx.now = new Date()
   // ctx.now = new Date('2020-09-27')
   return next()
@@ -86,7 +78,6 @@ bot.use((ctx: any, next: any) => {
 // Logger
 //
 bot.use(logger)
-
 
 // Chat
 //
@@ -133,25 +124,37 @@ bot.use(async (ctx: any, next: any) => {
         await pauseForA(2)
         await ctx.reply(`You might be interested to see what the last month looked like from the bot’s perspective.`)
         await pauseForA(3)
-        await ctx.replyWithMarkdown(`Check out the [Yoga Calendar Effect](https://yoga-calendar-effect.now.sh/?yogi=${yogi}) chart.\nYou’re part of it too!`)
+        await ctx.replyWithMarkdown(
+          `Check out the [Yoga Calendar Effect](https://yoga-calendar-effect.now.sh/?yogi=${yogi}) chart.\nYou’re part of it too!`
+        )
         linkSeen = true
 
         // 4. save message sent date
         await userDoc.update({
-          message_sent_at: new Date()
+          message_sent_at: new Date(),
         })
 
         console.log(`link sent to ${first_name} (yogi=${yogi})`)
         const linkSentMessage = `${first_name} have received https://ywa-calendar-may-2020.now.sh/?yogi=${yogi}`
         await ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, linkSentMessage)
       } catch (e) {
-        await reportError({ ctx, where: `yogi message, linkSeen: ${linkSeen}, yogi: ${yogi}`, error: e, silent: true })
+        await reportError({
+          ctx,
+          where: `yogi message, linkSeen: ${linkSeen}, yogi: ${yogi}`,
+          error: e,
+          silent: true,
+        })
       }
     })
     return Promise.resolve()
   } catch (e) {
     console.error('🐛 In announcement logic', e)
-    return reportError({ ctx, where: 'announcement middleware', error: e, silent: true })
+    return reportError({
+      ctx,
+      where: 'announcement middleware',
+      error: e,
+      silent: true,
+    })
   }
 })
 
@@ -161,12 +164,18 @@ bot.use(longPractice)
 //
 bot.command('/start', async (ctx: any) => {
   // I use it in the logger to do verbose log for new users
-  ctx.state.command = "start"
+  ctx.state.command = 'start'
 
   const greetings = [
     [0.0, '👋 _Hello my darling friend!_'],
-    [2.2, 'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.'],
-    [3.5, 'It gives you */today*’s yoga video from the */calendar* and shows how many people have started this video right now.'],
+    [
+      2.2,
+      'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.',
+    ],
+    [
+      3.5,
+      'It gives you */today*’s yoga video from the */calendar* and shows how many people have started this video right now.',
+    ],
     [4.0, 'No distractions. No paradox of choice.'],
     [3.0, '_Less_ is _more_.'],
     [3.0, 'With _less_ friction there are _more_ chances your healthy habit will *thrive*.'],
@@ -181,12 +190,12 @@ bot.command('/start', async (ctx: any) => {
     const message = greetings[i][1]
     const delaySec = _.get(greetings, [i + 1, 0])
     const isLastMessage = i === greetings.length - 1
-    await ctx
-      .reply(message, Extra.markdown()
-        .markup((m: any) => isLastMessage ?
-          m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
-        )
+    await ctx.reply(
+      message,
+      Extra.markdown().markup((m: any) =>
+        isLastMessage ? m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
       )
+    )
     if (delaySec !== undefined) {
       await ctx.replyWithChatAction('typing')
       await pauseForA(delaySec)
@@ -200,9 +209,12 @@ bot.command('/start', async (ctx: any) => {
   return setFirstContact({
     user: _.get(ctx.update, 'message.from'),
   })
-});
+})
 
-const replyHelp = (ctx: any) => ctx.replyWithHTML(`
+const replyHelp = (ctx: any) =>
+  ctx
+    .replyWithHTML(
+      `
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
 
 <b>Commands</b>
@@ -212,18 +224,24 @@ const replyHelp = (ctx: any) => ctx.replyWithHTML(`
 • <b>/help</b> — <i>this message</i>📍
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
-`, Extra.webPreview(false))
-.then(() => ctx.state.success = true)
-.then(() => ctx.state.command = 'help')
+`,
+      Extra.webPreview(false)
+    )
+    .then(() => (ctx.state.success = true))
+    .then(() => (ctx.state.command = 'help'))
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
 bot.hears(bot.menu.help, replyHelp)
 bot.command('/help', replyHelp)
 
-
-bot.command('/feedback', (ctx: any) => ctx.replyWithMarkdown(`
+bot.command('/feedback', (ctx: any) =>
+  ctx
+    .replyWithMarkdown(
+      `
 Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
-`).then(() => ctx.state.success = true))
-
+`
+    )
+    .then(() => (ctx.state.success = true))
+)
 
 const oneOf = (messages: any) => _.sample(_.sample(messages))
 
@@ -237,28 +255,30 @@ const getPart = (i: any) => {
 
 async function replyToday(ctx: any) {
   // I use it in announcement middleware to react only on today commands
-  ctx.state.command = "today"
+  ctx.state.command = 'today'
 
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
-  console.log('replyToday', {month, day, part})
+  console.log('replyToday', { month, day, part })
 
-  const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
+  const videos = await fs
+    .readFile(`calendars/${month}.json`, 'utf8')
     .then((txt: any) => JSON.parse(txt))
-    .then((json: any) => _.filter(json, { day })
-      .map((v: any) => ({
-    ...v,
-    month
-  }))
+    .then((json: any) =>
+      _.filter(json, { day }).map((v: any) => ({
+        ...v,
+        month,
+      }))
     )
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
-    const message = `Here should be a link to the video, but there isn’t 🤷\n` +
+    const message =
+      `Here should be a link to the video, but there isn’t 🤷\n` +
       `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    return ctx.replyWithMarkdown(message).then(() => ctx.state.success = true)
+    return ctx.replyWithMarkdown(message).then(() => (ctx.state.success = true))
   }
 
   if (!part && videos.length > 1) {
@@ -268,19 +288,24 @@ async function replyToday(ctx: any) {
     let buttons: any
     if (isFWFGDay) {
       videosList = videos
-        .map((v: any) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`).join('\n')
+        .map((v: any) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
+        .join('\n')
       message = `FWFG video today\n${videosList}`
-      buttons = (m: any) => videos
-        .map((v: any, i: any) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
+      buttons = (m: any) =>
+        videos.map((v: any, i: any) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
     } else {
       videosList = videos.map((v: any, i: any) => `${getPart(i)} ${v.title}`).join('\n')
       message = `${_.capitalize(writtenNumber(videos.length))} videos today\n${videosList}`
-      buttons = (m: any) => videos.map((v: any, i: any) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
+      buttons = (m: any) =>
+        videos.map((v: any, i: any) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
     console.log(message)
     return ctx
-      .replyWithMarkdown(message, Extra.markup((m: any) => m.inlineKeyboard(buttons(m))))
-      .then(() => ctx.state.success = true);
+      .replyWithMarkdown(
+        message,
+        Extra.markup((m: any) => m.inlineKeyboard(buttons(m)))
+      )
+      .then(() => (ctx.state.success = true))
   } else {
     // Send the video and pre-video message
     const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
@@ -294,32 +319,32 @@ async function replyToday(ctx: any) {
     try {
       await Promise.all([
         ctx.replyWithMarkdown(message),
-        pauseForA(2) // give some time to read the message
+        pauseForA(2), // give some time to read the message
       ])
       // show how the message looks in botlog
       if (!isAdmin(ctx)) {
         // eslint-disable-next-line require-atomic-updates
-        ctx.state.logQueue = [
-          ...(ctx.state.logQueue || []),
-          message
-        ]
+        ctx.state.logQueue = [...(ctx.state.logQueue || []), message]
       }
       console.log(message)
     } catch (e) {
       console.error(`Error with pre-video message "${message}"`, e)
-      await reportError({ ctx, where: '/today: pre-video message', error: e, silent: true })
+      await reportError({
+        ctx,
+        where: '/today: pre-video message',
+        error: e,
+        silent: true,
+      })
     }
 
     try {
       message = 'oops 🐩' // so it can be used in catch (e) block
-      const partSymbol = isFWFGDay ?
-        isFWFG(video) ? '🖤' : '❤️' :
-        part ? getPart(+part) : ''
+      const partSymbol = isFWFGDay ? (isFWFG(video) ? '🖤' : '❤️') : part ? getPart(+part) : ''
 
       const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
       message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
       console.log(message)
-      return ctx.reply(message, Extra.markup(menuKeboard)).then(() => ctx.state.success = true)
+      return ctx.reply(message, Extra.markup(menuKeboard)).then(() => (ctx.state.success = true))
     } catch (e) {
       console.error(`Error with video link: ${message}`, e)
       return reportError({ ctx, where: '/today: the video link', error: e })
@@ -355,23 +380,30 @@ function nowWatchingMessage(nowWatching: any) {
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = yogi1
-  const emojis = _.range(nowWatching).map(() => _.sample(yogi)).join('')
+  const emojis = _.range(nowWatching)
+    .map(() => _.sample(yogi))
+    .join('')
   const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
-  const messages = nowWatching > 25 ? [
-    `*${number} people* started this video within the last minute`,
-    `*${number} folks* started this video within the last minute`,
-    `Practice in sync with *${number} people*`,
-    `Join *${number} brave souls*, they’ve just started`,
-  ] : nowWatching > 2 ? [
-    `*${_.capitalize(number)} folks* started this video within the last minute\n${emojis}`,
-    `Practice in sync with *${number} people*\n${emojis}`,
-    `Join *${number} brave souls*, they’ve just started\n${emojis}`,
-  ] : nowWatching === 2 ? [
-    `Make a trio with these *two*, they started within the last minute: ${emojis}`,
-  ] : [
-    '*One person* hit play within the last minute, make a duo!',
-    'Someone on the planet just started this video, keep them company!',
-  ]
+  const messages =
+    nowWatching > 25
+      ? [
+          `*${number} people* started this video within the last minute`,
+          `*${number} folks* started this video within the last minute`,
+          `Practice in sync with *${number} people*`,
+          `Join *${number} brave souls*, they’ve just started`,
+        ]
+      : nowWatching > 2
+      ? [
+          `*${_.capitalize(number)} folks* started this video within the last minute\n${emojis}`,
+          `Practice in sync with *${number} people*\n${emojis}`,
+          `Join *${number} brave souls*, they’ve just started\n${emojis}`,
+        ]
+      : nowWatching === 2
+      ? [`Make a trio with these *two*, they started within the last minute: ${emojis}`]
+      : [
+          '*One person* hit play within the last minute, make a duo!',
+          'Someone on the planet just started this video, keep them company!',
+        ]
   return _.sample(messages)
 }
 
@@ -383,16 +415,15 @@ function preVideoMessage() {
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
-    [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
-    [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
-  ];
+    [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
+    [...'🐌🐢'].map((e) => `${e} _Little goes a long way_`),
+  ]
   return oneOf(messages)
 }
 
 setupCalendar(bot)
 
 setupJourneys(bot)
-
 
 const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️😍🥰😘]|thank)'
 const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
@@ -403,9 +434,7 @@ const thanksMessages = [
   [...'🥰💚🤗'], // love
   [...'🙏'], // gestures
 ]
-const greetMessages = [
-  [...'👋']
-]
+const greetMessages = [[...'👋']]
 async function replySmallTalk(ctx: any) {
   ctx.state.command = 'smallTalk'
   await pauseForA(1)
@@ -419,34 +448,33 @@ async function replySmallTalk(ctx: any) {
   // show how the message looks in botlog
   if (!isAdmin(ctx)) {
     // eslint-disable-next-line require-atomic-updates
-    ctx.state.logQueue = [
-      ...(ctx.state.logQueue || []),
-      reply
-    ]
+    ctx.state.logQueue = [...(ctx.state.logQueue || []), reply]
     console.log(reply)
   }
-  return ctx.replyWithMarkdown(reply).then(() => ctx.state.success = true)
+  return ctx.replyWithMarkdown(reply).then(() => (ctx.state.success = true))
 }
 bot.hears(smallTalkMessage, replySmallTalk)
-
 
 function menuKeboard(m: any) {
   return m.resize().keyboard([bot.menu.today, bot.menu.calendar, bot.menu.help])
 }
 
-
-
-bot.telegram.setMyCommands([{
-  command: 'today', description: 'Get today’s video from the yoga calendar'
-}, {
-  command: 'calendar', description: 'Review the month’s calendar'
-// }, {
-//   command: 'feedback', description: 'Ask a question or share an idea'
-}, {
-  command: 'help', description: 'See what this bot can do for you'
-}])
-
-
+bot.telegram.setMyCommands([
+  {
+    command: 'today',
+    description: 'Get today’s video from the yoga calendar',
+  },
+  {
+    command: 'calendar',
+    description: 'Review the month’s calendar',
+    // }, {
+    //   command: 'feedback', description: 'Ask a question or share an idea'
+  },
+  {
+    command: 'help',
+    description: 'See what this bot can do for you',
+  },
+])
 
 const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
 
@@ -454,21 +482,22 @@ if (NODE_ENV === 'production') {
   bot.launch({
     webhook: {
       domain: `https://${HOST}/${WEBHOOK_SECRET}`,
-      port: PORT
-    }
+      port: PORT,
+    },
   })
-  console.info("Launch webhook 🚀")
+  console.info('Launch webhook 🚀')
 
   // Prevent app from sleeping
-  const request = require('request');
-  const ping = () => request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
-      error && console.log('error:', error);
-      body && console.log('body:', body);
+  const request = require('request')
+  const ping = () =>
+    request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
+      error && console.log('error:', error)
+      body && console.log('body:', body)
       setTimeout(ping, 1000 * 60 * 25)
-  });
+    })
   console.log('Ping myself 👈')
   ping()
 } else {
   bot.launch()
-  console.info("Launch polling 🚀")
+  console.info('Launch polling 🚀')
 }

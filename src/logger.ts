@@ -15,7 +15,9 @@ async function logger(ctx: any, next: any) {
   if (!isAdmin(ctx)) {
     console.log('👉 New Request ---')
     console.info(ctx.update)
-  } else { console.log('👨‍💻 me working…') }
+  } else {
+    console.log('👨‍💻 me working…')
+  }
 
   await next()
   // @ts-expect-error ts-migrate(2362) FIXME: The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
@@ -41,7 +43,10 @@ async function logger(ctx: any, next: any) {
           ])
           const html = YAML.stringify(payload)
           const name = username ? `@${username}` : first_name
-          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, { disable_notification: true, parse_mode: 'html' })
+          return ctx.telegram.sendMessage(toChat, `<b>${name}: ${text}</b>\n${html}`, {
+            disable_notification: true,
+            parse_mode: 'html',
+          })
         } else if (!ctx.state.command) {
           // User said something which is not a command,
           // log the user id and message id, so I can answer
@@ -50,7 +55,10 @@ async function logger(ctx: any, next: any) {
       } else if (ctx.update.callback_query) {
         const { username, first_name } = ctx.update.callback_query.from
         const text = ctx.update.callback_query.data
-        await ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>`, { disable_notification: true, parse_mode: 'html' })
+        await ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}: ${text}</b>`, {
+          disable_notification: true,
+          parse_mode: 'html',
+        })
       } else {
         const html = YAML.stringify(ctx.update)
         await ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })

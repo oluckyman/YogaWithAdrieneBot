@@ -15,7 +15,7 @@ async function chat(ctx: any, next: any) {
   const message = ctx.update.message.text
 
   return ctx.telegram.sendMessage(toChat, message, {
-    reply_to_message_id: messageId
+    reply_to_message_id: messageId,
   })
 }
 

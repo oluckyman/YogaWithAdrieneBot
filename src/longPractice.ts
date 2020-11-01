@@ -26,7 +26,8 @@ async function longPractice(ctx: any, next: any) {
     const day = tomorrow.getDate()
 
     // TODO: cache parsed month playlist
-    const video = await fs.readFile(`calendars/${month}.json`, 'utf8')
+    const video = await fs
+      .readFile(`calendars/${month}.json`, 'utf8')
       .then((txt: any) => JSON.parse(txt))
       .then((json: any) => _.filter(json, { day }))
       .then((parts: any) => _.minBy(parts, 'duration'))
@@ -51,9 +52,8 @@ async function longPractice(ctx: any, next: any) {
     if (part) {
       // user picked a specific video from the parts menu, it means he saw /today command
       // and the longPractice note already
-      return;
+      return
     }
-
 
     // 4. Notify
     //
