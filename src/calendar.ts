@@ -9,9 +9,8 @@ const { getUser } = require('./utils')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'getJourney... Remove this comment to see the full error message
 const { getJourney } = require('./journeys')
 
-// @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-const calendarImageUrl = (now: any) =>
-  ({
+const calendarImageUrl = (now: Date) =>
+  (({
     5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
     6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
     7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
@@ -19,10 +18,9 @@ const calendarImageUrl = (now: any) =>
     9: 'https://yogawithadriene.com/wp-content/uploads/2020/08/YWA-September-2020-Yoga-Calendar-1.png',
     10: 'https://yogawithadriene.com/wp-content/uploads/2020/09/Oct.-2020-Yoga-Calendar-.png',
     11: 'https://yogawithadriene.com/wp-content/uploads/2020/10/YWA-Nov.-2020-Yoga-Calendar-1.png',
-  }[now.getMonth() + 1])
-// @ts-expect-error ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-const calendarYouTubeUrl = (now: any) =>
-  ({
+  } as Record<number, string>)[now.getMonth() + 1])
+const calendarYouTubeUrl = (now: Date) =>
+  (({
     5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
     6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
     7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
@@ -30,7 +28,7 @@ const calendarYouTubeUrl = (now: any) =>
     9: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwJ37AOvztr5NA0LUciJqoD',
     10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyfM2YN1BndQWyKAWIXdvLz',
     11: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw8oSuJnpkem3axd29j7NOi',
-  }[now.getMonth() + 1])
+  } as Record<number, string>)[now.getMonth() + 1])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 const replyCalendar = async (ctx: any) => {
