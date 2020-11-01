@@ -1,15 +1,12 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
-const _ = require('lodash')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
-const Extra = require('telegraf/extra')
+import _ from 'lodash'
+// @ts-expect-error waiting for https://github.com/telegraf/telegraf/issues/1074
+import Extra from 'telegraf/extra'
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
 function pauseForA(sec: any) {
   return new Promise(r => setTimeout(r, sec * 1000)) // eslint-disable-line no-promise-executor-return
 }
 
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'isAdmin'.
 const isAdmin = (ctx: any) => [
   _.get(ctx.update, 'message.from.id'),
   _.get(ctx.update, 'callback_query.from.id'),
@@ -18,11 +15,9 @@ const isAdmin = (ctx: any) => [
 
 
 // TODO: need a bullet-proof get-user method
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'getUser'.
 const getUser = (ctx: any) => ctx.update.message ? ctx.update.message.from : ctx.update.callback_query.from
 
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'reportErro... Remove this comment to see the full error message
 async function reportError({
   ctx,
   error,
@@ -40,6 +35,7 @@ async function reportError({
   await pauseForA(2)
   await ctx.replyWithMarkdown('Meantime try the */calendar*…')
   await pauseForA(.7)
+  // eslint-disable-next-line consistent-return
   return ctx.replyWithMarkdown('_…if it’s working 😅_')
 }
 
