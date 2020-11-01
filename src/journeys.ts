@@ -78,25 +78,24 @@ async function replyJourney(ctx: any) {
     return ctx
       .replyWithPhoto(thumb, Extra.caption(caption).markdown().markup(keyboard))
       .then(() => (ctx.state.success = true))
-  } else {
-    const chatId = ctx.update.callback_query.from.id
-    const messageId = ctx.update.callback_query.message.message_id
-    const media = {
-      type: 'photo',
-      media: thumb,
-      caption,
-    }
-    let sent
-    try {
-      sent = await ctx.telegram
-        .editMessageMedia(chatId, messageId, null, media, Extra.markdown().markup(keyboard))
-        .then(() => (ctx.state.success = true))
-    } catch (e) {
-      console.error('🤔 Paging journeys: too many queires?', e)
-      return reportError({ ctx, where: 'paging journeys', error: e, silent: true })
-    }
-    return sent
   }
+  const chatId = ctx.update.callback_query.from.id
+  const messageId = ctx.update.callback_query.message.message_id
+  const media = {
+    type: 'photo',
+    media: thumb,
+    caption,
+  }
+  let sent
+  try {
+    sent = await ctx.telegram
+      .editMessageMedia(chatId, messageId, null, media, Extra.markdown().markup(keyboard))
+      .then(() => (ctx.state.success = true))
+  } catch (e) {
+    console.error('🤔 Paging journeys: too many queires?', e)
+    return reportError({ ctx, where: 'paging journeys', error: e, silent: true })
+  }
+  return sent
 }
 
 async function replyJourneyJoin(ctx: any) {

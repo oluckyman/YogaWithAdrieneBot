@@ -33,7 +33,7 @@ async function logger(ctx: any, next: any) {
         await ctx.forwardMessage(toChat, fromChat, messageId, { disable_notification: true })
         if (isNewUser) {
           const { username, first_name } = ctx.update.message.from
-          const text = ctx.update.message.text
+          const { text } = ctx.update.message
           const payload = _.omit(ctx.update.message, [
             'from.username',
             'date',
@@ -47,7 +47,8 @@ async function logger(ctx: any, next: any) {
             disable_notification: true,
             parse_mode: 'html',
           })
-        } else if (!ctx.state.command) {
+        }
+        if (!ctx.state.command) {
           // User said something which is not a command,
           // log the user id and message id, so I can answer
           return ctx.telegram.sendMessage(toChat, `💬 ${fromChat} ${messageId}`, { disable_notification: true })

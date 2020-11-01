@@ -11,6 +11,9 @@ const Promise = require('bluebird')
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'logger'.
+const fs = require('fs').promises
+const Firestore = require('@google-cloud/firestore')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
 const logger = require('./logger')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
 const chat = require('./chat')
@@ -24,11 +27,8 @@ const { setupJourneys } = require('./journeys')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
 const { pauseForA, reportError, getUser, isAdmin } = require('./utils')
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
-const fs = require('fs').promises
 dotenv.config()
 
-const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
   credentials: {
@@ -306,60 +306,59 @@ async function replyToday(ctx: any) {
         Extra.markup((m: any) => m.inlineKeyboard(buttons(m)))
       )
       .then(() => (ctx.state.success = true))
+  }
+  // Send the video and pre-video message
+  const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
+  const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
+  let message
+  if (nowWatching) {
+    message = nowWatchingMessage(nowWatching)
   } else {
-    // Send the video and pre-video message
-    const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
-    const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
-    let message
-    if (nowWatching) {
-      message = nowWatchingMessage(nowWatching)
-    } else {
-      message = preVideoMessage()
+    message = preVideoMessage()
+  }
+  try {
+    await Promise.all([
+      ctx.replyWithMarkdown(message),
+      pauseForA(2), // give some time to read the message
+    ])
+    // show how the message looks in botlog
+    if (!isAdmin(ctx)) {
+      // eslint-disable-next-line require-atomic-updates
+      ctx.state.logQueue = [...(ctx.state.logQueue || []), message]
     }
-    try {
-      await Promise.all([
-        ctx.replyWithMarkdown(message),
-        pauseForA(2), // give some time to read the message
-      ])
-      // show how the message looks in botlog
-      if (!isAdmin(ctx)) {
-        // eslint-disable-next-line require-atomic-updates
-        ctx.state.logQueue = [...(ctx.state.logQueue || []), message]
-      }
-      console.log(message)
-    } catch (e) {
-      console.error(`Error with pre-video message "${message}"`, e)
-      await reportError({
-        ctx,
-        where: '/today: pre-video message',
-        error: e,
-        silent: true,
-      })
-    }
+    console.log(message)
+  } catch (e) {
+    console.error(`Error with pre-video message "${message}"`, e)
+    await reportError({
+      ctx,
+      where: '/today: pre-video message',
+      error: e,
+      silent: true,
+    })
+  }
 
-    try {
-      message = 'oops 🐩' // so it can be used in catch (e) block
-      const partSymbol = isFWFGDay ? (isFWFG(video) ? '🖤' : '❤️') : part ? getPart(+part) : ''
+  try {
+    message = 'oops 🐩' // so it can be used in catch (e) block
+    const partSymbol = isFWFGDay ? (isFWFG(video) ? '🖤' : '❤️') : part ? getPart(+part) : ''
 
-      const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
-      message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
-      console.log(message)
-      return ctx.reply(message, Extra.markup(menuKeboard)).then(() => (ctx.state.success = true))
-    } catch (e) {
-      console.error(`Error with video link: ${message}`, e)
-      return reportError({ ctx, where: '/today: the video link', error: e })
-    }
+    const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
+    message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
+    console.log(message)
+    return ctx.reply(message, Extra.markup(menuKeboard)).then(() => (ctx.state.success = true))
+  } catch (e) {
+    console.error(`Error with video link: ${message}`, e)
+    return reportError({ ctx, where: '/today: the video link', error: e })
   }
 }
 bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
 bot.hears(bot.menu.today, replyToday)
 bot.command('/today', (ctx: any) => {
-  const text = ctx.update.message.text
+  const { text } = ctx.update.message
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
   return replyToday(ctx)
 })
 bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx: any) => {
-  const part = ctx.match.groups.part
+  const { part } = ctx.match.groups
   ctx.state.day = +_.get(ctx, 'match.groups.day', 0)
   if (part !== undefined) {
     ctx.answerCbQuery('Getting the video for you…')

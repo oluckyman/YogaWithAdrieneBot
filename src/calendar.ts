@@ -78,27 +78,26 @@ const replyCalendar = async (ctx: any) => {
           )
       )
       .then(() => (ctx.state.success = true))
-  } else {
-    // Monthly Calendar
-    //
-    return ctx
-      .replyWithPhoto(
-        calendarImageUrl(ctx.now),
-        Extra.caption(`*/today* is *Day ${ctx.now.getDate()}*`)
-          .markdown()
-          .markup((m: any) =>
-            m.inlineKeyboard(
-              [
-                m.urlButton('YWA Calendar', calendarYWAUrl),
-                m.urlButton('YouTube playlist', calendarYouTubeUrl(ctx.now)),
-                // m.callbackButton('30 Days of Yoga series', 'cb:journeys')
-              ],
-              { columns: 2 }
-            )
-          )
-      )
-      .then(() => (ctx.state.success = true))
   }
+  // Monthly Calendar
+  //
+  return ctx
+    .replyWithPhoto(
+      calendarImageUrl(ctx.now),
+      Extra.caption(`*/today* is *Day ${ctx.now.getDate()}*`)
+        .markdown()
+        .markup((m: any) =>
+          m.inlineKeyboard(
+            [
+              m.urlButton('YWA Calendar', calendarYWAUrl),
+              m.urlButton('YouTube playlist', calendarYouTubeUrl(ctx.now)),
+              // m.callbackButton('30 Days of Yoga series', 'cb:journeys')
+            ],
+            { columns: 2 }
+          )
+        )
+    )
+    .then(() => (ctx.state.success = true))
 }
 
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupCalen... Remove this comment to see the full error message
