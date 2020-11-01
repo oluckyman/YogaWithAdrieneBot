@@ -1,20 +1,31 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
 const _ = require('lodash')
 const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
 const Extra = require('telegraf/extra')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeFormat... Remove this comment to see the full error message
 const { timeFormat } = require('d3-time-format')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Promise'.
 const Promise = require("bluebird")
 const { toEmoji } = require('number-to-emoji')
 const writtenNumber = require('written-number')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'logger'.
 const logger = require('./logger')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
 const chat = require('./chat')
 const getNowWatching = require('./nowWatching')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'longPracti... Remove this comment to see the full error message
 const longPractice = require('./longPractice')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupCalen... Remove this comment to see the full error message
 const setupCalendar = require('./calendar')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupJourn... Remove this comment to see the full error message
 const { setupJourneys } = require('./journeys')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
 const { pauseForA, reportError, getUser, isAdmin } = require('./utils')
 
 
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs').promises
 dotenv.config()
 
@@ -24,21 +35,24 @@ const Firestore = require('@google-cloud/firestore')
 const firestore = new Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
   credentials: {
+    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     private_key: process.env.GOOGLE_APP_PRIVATE_KEY.split('\\n').join('\n'),
     client_email: process.env.GOOGLE_APP_CLIENT_EMAIL,
   }
 })
 
-const setFirstContact = ({ user }) => {
+const setFirstContact = ({
+  user
+}: any) => {
   const userDoc = firestore.collection('users').doc(`id${user.id}`)
-  return userDoc.get().then(doc => {
+  return userDoc.get().then((doc: any) => {
     if (!doc.exists) {
       return userDoc.set({
         ...user,
         first_contact_at: new Date()
       })
     }
-  })
+  });
 }
 
 
@@ -51,14 +65,14 @@ bot.menu = {
 }
 
 
-bot.catch(async (err, ctx) => {
+bot.catch(async (err: any, ctx: any) => {
   // do not show error message to user if the main action was successful
   const silent = _.get(ctx, 'state.success')
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
 
-bot.use((ctx, next) => {
+bot.use((ctx: any, next: any) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
   ctx.firestore = firestore
@@ -80,7 +94,7 @@ bot.use(chat)
 
 // Annoncement
 //
-bot.use(async (ctx, next) => {
+bot.use(async (ctx: any, next: any) => {
   await next()
   try {
     // 0. if it was one of today commands
@@ -94,7 +108,7 @@ bot.use(async (ctx, next) => {
 
     // 1. get user doc by user.id
     const userDoc = firestore.collection('users').doc(`id${user.id}`)
-    await userDoc.get().then(async doc => {
+    await userDoc.get().then(async (doc: any) => {
       if (!doc.exists) {
         console.log(`dunno this user ${user.id}`)
         return // TODO: what async and what not?
@@ -145,7 +159,7 @@ bot.use(longPractice)
 
 // /strat
 //
-bot.command('/start', async ctx => {
+bot.command('/start', async (ctx: any) => {
   // I use it in the logger to do verbose log for new users
   ctx.state.command = "start"
 
@@ -162,14 +176,14 @@ bot.command('/start', async ctx => {
     [4.0, '_So, hop into something comfy, and let’s get started!_'],
     // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
-  const sendGreeting = async i => {
+  const sendGreeting = async (i: any) => {
     if (i >= greetings.length) return
     const message = greetings[i][1]
     const delaySec = _.get(greetings, [i + 1, 0])
     const isLastMessage = i === greetings.length - 1
     await ctx
       .reply(message, Extra.markdown()
-        .markup(m => isLastMessage ?
+        .markup((m: any) => isLastMessage ?
           m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
         )
       )
@@ -188,7 +202,7 @@ bot.command('/start', async ctx => {
   })
 });
 
-const replyHelp = ctx => ctx.replyWithHTML(`
+const replyHelp = (ctx: any) => ctx.replyWithHTML(`
 <b>Yoga With Adriene</b> bot helps you get yoga videos without friction and distractions.
 
 <b>Commands</b>
@@ -206,22 +220,22 @@ bot.hears(bot.menu.help, replyHelp)
 bot.command('/help', replyHelp)
 
 
-bot.command('/feedback', ctx => ctx.replyWithMarkdown(`
+bot.command('/feedback', (ctx: any) => ctx.replyWithMarkdown(`
 Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
 `).then(() => ctx.state.success = true))
 
 
-const oneOf = messages => _.sample(_.sample(messages))
+const oneOf = (messages: any) => _.sample(_.sample(messages))
 
 // Consider videos without id as FWFG videos
-const isFWFG = v => !v.id
+const isFWFG = (v: any) => !v.id
 
-const getPart = i => {
+const getPart = (i: any) => {
   const partSymbols = ['🅰️', '🅱️', '❤️', '🧡', '💛', '💚', '💙', '💜']
   return i < partSymbols.length ? partSymbols[i] : `*[${i + 1}]*`
 }
 
-async function replyToday(ctx) {
+async function replyToday(ctx: any) {
   // I use it in announcement middleware to react only on today commands
   ctx.state.command = "today"
 
@@ -232,9 +246,12 @@ async function replyToday(ctx) {
   console.log('replyToday', {month, day, part})
 
   const videos = await fs.readFile(`calendars/${month}.json`, 'utf8')
-    .then(txt => JSON.parse(txt))
-    .then(json => _.filter(json, { day })
-      .map(v => ({ ...v, month }))
+    .then((txt: any) => JSON.parse(txt))
+    .then((json: any) => _.filter(json, { day })
+      .map((v: any) => ({
+    ...v,
+    month
+  }))
     )
   const isFWFGDay = _.some(videos, isFWFG)
 
@@ -248,25 +265,25 @@ async function replyToday(ctx) {
     // Ask which one to show now
     let videosList
     let message
-    let buttons
+    let buttons: any
     if (isFWFGDay) {
       videosList = videos
-        .map(v => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`).join('\n')
+        .map((v: any) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`).join('\n')
       message = `FWFG video today\n${videosList}`
-      buttons = m => videos
-        .map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
+      buttons = (m: any) => videos
+        .map((v: any, i: any) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
     } else {
-      videosList = videos.map((v, i) => `${getPart(i)} ${v.title}`).join('\n')
+      videosList = videos.map((v: any, i: any) => `${getPart(i)} ${v.title}`).join('\n')
       message = `${_.capitalize(writtenNumber(videos.length))} videos today\n${videosList}`
-      buttons = m => videos.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
+      buttons = (m: any) => videos.map((v: any, i: any) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
     console.log(message)
     return ctx
-      .replyWithMarkdown(message, Extra.markup(m => m.inlineKeyboard(buttons(m))))
-      .then(() => ctx.state.success = true)
+      .replyWithMarkdown(message, Extra.markup((m: any) => m.inlineKeyboard(buttons(m))))
+      .then(() => ctx.state.success = true);
   } else {
     // Send the video and pre-video message
-    const video = _.filter(videos, (v, i) => !part || i === +part)[0]
+    const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
     const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
     let message
     if (nowWatching) {
@@ -283,7 +300,7 @@ async function replyToday(ctx) {
       if (!isAdmin(ctx)) {
         // eslint-disable-next-line require-atomic-updates
         ctx.state.logQueue = [
-          ...ctx.state.logQueue || [],
+          ...(ctx.state.logQueue || []),
           message
         ]
       }
@@ -311,12 +328,12 @@ async function replyToday(ctx) {
 }
 bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
 bot.hears(bot.menu.today, replyToday)
-bot.command('/today', ctx => {
+bot.command('/today', (ctx: any) => {
   const text = ctx.update.message.text
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
   return replyToday(ctx)
 })
-bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, ctx => {
+bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx: any) => {
   const part = ctx.match.groups.part
   ctx.state.day = +_.get(ctx, 'match.groups.day', 0)
   if (part !== undefined) {
@@ -328,13 +345,14 @@ bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, ctx => {
   return replyToday(ctx)
 })
 
-function shortUrl(id) {
+function shortUrl(id: any) {
   return `youtu.be/${id}`
 }
 
 // Show who's practicing right now
 //
-function nowWatchingMessage(nowWatching) {
+function nowWatchingMessage(nowWatching: any) {
+  // @ts-expect-error ts-migrate(2569) FIXME: Type '"😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌�... Remove this comment to see the full error message
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = yogi1
@@ -366,7 +384,9 @@ function preVideoMessage() {
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
+    // @ts-expect-error ts-migrate(2569) FIXME: Type '"🐌🐢"' is not an array type or a string typ... Remove this comment to see the full error message
     [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
+    // @ts-expect-error ts-migrate(2569) FIXME: Type '"🐌🐢"' is not an array type or a string typ... Remove this comment to see the full error message
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
   return oneOf(messages)
@@ -382,14 +402,18 @@ const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
 // eslint-disable-next-line no-misleading-character-class
 const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')
 const thanksMessages = [
+  // @ts-expect-error ts-migrate(2569) FIXME: Type '"😌☺️😉"' is not an array type or a string t... Remove this comment to see the full error message
   [...'😌☺️😉'], // smiles
+  // @ts-expect-error ts-migrate(2569) FIXME: Type '"🥰💚🤗"' is not an array type or a string t... Remove this comment to see the full error message
   [...'🥰💚🤗'], // love
+  // @ts-expect-error ts-migrate(2569) FIXME: Type '"🙏"' is not an array type or a string type.... Remove this comment to see the full error message
   [...'🙏'], // gestures
 ]
 const greetMessages = [
+  // @ts-expect-error ts-migrate(2569) FIXME: Type '"👋"' is not an array type or a string type.... Remove this comment to see the full error message
   [...'👋']
 ]
-async function replySmallTalk(ctx) {
+async function replySmallTalk(ctx: any) {
   ctx.state.command = 'smallTalk'
   await pauseForA(1)
   await ctx.replyWithChatAction('typing')
@@ -403,7 +427,7 @@ async function replySmallTalk(ctx) {
   if (!isAdmin(ctx)) {
     // eslint-disable-next-line require-atomic-updates
     ctx.state.logQueue = [
-      ...ctx.state.logQueue || [],
+      ...(ctx.state.logQueue || []),
       reply
     ]
     console.log(reply)
@@ -413,7 +437,7 @@ async function replySmallTalk(ctx) {
 bot.hears(smallTalkMessage, replySmallTalk)
 
 
-function menuKeboard(m) {
+function menuKeboard(m: any) {
   return m.resize().keyboard([bot.menu.today, bot.menu.calendar, bot.menu.help])
 }
 
@@ -444,7 +468,7 @@ if (NODE_ENV === 'production') {
 
   // Prevent app from sleeping
   const request = require('request');
-  const ping = () => request(`https://${HOST}/ping`, (error, response, body) => {
+  const ping = () => request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
       error && console.log('error:', error);
       body && console.log('body:', body);
       setTimeout(ping, 1000 * 60 * 25)

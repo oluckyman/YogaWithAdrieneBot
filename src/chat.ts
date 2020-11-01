@@ -1,7 +1,10 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
 const _ = require('lodash')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'isAdmin'.
 const { isAdmin } = require('./utils')
 
-async function chat(ctx, next) {
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
+async function chat(ctx: any, next: any) {
   const replyTo = _.get(ctx.update, 'message.reply_to_message')
   if (!replyTo || !isAdmin(ctx)) {
     return next()

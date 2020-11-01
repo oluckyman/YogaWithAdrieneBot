@@ -1,9 +1,13 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
 const _ = require('lodash')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
 const Extra = require('telegraf/extra')
 const journeys = require('./journeys.json')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'reportErro... Remove this comment to see the full error message
 const { reportError, getUser } = require('./utils')
 
-function setupJourneys(bot) {
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupJourn... Remove this comment to see the full error message
+function setupJourneys(bot: any) {
   bot.command('/journeys', replyJourneys)
   bot.action('cb:journeys', replyJourneys)
 
@@ -13,9 +17,10 @@ function setupJourneys(bot) {
   // bot.action(/cb:journey:(?<year>\d+):(?<command>.*)$/, replyJourneyJoin)
 }
 
-const getJourney = year => journeys.find(c => +c.year === +year)
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'getJourney... Remove this comment to see the full error message
+const getJourney = (year: any) => journeys.find((c: any) => +c.year === +year)
 
-function replyJourneys(ctx) {
+function replyJourneys(ctx: any) {
   // TODO: add message that you can subscribe to a email version and receive
   // a daily letter here https://do.yogawithadriene.com/30-days-of-yoga-daily-emails
   //   const message = `
@@ -27,16 +32,19 @@ function replyJourneys(ctx) {
   const message = `*30 Days of Yoga series*`
 
   return ctx.replyWithMarkdown(message, Extra.markdown()
-    .markup(m => m.inlineKeyboard(
-      journeys.map(({ year, title }) => m.callbackButton(`${title} • ${year}`, `cb:journey:${year}`))
+    .markup((m: any) => m.inlineKeyboard(
+      journeys.map(({
+        year,
+        title
+      }: any) => m.callbackButton(`${title} • ${year}`, `cb:journey:${year}`))
     , { columns: 1 })))
-    .then(() => ctx.state.success = true)
+    .then(() => ctx.state.success = true);
 }
 
 
 // Show journey for the current year
 // reuse previous message when paging
-async function replyJourney(ctx) {
+async function replyJourney(ctx: any) {
   const year = +ctx.match.groups.year
   const journey = getJourney(year)
   const { title, description, thumb } = journey
@@ -49,7 +57,7 @@ async function replyJourney(ctx) {
   const [prevArrow, nextArrow] = [prevLoop ? '↪️' : '←️', nextLoop ? '↩️' : '→️']
   const [prevBtn, nextBtn] = [[prevArrow, prevYear], [nextYear, nextArrow]].map(arr => arr.join(' '))
 
-  const keyboard = m => m.inlineKeyboard([
+  const keyboard = (m: any) => m.inlineKeyboard([
     m.callbackButton(`${prevBtn}`, `cb:journey:${prevYear}`),
     m.callbackButton('Join', `cb:journey:${year}:join`),
     m.callbackButton(`${nextBtn}`, `cb:journey:${nextYear}`),
@@ -86,7 +94,7 @@ async function replyJourney(ctx) {
 }
 
 
-async function replyJourneyJoin(ctx) {
+async function replyJourneyJoin(ctx: any) {
   const year = +ctx.match.groups.year
   const journey = getJourney(year)
   const { title, description, thumb } = journey
@@ -102,7 +110,7 @@ async function replyJourneyJoin(ctx) {
     media: thumb,
     caption,
   }
-  const keyboard = m => m.inlineKeyboard([
+  const keyboard = (m: any) => m.inlineKeyboard([
     m.callbackButton('Start the Journey!', `cb:journey:${year}:start`),
     m.callbackButton('Back', `cb:journey:${year}`),
   ], { columns: 1 })
@@ -121,7 +129,7 @@ async function replyJourneyJoin(ctx) {
 }
 
 
-async function replyJourneyStart(ctx) {
+async function replyJourneyStart(ctx: any) {
   // const year = +ctx.match.groups.year
   // const journey = journeys.find(c => +c.year === year)
   // const { title, description, thumb } = journey

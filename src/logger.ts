@@ -1,12 +1,15 @@
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
 const _ = require('lodash')
 const YAML = require('json-to-pretty-yaml')
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'isAdmin'.
 const { isAdmin, reportError } = require('./utils')
 
-const logEvent = firestore => update => {
+const logEvent = (firestore: any) => (update: any) => {
   return firestore.collection('logs').add({ json: JSON.stringify(update), date: new Date() })
 }
 
-async function logger(ctx, next) {
+// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'logger'.
+async function logger(ctx: any, next: any) {
   const start = new Date()
 
   if (!isAdmin(ctx)) {
@@ -15,6 +18,7 @@ async function logger(ctx, next) {
   } else { console.log('👨‍💻 me working…') }
 
   await next()
+  // @ts-expect-error ts-migrate(2362) FIXME: The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
   const ms = new Date() - start
   try {
     if (!isAdmin(ctx)) {
