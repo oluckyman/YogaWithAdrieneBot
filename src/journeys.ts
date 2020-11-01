@@ -2,7 +2,7 @@
 const _ = require('lodash')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
 const Extra = require('telegraf/extra')
-const journeys = require('./journeys.json')
+const journeys = require('../calendars/journeys.json')
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'reportErro... Remove this comment to see the full error message
 const { reportError, getUser } = require('./utils')
 

@@ -352,7 +352,6 @@ function shortUrl(id: any) {
 // Show who's practicing right now
 //
 function nowWatchingMessage(nowWatching: any) {
-  // @ts-expect-error ts-migrate(2569) FIXME: Type '"😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌�... Remove this comment to see the full error message
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = yogi1
@@ -384,9 +383,7 @@ function preVideoMessage() {
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
-    // @ts-expect-error ts-migrate(2569) FIXME: Type '"🐌🐢"' is not an array type or a string typ... Remove this comment to see the full error message
     [...'🐌🐢'].map(e => `${e} _One yoga at a time_`),
-    // @ts-expect-error ts-migrate(2569) FIXME: Type '"🐌🐢"' is not an array type or a string typ... Remove this comment to see the full error message
     [...'🐌🐢'].map(e => `${e} _Little goes a long way_`),
   ];
   return oneOf(messages)
@@ -402,15 +399,11 @@ const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
 // eslint-disable-next-line no-misleading-character-class
 const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')
 const thanksMessages = [
-  // @ts-expect-error ts-migrate(2569) FIXME: Type '"😌☺️😉"' is not an array type or a string t... Remove this comment to see the full error message
   [...'😌☺️😉'], // smiles
-  // @ts-expect-error ts-migrate(2569) FIXME: Type '"🥰💚🤗"' is not an array type or a string t... Remove this comment to see the full error message
   [...'🥰💚🤗'], // love
-  // @ts-expect-error ts-migrate(2569) FIXME: Type '"🙏"' is not an array type or a string type.... Remove this comment to see the full error message
   [...'🙏'], // gestures
 ]
 const greetMessages = [
-  // @ts-expect-error ts-migrate(2569) FIXME: Type '"👋"' is not an array type or a string type.... Remove this comment to see the full error message
   [...'👋']
 ]
 async function replySmallTalk(ctx: any) {
