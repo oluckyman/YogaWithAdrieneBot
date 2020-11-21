@@ -16,5 +16,6 @@ module.exports = {
     'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
     camelcase: 'off',
     'consistent-return': 'off',
+    'no-use-before-define': ['error', { functions: false }],
   },
 }
