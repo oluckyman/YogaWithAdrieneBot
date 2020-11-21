@@ -1,38 +1,29 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
-const _ = require('lodash')
-const dotenv = require('dotenv')
-const Telegraf = require('telegraf')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
-const Extra = require('telegraf/extra')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeFormat... Remove this comment to see the full error message
-const { timeFormat } = require('d3-time-format')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Promise'.
-const Promise = require('bluebird')
-const { toEmoji } = require('number-to-emoji')
-const writtenNumber = require('written-number')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'logger'.
-const fs = require('fs').promises
-const Firestore = require('@google-cloud/firestore')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
-const logger = require('./logger')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'chat'.
-const chat = require('./chat')
-const getNowWatching = require('./nowWatching')
+import _ from 'lodash'
+import dotenv from 'dotenv'
+import Telegraf, { Extra } from 'telegraf'
+import { timeFormat } from 'd3-time-format'
+import Promise from 'bluebird'
+import { toEmoji } from 'number-to-emoji'
+import writtenNumber from 'written-number'
+import Firestore, { DocumentReference, Timestamp } from '@google-cloud/firestore'
+import { promises as fs } from 'fs'
+import BotContext from './models/bot-context'
+import logger from './logger'
+import chat from './chat'
+import getNowWatching from './nowWatching'
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'longPracti... Remove this comment to see the full error message
-const longPractice = require('./longPractice')
+import longPractice from './longPractice'
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupCalen... Remove this comment to see the full error message
-const setupCalendar = require('./calendar')
+import setupCalendar from './calendar'
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupJourn... Remove this comment to see the full error message
-const { setupJourneys } = require('./journeys')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
-const { pauseForA, reportError, getUser, isAdmin } = require('./utils')
+import { setupJourneys } from './journeys'
+import { pauseForA, reportError, getUser, isAdmin } from './utils'
 
 dotenv.config()
 
 const firestore = new Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
   credentials: {
-    // @ts-expect-error ts-migrate(2532) FIXME: Object is possibly 'undefined'.
     private_key: process.env.GOOGLE_APP_PRIVATE_KEY.split('\\n').join('\n'),
     client_email: process.env.GOOGLE_APP_CLIENT_EMAIL,
   },
@@ -50,7 +41,7 @@ const setFirstContact = ({ user }: any) => {
   })
 }
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN)
 
 bot.menu = {
   today: '▶️ Today’s yoga',
@@ -58,14 +49,14 @@ bot.menu = {
   help: '💁 Help',
 }
 
-bot.catch(async (err: any, ctx: any) => {
+bot.catch(async (err: string, ctx: BotContext) => {
   // do not show error message to user if the main action was successful
-  const silent = _.get(ctx, 'state.success')
+  const silent = ctx.state.success
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
 
-bot.use((ctx: any, next: any) => {
+bot.use((ctx, next) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
   ctx.firestore = firestore
@@ -85,34 +76,40 @@ bot.use(chat)
 
 // Annoncement
 //
-bot.use(async (ctx: any, next: any) => {
+bot.use(async (ctx, next) => {
   await next()
   try {
     // 0. if it was one of today commands
     if (ctx.state.command !== 'today') {
       return
     }
-    console.log(`Checking if I should send a link to chart to user?`)
+    console.info(`Checking if I should send a link to chart to user?`)
 
     // TODO: need a bullet-proof get-user method
     const user = getUser(ctx)
 
     // 1. get user doc by user.id
-    const userDoc = firestore.collection('users').doc(`id${user.id}`)
-    await userDoc.get().then(async (doc: any) => {
+    type UserData = {
+      id: number
+      yogi: string
+      message_sent_at: Timestamp
+      first_name: string
+    }
+    const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
+    await userDoc.get().then(async (doc) => {
       if (!doc.exists) {
-        console.log(`dunno this user ${user.id}`)
+        console.info(`dunno this user ${user?.id}`)
         return // TODO: what async and what not?
       }
-      const { yogi, message_sent_at, first_name } = doc.data()
+      const { yogi, message_sent_at, first_name } = doc.data() ?? {}
 
       // 2. see if the doc has yogi field and message was not sent
       if (!yogi) {
-        console.log(`${first_name} not a regular user in May`)
+        console.info(`${first_name} not a regular user in May`)
         return
       }
       if (message_sent_at) {
-        console.log(`${first_name} already received the message at`, message_sent_at.toDate())
+        console.info(`${first_name} already received the message at`, message_sent_at.toDate())
         return
       }
 
@@ -125,6 +122,7 @@ bot.use(async (ctx: any, next: any) => {
         await ctx.reply(`You might be interested to see what the last month looked like from the bot’s perspective.`)
         await pauseForA(3)
         await ctx.replyWithMarkdown(
+          // eslint-disable-next-line no-irregular-whitespace
           `Check out the [Yoga Calendar Effect](https://yoga-calendar-effect.now.sh/?yogi=${yogi}) chart.\nYou’re part of it too!`
         )
         linkSeen = true
@@ -134,7 +132,7 @@ bot.use(async (ctx: any, next: any) => {
           message_sent_at: new Date(),
         })
 
-        console.log(`link sent to ${first_name} (yogi=${yogi})`)
+        console.info(`link sent to ${first_name} (yogi=${yogi})`)
         const linkSentMessage = `${first_name} have received https://ywa-calendar-may-2020.now.sh/?yogi=${yogi}`
         await ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, linkSentMessage)
       } catch (e) {
@@ -253,7 +251,7 @@ const getPart = (i: any) => {
   return i < partSymbols.length ? partSymbols[i] : `*[${i + 1}]*`
 }
 
-async function replyToday(ctx: any) {
+async function replyToday(ctx: BotContext) {
   // I use it in announcement middleware to react only on today commands
   ctx.state.command = 'today'
 
@@ -261,7 +259,7 @@ async function replyToday(ctx: any) {
   const day = ctx.state.day || ctx.now.getDate()
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
-  console.log('replyToday', { month, day, part })
+  console.info('replyToday', { month, day, part })
 
   const videos = await fs
     .readFile(`calendars/${month}.json`, 'utf8')
@@ -299,7 +297,7 @@ async function replyToday(ctx: any) {
       buttons = (m: any) =>
         videos.map((v: any, i: any) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
-    console.log(message)
+    console.info(message)
     return ctx
       .replyWithMarkdown(
         message,
@@ -326,7 +324,7 @@ async function replyToday(ctx: any) {
       // eslint-disable-next-line require-atomic-updates
       ctx.state.logQueue = [...(ctx.state.logQueue || []), message]
     }
-    console.log(message)
+    console.info(message)
   } catch (e) {
     console.error(`Error with pre-video message "${message}"`, e)
     await reportError({
@@ -343,7 +341,7 @@ async function replyToday(ctx: any) {
 
     const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
     message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
-    console.log(message)
+    console.info(message)
     return ctx.reply(message, Extra.markup(menuKeboard)).then(() => (ctx.state.success = true))
   } catch (e) {
     console.error(`Error with video link: ${message}`, e)
@@ -384,6 +382,7 @@ function nowWatchingMessage(nowWatching: any) {
     .join('')
   const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
   const messages =
+    // eslint-disable-next-line no-nested-ternary
     nowWatching > 25
       ? [
           `*${number} people* started this video within the last minute`,
@@ -391,7 +390,8 @@ function nowWatchingMessage(nowWatching: any) {
           `Practice in sync with *${number} people*`,
           `Join *${number} brave souls*, they’ve just started`,
         ]
-      : nowWatching > 2
+      : // eslint-disable-next-line no-nested-ternary
+      nowWatching > 2
       ? [
           `*${_.capitalize(number)} folks* started this video within the last minute\n${emojis}`,
           `Practice in sync with *${number} people*\n${emojis}`,
@@ -448,7 +448,7 @@ async function replySmallTalk(ctx: any) {
   if (!isAdmin(ctx)) {
     // eslint-disable-next-line require-atomic-updates
     ctx.state.logQueue = [...(ctx.state.logQueue || []), reply]
-    console.log(reply)
+    console.info(reply)
   }
   return ctx.replyWithMarkdown(reply).then(() => (ctx.state.success = true))
 }
@@ -490,11 +490,11 @@ if (NODE_ENV === 'production') {
   const request = require('request')
   const ping = () =>
     request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
-      error && console.log('error:', error)
-      body && console.log('body:', body)
+      error && console.info('error:', error)
+      body && console.info('body:', body)
       setTimeout(ping, 1000 * 60 * 25)
     })
-  console.log('Ping myself 👈')
+  console.info('Ping myself 👈')
   ping()
 } else {
   bot.launch()

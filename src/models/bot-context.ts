@@ -5,6 +5,8 @@ export default interface BotContext extends Context {
   state: {
     command?: string
     logQueue?: string[]
+    success?: boolean
   }
+  now: Date
   firestore: Firestore
 }
