@@ -3,14 +3,14 @@ import YAML from 'json-to-pretty-yaml'
 import { Middleware } from 'telegraf'
 import type { Firestore } from '@google-cloud/firestore'
 import { Update } from 'telegraf/typings/telegram-types'
-import Context from './models/context'
+import BotContext from './models/bot-context'
 import { isAdmin, reportError } from './utils'
 
 const logEvent = (firestore: Firestore) => (update: Update) => {
   return firestore.collection('logs').add({ json: JSON.stringify(update), date: new Date() })
 }
 
-const logger: Middleware<Context> = async (ctx, next) => {
+const logger: Middleware<BotContext> = async (ctx, next) => {
   const start = new Date()
 
   if (!isAdmin(ctx)) {

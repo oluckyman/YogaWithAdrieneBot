@@ -1,20 +1,20 @@
 import { Extra } from 'telegraf'
 import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types'
-import Context from './models/context'
+import BotContext from './models/bot-context'
 
 export function pauseForA(sec: number): Promise<void> {
   return new Promise((r) => setTimeout(r, sec * 1000))
 }
 
-export const isAdmin = (ctx: Context): boolean =>
+export const isAdmin = (ctx: BotContext): boolean =>
   [ctx.update.message?.from?.id, ctx.update.callback_query?.from.id].includes(+process.env.ADMIN_ID)
 
 // TODO: need a bullet-proof get-user method
-export const getUser = (ctx: Context): User | undefined =>
+export const getUser = (ctx: BotContext): User | undefined =>
   ctx.update.message ? ctx.update.message.from : ctx.update.callback_query?.from
 
 interface ReportErrorProps {
-  ctx: Context
+  ctx: BotContext
   error: string
   where: string
   silent?: boolean
