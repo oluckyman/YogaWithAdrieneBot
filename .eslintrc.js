@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['airbnb-base', 'prettier', 'plugin:@typescript-eslint/recommended'],
+  extends: ['airbnb-base', 'prettier', 'plugin:@typescript-eslint/recommended', 'plugin:import/typescript'],
   plugins: ['@typescript-eslint'],
   env: {
     node: true,
@@ -12,5 +12,9 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
+    'import/extensions': ['error', 'ignorePackages', { js: 'never', ts: 'never' }],
+    'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+    camelcase: 'off',
+    'consistent-return': 'off',
   },
 }
