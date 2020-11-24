@@ -7,15 +7,13 @@ import { toEmoji } from 'number-to-emoji'
 import writtenNumber from 'written-number'
 import Firestore, { DocumentReference, Timestamp } from '@google-cloud/firestore'
 import { promises as fs } from 'fs'
-import BotContext from './models/bot-context'
+import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import chat from './chat'
 import getNowWatching from './nowWatching'
 import longPractice from './longPractice'
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupCalen... Remove this comment to see the full error message
-import setupCalendar from './calendar'
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupJourn... Remove this comment to see the full error message
-import { setupJourneys } from './journeys'
+import replyCalendar from './calendar'
+// import { setupJourneys } from './journeys'
 import { pauseForA, reportError, getUser, isAdmin } from './utils'
 
 dotenv.config()
@@ -40,13 +38,12 @@ const setFirstContact = ({ user }: any) => {
   })
 }
 
-const bot = new Telegraf<BotContext>(process.env.BOT_TOKEN)
-
-bot.menu = {
+const MENU = {
   today: '▶️ Today’s yoga',
   calendar: '🗓 Calendar',
   help: '💁 Help',
 }
+const bot: Bot = new Telegraf(process.env.BOT_TOKEN)
 
 bot.catch(async (err: string, ctx: BotContext) => {
   // do not show error message to user if the main action was successful
@@ -227,7 +224,7 @@ const replyHelp = (ctx: any) =>
     .then(() => (ctx.state.success = true))
     .then(() => (ctx.state.command = 'help'))
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
-bot.hears(bot.menu.help, replyHelp)
+bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
 
 bot.command('/feedback', (ctx: any) =>
@@ -348,7 +345,7 @@ async function replyToday(ctx: BotContext) {
   }
 }
 bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
-bot.hears(bot.menu.today, replyToday)
+bot.hears(MENU.today, replyToday)
 bot.command('/today', (ctx: any) => {
   const { text } = ctx.update.message
   ctx.state.day = +_.get(text.match(/\/today +(?<day>\d+)/), 'groups.day', 0)
@@ -419,9 +416,10 @@ function preVideoMessage() {
   return oneOf(messages)
 }
 
-setupCalendar(bot)
+bot.command('/calendar', replyCalendar)
+bot.hears(MENU.calendar, replyCalendar)
 
-setupJourneys(bot)
+// setupJourneys(bot)
 
 const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️😍🥰😘]|thank)'
 const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
@@ -454,7 +452,7 @@ async function replySmallTalk(ctx: any) {
 bot.hears(smallTalkMessage, replySmallTalk)
 
 function menuKeboard(m: any) {
-  return m.resize().keyboard([bot.menu.today, bot.menu.calendar, bot.menu.help])
+  return m.resize().keyboard([MENU.today, MENU.calendar, MENU.help])
 }
 
 bot.telegram.setMyCommands([

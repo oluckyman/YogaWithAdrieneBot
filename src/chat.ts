@@ -1,8 +1,7 @@
-import { Middleware } from 'telegraf'
-import BotContext from './models/bot-context'
+import type { BotMiddleware } from './models/bot'
 import { isAdmin } from './utils'
 
-const chat: Middleware<BotContext> = (ctx, next) => {
+const chat: BotMiddleware = (ctx, next) => {
   const replyTo = ctx.update.message?.reply_to_message
   if (!replyTo || !isAdmin(ctx)) {
     return next()

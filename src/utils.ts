@@ -1,6 +1,6 @@
 import { Extra } from 'telegraf'
 import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types'
-import BotContext from './models/bot-context'
+import type { BotContext } from './models/bot'
 
 export function pauseForA(sec: number): Promise<void> {
   return new Promise((r) => setTimeout(r, sec * 1000))

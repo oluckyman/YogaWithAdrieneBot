@@ -1,14 +1,13 @@
 import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { promises as fs } from 'fs'
-import { Middleware } from 'telegraf'
-import BotContext from './models/bot-context'
+import type { BotMiddleware } from './models/bot'
 import { pauseForA, reportError } from './utils'
 import latestCalendar from '../calendars/11.json'
 
 type CalendarType = typeof latestCalendar
 
-const longPractice: Middleware<BotContext> = async (ctx, next) => {
+const longPractice: BotMiddleware = async (ctx, next) => {
   await next()
 
   try {
