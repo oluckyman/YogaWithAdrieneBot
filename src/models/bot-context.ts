@@ -3,7 +3,7 @@ import type { Context } from 'telegraf'
 
 export default interface BotContext extends Context {
   state: {
-    command?: string
+    command?: 'today'
     logQueue?: string[]
     success?: boolean
   }

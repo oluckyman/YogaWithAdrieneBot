@@ -11,7 +11,6 @@ import BotContext from './models/bot-context'
 import logger from './logger'
 import chat from './chat'
 import getNowWatching from './nowWatching'
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'longPracti... Remove this comment to see the full error message
 import longPractice from './longPractice'
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupCalen... Remove this comment to see the full error message
 import setupCalendar from './calendar'

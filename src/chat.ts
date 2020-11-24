@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { Middleware } from 'telegraf'
 import BotContext from './models/bot-context'
 import { isAdmin } from './utils'

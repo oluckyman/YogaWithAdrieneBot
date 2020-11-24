@@ -1,14 +1,14 @@
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
-const _ = require('lodash')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'timeFormat... Remove this comment to see the full error message
-const { timeFormat } = require('d3-time-format')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'pauseForA'... Remove this comment to see the full error message
-const { pauseForA, reportError } = require('./utils')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'fs'.
-const fs = require('fs').promises
+import _ from 'lodash'
+import { timeFormat } from 'd3-time-format'
+import { promises as fs } from 'fs'
+import { Middleware } from 'telegraf'
+import BotContext from './models/bot-context'
+import { pauseForA, reportError } from './utils'
+import latestCalendar from '../calendars/11.json'
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'longPracti... Remove this comment to see the full error message
-async function longPractice(ctx: any, next: any) {
+type CalendarType = typeof latestCalendar
+
+const longPractice: Middleware<BotContext> = async (ctx, next) => {
   await next()
 
   try {
@@ -29,8 +29,8 @@ async function longPractice(ctx: any, next: any) {
     const video = await fs
       .readFile(`calendars/${month}.json`, 'utf8')
       .then((txt: any) => JSON.parse(txt))
-      .then((json: any) => _.filter(json, { day }))
-      .then((parts: any) => _.minBy(parts, 'duration'))
+      .then((json: CalendarType) => _.filter(json, { day }))
+      .then((parts) => _.minBy(parts, 'duration'))
 
     if (!video) {
       // TODO: handle this case some day
@@ -48,7 +48,7 @@ async function longPractice(ctx: any, next: any) {
     // TODO: add this check some day
     // XXX: while there is no such check, prevent sending notification twice
     // when there is two practices for a day
-    const part = _.get(ctx, 'match.groups.part')
+    const part = ctx.match?.groups?.part
     if (part) {
       // user picked a specific video from the parts menu, it means he saw /today command
       // and the longPractice note already
@@ -57,9 +57,9 @@ async function longPractice(ctx: any, next: any) {
 
     // 4. Notify
     //
-    let dura = video.duration
+    let dura: string | number = video.duration
     if (dura <= 55) {
-      dura = `${dura} minutes`
+      dura = `${dura} minutes` // eslint-disable-line no-irregular-whitespace
     } else if (dura <= 70) {
       dura = 'about a hour'
     } else {
@@ -67,7 +67,7 @@ async function longPractice(ctx: any, next: any) {
     }
     await pauseForA(1)
     const message = `👉 Note, tomorrow's video will be long: _${dura}_`
-    console.log(message)
+    console.info(message)
     return ctx.replyWithMarkdown(message)
   } catch (e) {
     console.error('🐛 In long practice logic', e)
@@ -75,4 +75,4 @@ async function longPractice(ctx: any, next: any) {
   }
 }
 
-module.exports = longPractice
+export default longPractice
