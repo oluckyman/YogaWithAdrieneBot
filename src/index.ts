@@ -159,7 +159,7 @@ bot.command('/start', async (ctx: any) => {
   // I use it in the logger to do verbose log for new users
   ctx.state.command = 'start'
 
-  const greetings = [
+  const greetings: [number, string][] = [
     [0.0, '👋 _Hello my darling friend!_'],
     [
       2.2,
@@ -477,7 +477,7 @@ if (NODE_ENV === 'production') {
   bot.launch({
     webhook: {
       domain: `https://${HOST}/${WEBHOOK_SECRET}`,
-      port: PORT,
+      port: +PORT,
     },
   })
   console.info('Launch webhook 🚀')

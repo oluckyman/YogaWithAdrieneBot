@@ -3,9 +3,17 @@ import { timeFormat } from 'd3-time-format'
 import { promises as fs } from 'fs'
 import type { BotMiddleware } from './models/bot'
 import { pauseForA, reportError } from './utils'
-import latestCalendar from '../calendars/11.json'
 
-type CalendarType = typeof latestCalendar
+type VideoType = {
+  year: number
+  month: number
+  day: number
+  title: string
+  duration: number
+}
+type YouTubeVideoType = VideoType & { id: string }
+type FwfgVideoType = VideoType & { url: string }
+type CalendarType = Array<YouTubeVideoType | FwfgVideoType>
 
 const longPractice: BotMiddleware = async (ctx, next) => {
   await next()

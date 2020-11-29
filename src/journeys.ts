@@ -1,12 +1,9 @@
 // @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable '_'.
 const _ = require('lodash')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'Extra'.
 const Extra = require('telegraf/extra')
 const journeys = require('../calendars/journeys.json')
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'reportErro... Remove this comment to see the full error message
 const { reportError, getUser } = require('./utils')
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'setupJourn... Remove this comment to see the full error message
 function setupJourneys(bot: any) {
   bot.command('/journeys', replyJourneys)
   bot.action('cb:journeys', replyJourneys)
@@ -17,7 +14,6 @@ function setupJourneys(bot: any) {
   // bot.action(/cb:journey:(?<year>\d+):(?<command>.*)$/, replyJourneyJoin)
 }
 
-// @ts-expect-error ts-migrate(2451) FIXME: Cannot redeclare block-scoped variable 'getJourney... Remove this comment to see the full error message
 const getJourney = (year: any) => journeys.find((c: any) => +c.year === +year)
 
 function replyJourneys(ctx: any) {
