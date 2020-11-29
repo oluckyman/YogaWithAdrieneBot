@@ -17,8 +17,7 @@ import replyCalendar from './calendar'
 import { pauseForA, reportError, getUser, isAdmin } from './utils'
 
 dotenv.config()
-
-const firestore = new Firestore({
+const firestore = new Firestore.Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
   credentials: {
     private_key: process.env.GOOGLE_APP_PRIVATE_KEY.split('\\n').join('\n'),
