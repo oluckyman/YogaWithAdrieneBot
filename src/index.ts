@@ -9,6 +9,7 @@ import Firestore, { DocumentReference, Timestamp } from '@google-cloud/firestore
 import { promises as fs } from 'fs'
 import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
+import antispam from './antispam'
 import chat from './chat'
 import getNowWatching from './nowWatching'
 import longPractice from './longPractice'
@@ -60,6 +61,10 @@ bot.use((ctx, next) => {
   // ctx.now = new Date('2020-09-27')
   return next()
 })
+
+// Spam filter
+//
+bot.use(antispam)
 
 // Logger
 //
