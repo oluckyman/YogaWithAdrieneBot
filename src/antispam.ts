@@ -6,10 +6,11 @@ const blacklist: UsernameOrId[] = ['MCKGAMINGYT']
 
 const antispam: BotMiddleware = (ctx, next) => {
   const user = getUser(ctx)
-  const isSpam = blacklist.includes(user?.id ?? 0) || blacklist.includes(user?.username ?? '')
-  if (isSpam) {
-    return
-  }
+  const isSpamer = blacklist.includes(user?.id ?? 0) || blacklist.includes(user?.username ?? '')
+  if (isSpamer) return
+
+  const isMessageFromGroup = !!ctx.update.channel_post
+  if (isMessageFromGroup) return
   return next()
 }
 
