@@ -9,7 +9,7 @@ const antispam: BotMiddleware = (ctx, next) => {
   const isSpamer = blacklist.includes(user?.id ?? 0) || blacklist.includes(user?.username ?? '')
   if (isSpamer) return
 
-  const isMessageFromGroup = !!ctx.update.channel_post
+  const isMessageFromGroup = !!(ctx.update.channel_post || ctx.update.edited_channel_post)
   if (isMessageFromGroup) return
   return next()
 }
