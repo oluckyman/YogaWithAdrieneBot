@@ -58,7 +58,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  ctx.now = new Date('2021-01-01')
+  // ctx.now = new Date('2021-01-01')
   return next()
 })
 

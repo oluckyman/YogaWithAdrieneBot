@@ -1,9 +1,11 @@
 import { Extra } from 'telegraf'
 import { ExtraPhoto } from 'telegraf/typings/telegram-types'
+import { reportError } from './utils'
 import type { BotMiddleware } from './models/bot'
 
 const calendarImageUrl = (now: Date) =>
   (({
+    1: 'https://user-images.githubusercontent.com/642673/103418679-02d7c100-4b90-11eb-81ac-57247cfe8522.png',
     5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
     6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
     7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
@@ -15,6 +17,7 @@ const calendarImageUrl = (now: Date) =>
   } as Record<number, string>)[now.getMonth() + 1])
 const calendarYouTubeUrl = (now: Date) =>
   (({
+    1: 'https://www.youtube.com/c/yogawithadriene/', // TODO: put link to the playlist
     5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
     6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
     7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
@@ -97,6 +100,19 @@ const replyCalendar: BotMiddleware = async (ctx) => {
     )
     .then(() => {
       ctx.state.success = true
+      return ctx
+    })
+    .catch(async (e) => {
+      console.error('Failed to show calendar', e)
+      await reportError({
+        ctx,
+        where: '/calendar',
+        error: e,
+        silent: true,
+      })
+      await ctx.replyWithMarkdown(
+        'Oh, calendar is not working now. Sorry for that. Check out https://yogawithadriene.com/calendar/'
+      )
       return ctx
     })
 }
