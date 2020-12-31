@@ -58,7 +58,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2020-09-27')
+  ctx.now = new Date('2021-01-01')
   return next()
 })
 
@@ -270,6 +270,10 @@ async function replyToday(ctx: BotContext) {
         month,
       }))
     )
+    .catch((e) => {
+      console.error('Failed to get videos', e)
+      return []
+    })
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
