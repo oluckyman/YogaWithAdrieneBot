@@ -38,10 +38,13 @@ const longPractice: BotMiddleware = async (ctx, next) => {
       .then((txt: any) => JSON.parse(txt))
       .then((json: CalendarType) => _.filter(json, { day }))
       .then((parts) => _.minBy(parts, 'duration'))
+      .catch(() => {
+        /* do nothing, the check below will handle empty video */
+      })
 
     if (!video) {
       // TODO: handle this case some day
-      console.error('Cannot find tomorrow’s video. Is it the end of month?')
+      console.error('Cannot find tomorrow’s video')
       return
     }
 
