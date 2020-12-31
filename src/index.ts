@@ -261,7 +261,7 @@ async function replyToday(ctx: BotContext) {
   // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos = await fs
+  const videos: any[] = await fs
     .readFile(`calendars/${month}.json`, 'utf8')
     .then((txt: any) => JSON.parse(txt))
     .then((json: any) =>
