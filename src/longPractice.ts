@@ -30,7 +30,7 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     const tomorrow = new Date(ctx.now)
     tomorrow.setDate(tomorrow.getDate() + 1)
     const month = timeFormat('%m')(tomorrow)
-    const day = tomorrow.getDate()
+    const day = tomorrow.getDate() - 1 // XXX: journey's special
 
     // TODO: cache parsed month playlist
     const video = await fs

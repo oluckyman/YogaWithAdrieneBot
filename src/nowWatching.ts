@@ -14,9 +14,7 @@ export default async function nowWatching(
   firestore: Firestore,
   { id, year, month, day }: NowWatchingProps
 ): Promise<number> {
-  // XXX: 2021-01-01 Journey exeption
-  const journeyDay = day - 1
-  const videoName = `${year}_${pad(month)}_${pad(journeyDay)}_${id}`
+  const videoName = `${year}_${pad(month)}_${pad(day)}_${id}`
   console.info({ videoName })
   type LogData = {
     log: Array<{

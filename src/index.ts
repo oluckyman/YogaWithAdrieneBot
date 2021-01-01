@@ -256,7 +256,7 @@ async function replyToday(ctx: BotContext) {
   ctx.state.command = 'today'
 
   const month = timeFormat('%m')(ctx.now)
-  const day = ctx.state.day || ctx.now.getDate()
+  const day = ctx.state.day || ctx.now.getDate() - 1 // XXX: journey day shift!
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
