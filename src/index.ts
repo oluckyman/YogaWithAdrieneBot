@@ -388,7 +388,7 @@ function nowWatchingMessage(nowWatching: any) {
   const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
   const messages =
     // eslint-disable-next-line no-nested-ternary
-    nowWatching > 25
+    nowWatching > 925
       ? [
           `*${number} people* started this video within the last minute`,
           `*${number} folks* started this video within the last minute`,
