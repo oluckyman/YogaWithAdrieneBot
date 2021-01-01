@@ -310,6 +310,7 @@ async function replyToday(ctx: BotContext) {
       .then(() => (ctx.state.success = true))
   }
   // Send the video and pre-video message
+  // TODO: define video type here!
   const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
   const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
   let message

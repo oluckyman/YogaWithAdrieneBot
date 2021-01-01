@@ -6,15 +6,17 @@ const pad = (num: number) => `${num}`.padStart(2, '0')
 
 interface NowWatchingProps {
   id: string
-  year?: number
+  year: number
   month: number
   day: number
 }
 export default async function nowWatching(
   firestore: Firestore,
-  { id, year = 2020, month, day }: NowWatchingProps
+  { id, year, month, day }: NowWatchingProps
 ): Promise<number> {
-  const videoName = `${year}_${pad(month)}_${pad(day)}_${id}`
+  // XXX: 2021-01-01 Journey exeption
+  const journeyDay = day - 1
+  const videoName = `${year}_${pad(month)}_${pad(journeyDay)}_${id}`
   console.info({ videoName })
   type LogData = {
     log: Array<{
