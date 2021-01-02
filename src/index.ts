@@ -225,8 +225,12 @@ const replyHelp = (ctx: any) =>
 `,
       Extra.webPreview(false)
     )
-    .then(() => (ctx.state.success = true))
-    .then(() => (ctx.state.command = 'help'))
+    .then(() => {
+      ctx.state.success = true
+    })
+    .then(() => {
+      ctx.state.command = 'help'
+    })
 // • <b>/about</b> this bot and Yoga With Adriene 🤔
 bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
@@ -238,7 +242,9 @@ bot.command('/feedback', (ctx: any) =>
 Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
 `
     )
-    .then(() => (ctx.state.success = true))
+    .then(() => {
+      ctx.state.success = true
+    })
 )
 
 const oneOf = (messages: any) => _.sample(_.sample(messages))
@@ -280,7 +286,9 @@ async function replyToday(ctx: BotContext) {
     const message =
       `Here should be a link to the video, but there isn’t 🤷\n` +
       `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    return ctx.replyWithMarkdown(message).then(() => (ctx.state.success = true))
+    return ctx.replyWithMarkdown(message).then(() => {
+      ctx.state.success = true
+    })
   }
 
   if (!part && videos.length > 1) {
@@ -307,7 +315,9 @@ async function replyToday(ctx: BotContext) {
         message,
         Extra.markup((m: any) => m.inlineKeyboard(buttons(m)))
       )
-      .then(() => (ctx.state.success = true))
+      .then(() => {
+        ctx.state.success = true
+      })
   }
   // Send the video and pre-video message
   // TODO: define video type here!
@@ -342,12 +352,19 @@ async function replyToday(ctx: BotContext) {
 
   try {
     message = 'oops 🐩' // so it can be used in catch (e) block
-    const partSymbol = isFWFGDay ? (isFWFG(video) ? '🖤' : '❤️') : part ? getPart(+part) : ''
+    let partSymbol
+    if (isFWFGDay) {
+      partSymbol = isFWFG(video) ? '🖤' : '❤️'
+    } else {
+      partSymbol = part ? getPart(+part) : ''
+    }
 
     const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
     message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
     console.info(message)
-    return ctx.reply(message, Extra.markup(menuKeboard)).then(() => (ctx.state.success = true))
+    return ctx.reply(message, Extra.markup(menuKeboard)).then(() => {
+      ctx.state.success = true
+    })
   } catch (e) {
     console.error(`Error with video link: ${message}`, e)
     return reportError({ ctx, where: '/today: the video link', error: e })
@@ -456,7 +473,9 @@ async function replySmallTalk(ctx: any) {
     ctx.state.logQueue = [...(ctx.state.logQueue || []), reply]
     console.info(reply)
   }
-  return ctx.replyWithMarkdown(reply).then(() => (ctx.state.success = true))
+  return ctx.replyWithMarkdown(reply).then(() => {
+    ctx.state.success = true
+  })
 }
 bot.hears(smallTalkMessage, replySmallTalk)
 
@@ -493,11 +512,12 @@ if (NODE_ENV === 'production') {
   console.info('Launch webhook 🚀')
 
   // Prevent app from sleeping
+  // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
   const request = require('request')
   const ping = () =>
     request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
-      error && console.info('error:', error)
-      body && console.info('body:', body)
+      if (error) console.info('error:', error)
+      if (body) console.info('body:', body)
       setTimeout(ping, 1000 * 60 * 25)
     })
   console.info('Ping myself 👈')
