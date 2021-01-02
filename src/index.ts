@@ -58,7 +58,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-01-01')
+  // ctx.now = new Date('2021-01-03')
   return next()
 })
 
@@ -396,12 +396,20 @@ function shortUrl(id: any) {
 // Show who's practicing right now
 //
 function nowWatchingMessage(nowWatching: any) {
-  const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴🦄']
+  const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴']
+  const rare = [...'🦄', ...'🎅🤶⛄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
-  const yogi = yogi1
-  const emojis = _.range(nowWatching)
-    .map(() => _.sample(yogi))
-    .join('')
+  const yogi = [...yogi1, ...rare]
+  const emojisArr = _.range(nowWatching).map(() => _.sample(yogi))
+  // keep only one instance of rare emoji
+  rare.forEach((emoji) => {
+    const indexes = emojisArr.map((e, i) => (e === emoji ? i : -1)).filter((i) => i !== -1)
+    const toReplace = _.sampleSize(indexes, indexes.length - 1)
+    toReplace.forEach((index) => {
+      emojisArr[index] = _.sample(yogi1)
+    })
+  })
+  const emojis = emojisArr.join('')
   const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
   const messages =
     // eslint-disable-next-line no-nested-ternary
