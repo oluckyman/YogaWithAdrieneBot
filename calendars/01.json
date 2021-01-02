@@ -7,7 +7,14 @@
     "title": "Welcome to BREATH - A 30 Day Yoga Journey",
     "duration": 5
   },
-  { "year": 2021, "month": 1, "day": 1, "id": "JpWa4LtKe4c", "title": "", "duration": 48 },
+  {
+    "year": 2021,
+    "month": 1,
+    "day": 1,
+    "id": "ZSIp00SewO8",
+    "title": "Day 1 - Invite  |  BREATH - A 30 Day Yoga Journey",
+    "duration": 48
+  },
   { "year": 2021, "month": 1, "day": 2, "id": "JpWa4LtKe4c", "title": "", "duration": 37 },
   { "year": 2021, "month": 1, "day": 3, "id": "JpWa4LtKe4c", "title": "", "duration": 34 },
   { "year": 2021, "month": 1, "day": 4, "id": "JpWa4LtKe4c", "title": "", "duration": 27 },
