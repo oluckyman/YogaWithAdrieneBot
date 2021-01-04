@@ -5,17 +5,18 @@ import { timeFormat } from 'd3-time-format'
 import Promise from 'bluebird'
 import { toEmoji } from 'number-to-emoji'
 import writtenNumber from 'written-number'
-import Firestore, { DocumentReference, Timestamp } from '@google-cloud/firestore'
+import Firestore from '@google-cloud/firestore'
 import { promises as fs } from 'fs'
 import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import antispam from './antispam'
 import chat from './chat'
+import announcments from './announcments'
 import getNowWatching from './nowWatching'
 import longPractice from './longPractice'
 import replyCalendar from './calendar'
 // import { setupJourneys } from './journeys'
-import { pauseForA, reportError, getUser, isAdmin } from './utils'
+import { pauseForA, reportError, isAdmin } from './utils'
 
 dotenv.config()
 const firestore = new Firestore.Firestore({
@@ -81,87 +82,9 @@ bot.use(logger)
 //
 bot.use(chat)
 
-// Annoncement
+// Annoncements
 //
-bot.use(async (ctx, next) => {
-  await next()
-  try {
-    // 0. if it was one of today commands
-    if (ctx.state.command !== 'today') {
-      return
-    }
-    console.info(`Checking if I should send a link to chart to user?`)
-
-    // TODO: need a bullet-proof get-user method
-    const user = getUser(ctx)
-
-    // 1. get user doc by user.id
-    type UserData = {
-      id: number
-      yogi: string
-      message_sent_at: Timestamp
-      first_name: string
-    }
-    const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
-    await userDoc.get().then(async (doc) => {
-      if (!doc.exists) {
-        console.info(`dunno this user ${user?.id}`)
-        return // TODO: what async and what not?
-      }
-      const { yogi, message_sent_at, first_name } = doc.data() ?? {}
-
-      // 2. see if the doc has yogi field and message was not sent
-      if (!yogi) {
-        console.info(`${first_name} not a regular user in May`)
-        return
-      }
-      if (message_sent_at) {
-        console.info(`${first_name} already received the message at`, message_sent_at.toDate())
-        return
-      }
-
-      // 3. Send the link
-      let linkSeen = false
-      try {
-        await pauseForA(2)
-        await ctx.reply(`👋 Hey, ${first_name}! One more thing…`)
-        await pauseForA(2)
-        await ctx.reply(`You might be interested to see what the last month looked like from the bot’s perspective.`)
-        await pauseForA(3)
-        await ctx.replyWithMarkdown(
-          // eslint-disable-next-line no-irregular-whitespace
-          `Check out the [Yoga Calendar Effect](https://yoga-calendar-effect.now.sh/?yogi=${yogi}) chart.\nYou’re part of it too!`
-        )
-        linkSeen = true
-
-        // 4. save message sent date
-        await userDoc.update({
-          message_sent_at: new Date(),
-        })
-
-        console.info(`link sent to ${first_name} (yogi=${yogi})`)
-        const linkSentMessage = `${first_name} have received https://ywa-calendar-may-2020.now.sh/?yogi=${yogi}`
-        await ctx.telegram.sendMessage(process.env.LOG_CHAT_ID, linkSentMessage)
-      } catch (e) {
-        await reportError({
-          ctx,
-          where: `yogi message, linkSeen: ${linkSeen}, yogi: ${yogi}`,
-          error: e,
-          silent: true,
-        })
-      }
-    })
-    return Promise.resolve()
-  } catch (e) {
-    console.error('🐛 In announcement logic', e)
-    return reportError({
-      ctx,
-      where: 'announcement middleware',
-      error: e,
-      silent: true,
-    })
-  }
-})
+bot.use(announcments)
 
 bot.use(longPractice)
 
