@@ -52,13 +52,20 @@ bot.catch(async (err: string, ctx: BotContext) => {
   return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
 
+function convertTZ(date: Date, tzString: string) {
+  return new Date(date.toLocaleString('en-US', { timeZone: tzString }))
+}
+
 bot.use((ctx, next) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-01-03')
+  // ctx.now = new Date('2021-01-02 06:59')
+
+  // Use Texas Central timezone: this is the official YWA time
+  ctx.now = convertTZ(ctx.now, 'America/Chicago')
   return next()
 })
 
