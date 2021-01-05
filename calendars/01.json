@@ -31,7 +31,14 @@
     "title": "Day 3 - Anchor | BREATH - A 30 Day Yoga Journey ",
     "duration": 35
   },
-  { "year": 2021, "month": 1, "day": 4, "id": "JpWa4LtKe4c", "title": "", "duration": 27 },
+  {
+    "year": 2021,
+    "month": 1,
+    "day": 4,
+    "id": "-rjYMUNJsO0",
+    "title": "Day 4 - Listen | BREATH - A 30 Day Yoga Journey",
+    "duration": 27
+  },
   { "year": 2021, "month": 1, "day": 5, "id": "JpWa4LtKe4c", "title": "", "duration": 23 },
   { "year": 2021, "month": 1, "day": 6, "id": "JpWa4LtKe4c", "title": "", "duration": 28 }
 ]
