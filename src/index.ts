@@ -11,7 +11,7 @@ import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import antispam from './antispam'
 import chat from './chat'
-// import announcments from './announcments'
+import useAnnouncments from './announcments'
 import getNowWatching from './nowWatching'
 import longPractice from './longPractice'
 import replyCalendar from './calendar'
@@ -85,6 +85,7 @@ bot.use(chat)
 // Annoncements
 //
 // bot.use(announcments)
+useAnnouncments(bot)
 
 bot.use(longPractice)
 
