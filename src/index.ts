@@ -60,6 +60,13 @@ function convertTZ(date: Date, tzString: string) {
 bot.use((ctx, next) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
+  /* from https://telegraf.js.org/#/?id=extending-context
+  The recommended way to extend bot context:
+  const bot = new Telegraf(process.env.BOT_TOKEN)
+  bot.context.db = {
+    getScores: () => { return 42 }
+  }
+  */
   ctx.firestore = firestore
 
   ctx.now = new Date()

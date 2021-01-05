@@ -4,7 +4,8 @@ import type { Bot, BotMiddleware } from './models/bot'
 import { getUser } from './utils'
 
 // XXX: Don't forget, the title goes first
-const letter = `*Yoga is not all about fancy poses or sweating*
+const title = 'Yoga is not all about fancy poses or sweating'
+const letter = `
 
 Dear Elias,
  
@@ -57,12 +58,44 @@ const announcments: BotMiddleware = async (ctx, next) => {
   if (ctx.state.command !== 'today') {
     return
   }
-  await ctx.reply(
-    'The letter',
-    Extra.markdown().markup((m: any) =>
-      m.inlineKeyboard([m.callbackButton(`💌 Day ${ctx.now.getDate() - 1}`, 'cb:the_letter')])
-    )
+  await ctx.replyWithMarkdown(
+    `💌 Day ${ctx.now.getDate() - 1}: *${title}*`,
+    Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton(`Show the letter`, 'cb:the_letter')]))
   )
+}
+
+const theLetterShow: BotMiddleware = async (ctx) => {
+  const user = getUser(ctx)
+  type UserData = { id: number; first_name: string }
+  const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
+  return userDoc.get().then(async (doc) => {
+    if (!doc.exists) {
+      console.info(`dunno this user ${user?.id}`)
+      return
+    }
+    const { first_name = 'Love' } = doc.data() ?? {}
+    const message = `💌 Day ${ctx.now.getDate() - 1}: *${title}*\n${letter.replace(/Elias/g, first_name)}`
+    ctx.answerCbQuery()
+    return ctx.editMessageText(
+      message,
+      Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton('Hide', 'cb:the_letter_hide')]))
+    )
+  })
+}
+
+const theLetterHide: BotMiddleware = async (ctx) => {
+  ctx.answerCbQuery()
+  const message = `💌 Day ${ctx.now.getDate() - 1}: *${title}*`
+  return ctx.editMessageText(
+    message,
+    Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton('Show', 'cb:the_letter')]))
+  )
+}
+
+const useAnnouncments = (bot: Bot): void => {
+  bot.use(announcments)
+  bot.action('cb:the_letter', theLetterShow)
+  bot.action('cb:the_letter_hide', theLetterHide)
 }
 
 // const announcments_May_Monthly_Calendar: BotMiddleware = async (ctx, next) => {
@@ -144,29 +177,5 @@ const announcments: BotMiddleware = async (ctx, next) => {
 //     })
 //   }
 // }
-
-const useAnnouncments = (bot: Bot): void => {
-  bot.use(announcments)
-  bot.action('cb:the_letter', async (ctx) => {
-    const user = getUser(ctx)
-    // 1. get user doc by user.id
-    type UserData = {
-      id: number
-      yogi: string
-      message_sent_at: Timestamp
-      first_name: string
-    }
-    const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
-    await userDoc.get().then(async (doc) => {
-      if (!doc.exists) {
-        console.info(`dunno this user ${user?.id}`)
-        return
-      }
-      const { first_name = '' } = doc.data() ?? {}
-      await ctx.replyWithMarkdown(letter.replace(/Elias/g, first_name))
-    })
-    // Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton('✉️ Close', 'cb:the_letter_close')]))
-  })
-}
 
 export default useAnnouncments
