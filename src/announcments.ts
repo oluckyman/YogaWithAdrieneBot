@@ -73,7 +73,7 @@ const theLetterShow: BotMiddleware = async (ctx) => {
       console.info(`dunno this user ${user?.id}`)
       return
     }
-    const { first_name = 'Love' } = doc.data() ?? {}
+    const { first_name = 'Friend' } = doc.data() ?? {}
     const message = `💌 Day ${ctx.now.getDate() - 1}: *${title}*\n${letter.replace(/Elias/g, first_name)}`
     ctx.answerCbQuery()
     return ctx.editMessageText(
@@ -144,7 +144,7 @@ const useAnnouncments = (bot: Bot): void => {
 //         await ctx.reply(`You might be interested to see what the last month looked like from the bot’s perspective.`)
 //         await pauseForA(3)
 //         await ctx.replyWithMarkdown(
-//           // eslint-disable-next-line no-irregular-whitespace
+// eslint-disable-next-line no-irregular-whitespace
 //           `Check out the [Yoga Calendar Effect](https://yoga-calendar-effect.now.sh/?yogi=${yogi}) chart.\nYou’re part of it too!`
 //         )
 //         linkSeen = true
