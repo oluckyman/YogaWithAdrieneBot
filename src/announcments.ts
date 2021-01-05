@@ -60,7 +60,9 @@ const announcments: BotMiddleware = async (ctx, next) => {
   }
   await ctx.replyWithMarkdown(
     `💌 Day ${ctx.now.getDate() - 1}: *${title}*`,
-    Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton(`Show the letter`, 'cb:the_letter')]))
+    Extra.notifications(false)
+      .markdown()
+      .markup((m: any) => m.inlineKeyboard([m.callbackButton(`Show the letter`, 'cb:the_letter')]))
   )
 }
 

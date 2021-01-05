@@ -85,6 +85,7 @@ const replyCalendar: BotMiddleware = async (ctx) => {
       calendarImageUrl(ctx.now),
       // XXX: journeys special
       (Extra.caption(`*/today* is *Day ${ctx.now.getDate() - 1}*`)
+        .notifications(false)
         .markdown()
         .markup(
           (m: any) =>

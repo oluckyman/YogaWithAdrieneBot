@@ -147,7 +147,7 @@ bot.command('/start', async (ctx: any) => {
   })
 })
 
-const replyHelp = (ctx: any) =>
+const replyHelp = (ctx: BotContext) =>
   ctx
     .replyWithHTML(
       `
@@ -161,7 +161,7 @@ const replyHelp = (ctx: any) =>
 
 👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
 `,
-      Extra.webPreview(false)
+      Extra.notifications(false).webPreview(false) as any
     )
     .then(() => {
       ctx.state.success = true
@@ -251,7 +251,7 @@ async function replyToday(ctx: BotContext) {
     return ctx
       .replyWithMarkdown(
         message,
-        Extra.markup((m: any) => m.inlineKeyboard(buttons(m)))
+        Extra.notifications(false).markup((m: any) => m.inlineKeyboard(buttons(m)))
       )
       .then(() => {
         ctx.state.success = true
@@ -269,7 +269,7 @@ async function replyToday(ctx: BotContext) {
   }
   try {
     await Promise.all([
-      ctx.replyWithMarkdown(message),
+      ctx.replyWithMarkdown(message, Extra.notifications(false) as any),
       pauseForA(2), // give some time to read the message
     ])
     // show how the message looks in botlog
@@ -300,7 +300,7 @@ async function replyToday(ctx: BotContext) {
     const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
     message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
     console.info(message)
-    return ctx.reply(message, Extra.markup(menuKeboard)).then(() => {
+    return ctx.reply(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
       ctx.state.success = true
     })
   } catch (e) {
