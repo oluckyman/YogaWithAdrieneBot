@@ -4,53 +4,49 @@ import type { Bot, BotMiddleware } from './models/bot'
 import { getUser } from './utils'
 
 // XXX: Don't forget, the title goes first
-const title = 'Yoga is not all about fancy poses or sweating'
+const title = 'Make it to today and you can do this whole journey'
 const letter = `
-
 Dear Elias,
  
-Your presence is a gift.
+High five!
  
-If you had a thought or inkling that - despite what western wellness culture has marketed to you - yoga is not in fact all about fancy poses or sweating actual bullets, but rather about a deep, deep listening, I am here to tell you that, I think you are right. 
+If you make it to day five, you can do this whole journey. 
  
-Listen to the feedback that every gesture gives back to you. Rather than just _doing_ the poses, or _doing_ yoga, trust that practice really is an art of listening. 
+Today’s practice focuses on how the power of a true breath led yoga practice can shift and replenish the whole package. 
  
-Listening and responding…
+When we train our body to support deeper and more efficient breathing, we will begin to experience benefits that can shift, transform, heal, and center. 
  
-With, yes, again you’re right, 
+A true ripple effect of good health, alignment, and therefore the right energy to create, play, work, serve, live your life fully. 
  
-Your breath. 
+When we start to learn how to breathe more consciously, we will also start to feel less fatigued, and more naturally energetic and clear. 
  
-You actually have a lot of wisdom within. 
+We feel calmer and therefore experience less anxiety and feelings of stress. 
  
-A deep well. 
+We are able to lower and stabilize blood pressure. 
  
-The practice I am sharing in this 30 Day Journey will help you uncover it, and embody it.
+We are able to boost body function, such as immunity and digestion! 
+ 
+When we breathe with efficiency we carry oxygen in and carbon monoxide out. We send more life force to all of our living cells by sending oxygen into the body via our blood.
+ 
+When your heart receives increased oxygen it may slow down its pump rate - what!?
+ 
+Today’s session is designed to help you stay curious, to feel how your energy is shifting, and to invite a full replenish to balance out drain.
 
 --
 
-Our vocabulary grows today as we continue on our explorative journey, kicking it off with diaphragmatic breathing. 
+Replenish that which needs to be replenished, so that you can feel good. The world needs you feeling your best. 
  
-Most people do not breathe as well as they can, and I do mean MOST. 
+Cue the ripple effect. 
+
  
-We continue with intentional and intuitive movement to improve our posture today, why? 
+I love you. I am so glad you are doing this. 
  
-So you may breathe better, my dear. 
+See you tomorrow for a fun 28 min core practice.
  
-Re-training the posture is one of the best ways to ensure you are breathing deeply and efficiently.  
+Yours, 
+Adriene 
  
-When we are breathing deeply and efficiently we invite a WHOLE WELL of benefits our way. 
- 
-More about those benefits tomorrow, for today, listen to your inner teacher.
- 
-That guru is _the one_. 
- 
-Love, 
-Adriene
- 
- 
-_Listen - are you breathing just a little, and calling it a life?_
-_MARY OLIVER_  
+PS: I am enjoying hearing about your journey in the comments on YouTube and via the hashtag #ywabreath. So inspiring! Thank you for sharing, as you are no doubt encouraging someone else too.
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
