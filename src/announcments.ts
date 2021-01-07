@@ -4,49 +4,49 @@ import type { Bot, BotMiddleware } from './models/bot'
 import { getUser } from './utils'
 
 // XXX: Don't forget, the title goes first
-const title = 'Make it to today and you can do this whole journey'
+const title = 'Begin where you are today'
 const letter = `
 Dear Elias,
  
-High five!
+Day 6 is here, and it is a 30 Days Of Yoga tradition that on day 6 we focus on the core.
  
-If you make it to day five, you can do this whole journey. 
+Core centric practices are great for toning muscles that support strong and optimal function (read - less back pain) and, let me just get this out of the way, you will be working all of your abs into a fine fiery burn. 
  
-Today’s practice focuses on how the power of a true breath led yoga practice can shift and replenish the whole package. 
+But this type of work can also be really healing and centering. 
  
-When we train our body to support deeper and more efficient breathing, we will begin to experience benefits that can shift, transform, heal, and center. 
+Remember, this is a process of self discovery. 
  
-A true ripple effect of good health, alignment, and therefore the right energy to create, play, work, serve, live your life fully. 
+In my 30 day programs, Day 6 practices offer the opportunity to peel back another layer of connecting to who you are today, and what is serving **now**.
  
-When we start to learn how to breathe more consciously, we will also start to feel less fatigued, and more naturally energetic and clear. 
+Think of how many versions of your self you have been throughout your lifetime.
  
-We feel calmer and therefore experience less anxiety and feelings of stress. 
+A breath centric practice is one in which you are meeting yourself where you are today. 
  
-We are able to lower and stabilize blood pressure. 
+Core work, similar to balancing postures, encouraging you to take stock and embody the present moment as a way of creating sustainable strength and stamina. 
  
-We are able to boost body function, such as immunity and digestion! 
+While it can sometimes feel discouraging, it is most necessary that you take on the task of beginning where you are today. This is how we evolve, it’s how we learn to know ourselves better, and it is how we get stronger.
  
-When we breathe with efficiency we carry oxygen in and carbon monoxide out. We send more life force to all of our living cells by sending oxygen into the body via our blood.
+Today’s practice begins with a powerful pranayama, or breath technique, called the Breath Of Fire. 
  
-When your heart receives increased oxygen it may slow down its pump rate - what!?
+This breath technique comes with loads of benefits for long term health, and will also supply us with the energy and focus we may need for today’s core conditioning. 
  
-Today’s session is designed to help you stay curious, to feel how your energy is shifting, and to invite a full replenish to balance out drain.
+Breath Of Fire, also known as Kapalabhati, is a rhythmic cleansing breath that offers the respiratory system some major love. To get a full breakdown on Breath Of Fire,  [you may watch my tutorial here](https://www.youtube.com/watch?v=jbtLH-3DfLc&feature=youtu.be) . Again, fair warned, it is from Halloween 2014. 
 
 --
 
-Replenish that which needs to be replenished, so that you can feel good. The world needs you feeling your best. 
+Today’s session is great for the beginner, but also good for a long term practitioner who may be ready to assess what in their practice once served but may no longer be serving today. _Noticing this could lead to uncovering deeper layers, and a newfound sense of joy whilst doing hard things._
  
-Cue the ripple effect. 
-
+**Notice what it feels like to be alive today.**
  
-I love you. I am so glad you are doing this. 
+**Burn away that which no longer serves.**  
  
-See you tomorrow for a fun 28 min core practice.
- 
+Today is a fun one, I will meet you there. 
+  
 Yours, 
-Adriene 
+Adriene
  
-PS: I am enjoying hearing about your journey in the comments on YouTube and via the hashtag #ywabreath. So inspiring! Thank you for sharing, as you are no doubt encouraging someone else too.
+_Through love burning fire is pleasing light._
+_RUMI_
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
