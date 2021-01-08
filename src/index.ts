@@ -333,7 +333,7 @@ function shortUrl(id: any) {
 
 // Show who's practicing right now
 //
-function nowWatchingMessage(nowWatching: any) {
+function nowWatchingMessage(nowWatching: number) {
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😇😌😌😌😌😌😌😊😊😊😊😊😊😬😴']
   const rare = [...'🦄', ...'🎅🤶⛄']
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
@@ -348,7 +348,7 @@ function nowWatchingMessage(nowWatching: any) {
     })
   })
   const emojis = emojisArr.join('')
-  const number = nowWatching <= 10 ? writtenNumber(nowWatching) : nowWatching
+  const number = nowWatching <= 10 ? writtenNumber(nowWatching) : `${nowWatching}`
   const messages =
     // eslint-disable-next-line no-nested-ternary
     nowWatching > 925
@@ -361,9 +361,9 @@ function nowWatchingMessage(nowWatching: any) {
       : // eslint-disable-next-line no-nested-ternary
       nowWatching > 2
       ? [
-          `*${_.capitalize(number)} folks* started this video within the last minute\n${emojis}`,
-          `Practice in sync with *${number} people*\n${emojis}`,
-          `Join *${number} brave souls*, they’ve just started\n${emojis}`,
+          `${emojis}\n*${_.capitalize(number)} folks* started this video within the last minute`,
+          `${emojis}\nPractice in sync with *${number} people*`,
+          `${emojis}\nJoin *${number} brave souls*, they’ve just started`,
         ]
       : nowWatching === 2
       ? [`Make a trio with these *two*, they started within the last minute: ${emojis}`]
