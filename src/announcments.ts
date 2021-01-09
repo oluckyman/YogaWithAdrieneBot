@@ -4,47 +4,77 @@ import type { Bot, BotMiddleware } from './models/bot'
 import { getUser } from './utils'
 
 // XXX: Don't forget, the title goes first
-const title = 'You should feel proud!'
+const title = 'Snuggle up to the role of the observer.'
 const letter = `
 Dear Elias,
  
-Today marks one week of BREATH practice.
+Who wants to snuggle? 
+(Besides Benji.)
  
-How about we take a breath right now?
+Bring an extra blanket or towel and a pillow to the mat today for this restorative practice. 
  
-Lift your heart, relax your shoulders, and let’s celebrate one week together. 
+If you don’t have any of these things, don’t worry, just come as you are and it will still be really snuggly. 
  
-This program has depth. It asks you to sustain curiosity and extend a kindness to yourself that maybe you are not used to.  
+Wear something extra comfy! 
  
-It asks you to show up, even when you don’t feel like it, or when it feels like the day is conspiring against you.
+Lay an extra blanket down if you like, and let’s snuggle up to the sensation and rhythm of the breath in today’s gentle floor practice. 
  
-You should feel proud! One week of showing up for yourself in this manner is no small feat. 
+This session continues to help us learn about the philosophy of yoga too.  
  
-Today’s session invites you to feel the love that you are and that you deserve. We commemorate week one and phase one of this journey with a yummy vinyasa practice.
+For example, _snuggling up to the role of the observer_ has changed my whole life. 
  
-For a breakdown of the word _vinyasa_ and what it truly means, you might like to check out  this  [“What is Vinyasa?” video that I made in… 2015.](https://www.youtube.com/watch?v=cQ69bxW0DN4&feature=youtu.be) 
- 
-Your Day 7 practice includes some gentle and delicious dynamic movement to help you continue to free your spine, ribs, shoulders, and neck.
+Off the mat, this practice has allowed me to pause more, and notice my reaction before  I make a choice on how I want to consciously react to that emotional response. This has helped me to be a better listener, to move with more mindfulness, and to act with greater intention and purpose. 
 
 --
 
-Synchronize your watch, your heart, your brain, and your movement to your breath.
-
-I am here to remind you that you are worthy. It is a total honor to be your guide and your cheerleader on this journey. 
-
-Tomorrow begins week two! 
-
-Our quest for conscious breath continues with a very relaxing and supportive DAY 8. (Bring a blanket and a pillow to _snuggle_ with, if you have them. No worries if not.)
+Today’s practice is nice and slow and low to the ground. Medicine for the legs, the hips, the torso, and the spine. But also hopefully some feel good medicine for thine heart too. 
  
+Don’t miss it. Get to that mat today.
  
-Sincerely, 
+I hope you enjoy!
+ 
+With Love, 
 Adriene
  
-PS: The  [BREATH POP UP SHOP](https://yoga-with-adriene.teemill.com/?from=YogaWithAdrieeBot)  is live as we enter week two!
-Per your request, we have created a collection of limited edition **Yoga with Adriene** pieces for you - printed on zero waste natural fibers to celebrate your experience! 
-All items in this shop are custom made for this journey, designed by independent artists I love, packaged **without plastic**, and ship most everywhere! 
- [Click here to view the Breath Pop Up Shop and learn more!](https://yoga-with-adriene.teemill.com/?from=YogaWithAdrieeBot) 
+ 
+_The fox_
+_is so quiet—_
+_he moves like a red rain—_
+_even when his_
+_shoulders tense and then_
+_snuggle down for an instant_
+_against the ground_
+_and the perfect_
+_gate of his teeth_
+_slams shut_
+_there is nothing_
+_you can hear_
+_but the cold creek moving_
+_over the dark pebbles_
+_and across the field_
+_and into the rest of the world—_
+_and even when you find_
+_in the morning_
+_the feathery_
+_scuffs of fur_
+_of the vanished_
+_snowshoe hare_
+_tangled_
+_on the pale spires_
+_of the broken flowers_
+_of the lost summer—_
+_fluttering a little_
+_but only_
+_like the lapping threads_
+_of the wind itself—_
+_there is still_
+_nothing that you can hear_
+_but the cold creek moving_
+_over the old pebbles_
+_and across the field and into_
+_another year._
 
+_THE SNOWSHOE HARE, By MARY OLIVER_
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
