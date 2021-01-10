@@ -54,6 +54,7 @@ export default async function nowWatching(
     viewDeltas.map((d) => d.delta),
     3.5
   ).map((d) => d / minutes)
+  console.info('nowWatching', _.takeRight(smoothDeltas, 5))
   return Math.round(_.last(smoothDeltas) as number)
 }
 
