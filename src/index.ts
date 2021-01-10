@@ -72,7 +72,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-01-02 06:59')
+  // ctx.now = new Date('2021-01-12 06:59')
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')

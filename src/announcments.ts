@@ -3,8 +3,18 @@ import { Timestamp, DocumentReference } from '@google-cloud/firestore'
 import type { Bot, BotMiddleware } from './models/bot'
 import { getUser } from './utils'
 
-// XXX: Don't forget, the title goes first
-const title = 'Learn the process of centering yourself'
+const titles = [
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  'Learn the process of centering yourself', // 9
+]
 const letter = `
 Dear Elias,
  
@@ -49,25 +59,32 @@ const announcments: BotMiddleware = async (ctx, next) => {
   if (ctx.state.command !== 'today') {
     return
   }
-  await ctx.replyWithMarkdown(
-    `💌 Day ${ctx.now.getDate() - 1}: *${title}*`,
-    Extra.notifications(false)
-      .markdown()
-      .markup((m: any) => m.inlineKeyboard([m.callbackButton(`Show the letter`, 'cb:the_letter')]))
-  )
+  const day = ctx.now.getDate() - 1
+  const title = titles[day]
+  if (title) {
+    return ctx.replyWithMarkdown(
+      `💌 Day ${day}: *${title}*`,
+      Extra.notifications(false)
+        .markdown()
+        .markup((m: any) => m.inlineKeyboard([m.callbackButton(`Show the letter`, 'cb:the_letter')]))
+    )
+  }
+  return ctx.replyWithMarkdown(`💌 Remember to read the letter`)
 }
 
 const theLetterShow: BotMiddleware = async (ctx) => {
   const user = getUser(ctx)
   type UserData = { id: number; first_name: string }
   const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
+  const day = ctx.now.getDate() - 1
+  const title = titles[day]
   return userDoc.get().then(async (doc) => {
     if (!doc.exists) {
       console.info(`dunno this user ${user?.id}`)
       return
     }
     const { first_name = 'Friend' } = doc.data() ?? {}
-    const message = `💌 Day ${ctx.now.getDate() - 1}: *${title}*\n${letter.replace(/Elias/g, first_name)}`
+    const message = `💌 Day ${day}: *${title}*\n${letter.replace(/Elias/g, first_name)}`
     ctx.answerCbQuery()
     return ctx.editMessageText(
       message,
@@ -78,7 +95,9 @@ const theLetterShow: BotMiddleware = async (ctx) => {
 
 const theLetterHide: BotMiddleware = async (ctx) => {
   ctx.answerCbQuery()
-  const message = `💌 Day ${ctx.now.getDate() - 1}: *${title}*`
+  const day = ctx.now.getDate() - 1
+  const title = titles[day]
+  const message = `💌 Day ${day}: *${title}*`
   return ctx.editMessageText(
     message,
     Extra.markdown().markup((m: any) => m.inlineKeyboard([m.callbackButton('Show', 'cb:the_letter')]))
