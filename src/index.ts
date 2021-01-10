@@ -17,6 +17,8 @@ import longPractice from './longPractice'
 import replyCalendar from './calendar'
 // import { setupJourneys } from './journeys'
 import { pauseForA, reportError, isAdmin } from './utils'
+import { getLiveJourneyVideos } from './today'
+import type { Video } from './today'
 
 dotenv.config()
 const firestore = new Firestore.Firestore({
@@ -188,9 +190,9 @@ Write _or tell or show_ what’s on your mind in the chat, and I’ll consider i
 const oneOf = (messages: any) => _.sample(_.sample(messages))
 
 // Consider videos without id as FWFG videos
-const isFWFG = (v: any) => !v.id
+const isFWFG = (v: { id: string }) => !v.id
 
-const getPart = (i: any) => {
+const getPart = (i: number) => {
   const partSymbols = ['🅰️', '🅱️', '❤️', '🧡', '💛', '💚', '💙', '💜']
   return i < partSymbols.length ? partSymbols[i] : `*[${i + 1}]*`
 }
@@ -205,7 +207,7 @@ async function replyToday(ctx: BotContext) {
   // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos: any[] = await fs
+  const videos: Video[] = await fs
     .readFile(`calendars/${month}.json`, 'utf8')
     .then((txt: any) => JSON.parse(txt))
     .then((json: any) =>
@@ -221,31 +223,44 @@ async function replyToday(ctx: BotContext) {
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
-    const message =
-      `Here should be a link to the video, but there isn’t 🤷\n` +
-      `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    return ctx.replyWithMarkdown(message).then(() => {
-      ctx.state.success = true
-    })
+    // Load current journey videos from YouTube channel
+    console.info("getting the today's video in YouTube channel")
+    const currentJourneyVideos = await getLiveJourneyVideos(ctx.now)
+    const year = ctx.now.getFullYear()
+    const todaysVideo = currentJourneyVideos.find((v) => v.day === day && v.month === +month && v.year === year)
+    console.info('got', { todaysVideo })
+    if (todaysVideo) {
+      videos.push(todaysVideo)
+    } else {
+      const message =
+        `Here should be a link to the video, but there isn’t 🤷\n` +
+        `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
+      return ctx.replyWithMarkdown(message).then(() => {
+        ctx.state.success = true
+      })
+    }
   }
 
   if (!part && videos.length > 1) {
+    // TODO: refactor types to handle title, duration and url optional params
+    // When there are many videos, we are sure they go from JSON, so extend the Video type
+    const videosFromJson = videos as Array<Video & { title: string; duration: number }>
     // Ask which one to show now
     let videosList
     let message
     let buttons: any
     if (isFWFGDay) {
-      videosList = videos
-        .map((v: any) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
+      videosList = videosFromJson
+        .map((v) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
         .join('\n')
       message = `FWFG video today\n${videosList}`
       buttons = (m: any) =>
-        videos.map((v: any, i: any) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
+        videosFromJson.map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
     } else {
-      videosList = videos.map((v: any, i: any) => `${getPart(i)} ${v.title}`).join('\n')
-      message = `${_.capitalize(writtenNumber(videos.length))} videos today\n${videosList}`
+      videosList = videosFromJson.map((v, i) => `${getPart(i)} ${v.title}`).join('\n')
+      message = `${_.capitalize(writtenNumber(videosFromJson.length))} videos today\n${videosList}`
       buttons = (m: any) =>
-        videos.map((v: any, i: any) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
+        videosFromJson.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
     console.info(message)
     return ctx
@@ -259,7 +274,7 @@ async function replyToday(ctx: BotContext) {
   }
   // Send the video and pre-video message
   // TODO: define video type here!
-  const video = _.filter(videos, (v: any, i: any) => !part || i === +part)[0]
+  const video = _.filter(videos, (v, i) => !part || i === +part)[0]
   const nowWatching = isFWFG(video) ? 0 : await getNowWatching(firestore, video)
   let message
   if (nowWatching) {
@@ -297,8 +312,8 @@ async function replyToday(ctx: BotContext) {
       partSymbol = part ? getPart(+part) : ''
     }
 
-    const videoUrl = video.url ? `${video.url}?from=YogaWithAdrieneBot` : shortUrl(video.id)
-    message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
+    const videoUrl = (v: Video & { url?: string }) => (v.url ? `${v.url}?from=YogaWithAdrieneBot` : shortUrl(v.id))
+    message = `${toEmoji(day)}${partSymbol} ${videoUrl(video)}`
     console.info(message)
     return ctx.reply(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
       ctx.state.success = true
@@ -327,7 +342,7 @@ bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx: any) => {
   return replyToday(ctx)
 })
 
-function shortUrl(id: any) {
+function shortUrl(id: string) {
   return `youtu.be/${id}`
 }
 

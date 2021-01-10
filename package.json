@@ -25,6 +25,7 @@
     "dayjs": "^1.8.28",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
+    "googleapis": "^49.0.0",
     "json-to-pretty-yaml": "^1.2.2",
     "lodash": "^4.17.20",
     "number-to-emoji": "^1.0.0",
