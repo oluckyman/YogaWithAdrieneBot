@@ -14,44 +14,53 @@ const titles = [
   '',
   '',
   'Learn the process of centering yourself', // 9
+  'Ready to go to the next level?', // 10
 ]
 const letter = `
 Dear Elias,
  
-We ease in to practice today with a breath technique that can help balance out the brain and body. 
-
+Connecting to your breath is a real love connection for me.
  
-This particular technique takes a second to get down, so be patient with yourself, but once you have this breath in your toolkit, oh baby.
+It can be as simple as tuning in to listen to the sound of the breath, to anchor a busy mind. 
  
-Alternate Nostril Breathing, also called Nadhi Shodana, is an incredible tool for activating the parasympathetic nervous system which can restore balance - particularly if you are consciously, or subconsciously, living more in fight or flight mode - which is common in such uncertain times. 
+It can be about getting still and noticing the quality of your breath in the moment. 
  
-If it feels almost impossible to drop into practice, this is a great tool to guide you in, improving the mind’s ability to focus and sometimes almost immediately helping you notice how you feel energetically. The energetic body can often go unnoticed. We don’t even realize we are quite off balance until things are so bad they begin to show up in a more harsh or glaring way.
+It can also be an opportunity to connect to something bigger, much larger than your brain or body, but perhaps a reflection of an energy, or a greater spirit.
  
-Practices such as yoga and breath techniques, like Nadhi Shodhana, offer us a way to better keep in alignment. 
+Whatever it may be like for you today, know that it may be different for your tomorrow. 
  
-As with other techniques in this series this breath also supports your lungs and respiratory functions.
+Or the way in which you may connect to the breath at the beginning of a practice, may feel different by the end.
+ 
+May you enjoy connecting the dots of each present moment today in practice… via your breath.
 
 --
 
-Today we introduce the powerful play of opposites in yoga asana as well, considering the ways in which we may join steadiness, or STHIRA, with ease, or SUKHA.
+Taking the elements of Sthira (steadiness) and Sukha (ease) - we move from awareness of breath into the second stage of this journey. 
  
-I guide postures today that are there not to discourage you, but to help you play with the concept of how to create a dance for **both** steadiness and ease, and one that is individual for **you**. 
+Ready to go to the next level?
  
-I invite you to use this material to check in, learn, and grow. 
+I believe you are!
  
-Remember, it’s not about being able to stand on one foot. 
+Remember this is time for you to get to know yourself better, stay curious about your truth.
  
-**Learn the process of centering yourself, and remember, it’s a process.**
+**It is uniquely yours.**
  
-If you fall, I will catch you.
+21 minutes today to connect. 
  
-You got this.
+I think you will really like today’s practice.
  
-Love, 
-Adriene
+Because while the journey can be challenging,
+ 
+Connection can feel _really good._
+ 
+Let’s go.
  
  
-PS:  [I have a whole video on Alternate Nostril Breathing](https://www.youtube.com/watch?v=8VwufJrUhic&feature=youtu.be)  if you wish for a full tutorial! It is from 2014, baby Adriene, please forgive the lime green walls as that was before I convinced my landlord to allow me to re-paint. 
+Yours, 
+Adriene 
+ 
+ 
+PS:  [Boot Scootin’ Boogie for your reference.](https://www.youtube.com/watch?v=OyWTyVaF5Uc&feature=youtu.be) 
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
