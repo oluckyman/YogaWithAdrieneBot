@@ -15,52 +15,55 @@ const titles = [
   '',
   'Learn the process of centering yourself', // 9
   'Ready to go to the next level?', // 10
+  'A new layer of sensory experience on the mat', // 11
 ]
 const letter = `
 Dear Elias,
  
-Connecting to your breath is a real love connection for me.
+Double high fives today to you, my darling. 
  
-It can be as simple as tuning in to listen to the sound of the breath, to anchor a busy mind. 
+Eleven days.
  
-It can be about getting still and noticing the quality of your breath in the moment. 
+It is not easy to carve out this time, I know it. 
  
-It can also be an opportunity to connect to something bigger, much larger than your brain or body, but perhaps a reflection of an energy, or a greater spirit.
+Remember, the hardest part is showing up. 
  
-Whatever it may be like for you today, know that it may be different for your tomorrow. 
+**But - you can do it.**
  
-Or the way in which you may connect to the breath at the beginning of a practice, may feel different by the end.
+Just get yourself to the mat, and together we will take the next step…which will allow each present moment to FLOW into the next. 
  
-May you enjoy connecting the dots of each present moment today in practice… via your breath.
+**The next 5 days are designed to take us through a new layer of sensory experience on the mat.**
+ 
+Let’s go…
 
 --
 
-Taking the elements of Sthira (steadiness) and Sukha (ease) - we move from awareness of breath into the second stage of this journey. 
+Today we focus on the concept of _flow_, providing tools for practice that may lead you to explore the ways in which you may be working against yourself instead of for yourself. 
  
-Ready to go to the next level?
+You have been warned. 
  
-I believe you are!
+This type of exploration can be revealing and, especially for those who have been practicing for a while now, it can be so freeing! 
  
-Remember this is time for you to get to know yourself better, stay curious about your truth.
+We will begin standing in Mountain Pose, Tadasana, today, taking time to ground before we explore different tempos and rhythms.
  
-**It is uniquely yours.**
+This is not meant to throw you but to help guide you into new territory for a deeper discovery.
  
-21 minutes today to connect. 
+**Use the tempo play to see how you can put what you have learned so far into practice.**
  
-I think you will really like today’s practice.
+We continue to learn new vocabulary as well as integrate what we have learned so far to align and find freedom within the form. 
  
-Because while the journey can be challenging,
+Don’t worry, when I say tempo, I don’t just mean quick, there are some extra yummy beats for relaxation. 
  
-Connection can feel _really good._
- 
-Let’s go.
- 
+Today is all about understanding how yoga can help us lean into the process of finding our flow. 
  
 Yours, 
-Adriene 
+Adriene
  
  
-PS:  [Boot Scootin’ Boogie for your reference.](https://www.youtube.com/watch?v=OyWTyVaF5Uc&feature=youtu.be) 
+ 
+PS:  [The BREATH POP UP SHOP](https://yoga-with-adriene.teemill.com/)  is live! Per your request, we have created a collection of limited edition **Yoga with Adriene** pieces for you - printed on zero waste natural fibers to celebrate your experience! All items in this shop are custom made for this journey, designed by independent artists I love, packaged **without plastic**, and shipped almost everywhere! 
+ 
+ [Click here to view the Breath Pop Up Shop and learn more! ](https://yoga-with-adriene.teemill.com/) 
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
