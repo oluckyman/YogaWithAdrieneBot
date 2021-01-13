@@ -16,54 +16,40 @@ const titles = [
   'Learn the process of centering yourself', // 9
   'Ready to go to the next level?', // 10
   'A new layer of sensory experience on the mat', // 11
+  'Awareness of this conversation can be life changing', // 12
 ]
 const letter = `
 Dear Elias,
  
-Double high fives today to you, my darling. 
+The breath is a dear friend that you can drop into conversation with anytime, anywhere. 
  
-Eleven days.
+The quality of that conversation will change from moment to moment, day to day, week to week, year to year.
  
-It is not easy to carve out this time, I know it. 
+The awareness of this ongoing conversation might change your life. 
  
-Remember, the hardest part is showing up. 
+It did mine. 
  
-**But - you can do it.**
+With a strong theme to help you **drop into a more conscious conversation with the breath**, this session also invites you to drop expectations of what you think yoga is, or should be.
  
-Just get yourself to the mat, and together we will take the next step…which will allow each present moment to FLOW into the next. 
- 
-**The next 5 days are designed to take us through a new layer of sensory experience on the mat.**
- 
-Let’s go…
-
+We begin to explore today’s theme at the start of practice with a breath technique that may feel difficult, as this may be a brand new way of breathing for you.
 --
-
-Today we focus on the concept of _flow_, providing tools for practice that may lead you to explore the ways in which you may be working against yourself instead of for yourself. 
+Gently dropping your ties to the exterior and taking time for yourself is not selfish. 
  
-You have been warned. 
+**When you arrive on the mat remember you are there to experience your body, and your breath. You are there to snuggle up to your truth, what feels like home, what feels honest.**
  
-This type of exploration can be revealing and, especially for those who have been practicing for a while now, it can be so freeing! 
+You may work today to release stress or worries, allowing yourself to be present in this process for the short time we are on our mat. This is our shortest session yet, at 18 minutes.
  
-We will begin standing in Mountain Pose, Tadasana, today, taking time to ground before we explore different tempos and rhythms.
+Take the time to drop in. 
  
-This is not meant to throw you but to help guide you into new territory for a deeper discovery.
- 
-**Use the tempo play to see how you can put what you have learned so far into practice.**
- 
-We continue to learn new vocabulary as well as integrate what we have learned so far to align and find freedom within the form. 
- 
-Don’t worry, when I say tempo, I don’t just mean quick, there are some extra yummy beats for relaxation. 
- 
-Today is all about understanding how yoga can help us lean into the process of finding our flow. 
+YOU ARE DOING GREAT!
  
 Yours, 
 Adriene
  
  
- 
-PS:  [The BREATH POP UP SHOP](https://yoga-with-adriene.teemill.com/)  is live! Per your request, we have created a collection of limited edition **Yoga with Adriene** pieces for you - printed on zero waste natural fibers to celebrate your experience! All items in this shop are custom made for this journey, designed by independent artists I love, packaged **without plastic**, and shipped almost everywhere! 
- 
- [Click here to view the Breath Pop Up Shop and learn more! ](https://yoga-with-adriene.teemill.com/) 
+_I will follow my instincts, be myself for good or ill, and see what will be the upshot._
+_As long as I live, I'll hear waterfalls and birds and winds sing. I'll acquaint myself with the glaciers and wild gardens, and get as near the heart of the world as I can._
+_JOHN MUIR_
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
