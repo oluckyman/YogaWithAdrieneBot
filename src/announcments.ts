@@ -17,39 +17,44 @@ const titles = [
   'Ready to go to the next level?', // 10
   'A new layer of sensory experience on the mat', // 11
   'Awareness of this conversation can be life changing', // 12
+  'The most important aspect to focus on', // 13
 ]
 const letter = `
 Dear Elias,
- 
-The breath is a dear friend that you can drop into conversation with anytime, anywhere. 
- 
-The quality of that conversation will change from moment to moment, day to day, week to week, year to year.
- 
-The awareness of this ongoing conversation might change your life. 
- 
-It did mine. 
- 
-With a strong theme to help you **drop into a more conscious conversation with the breath**, this session also invites you to drop expectations of what you think yoga is, or should be.
- 
-We begin to explore today’s theme at the start of practice with a breath technique that may feel difficult, as this may be a brand new way of breathing for you.
+
+The most important aspect to focus on when it comes to the home yoga practice in particular, is not that of perfect timing, ideal energy levels, or fancy gear.
+
+**It is that you are taking the time to check in each day to connect to your self and your source.**
+
+**To me, this is a beautiful, complete, and highly productive act of self love and self care.**
+
+Each day is going to look and feel a little different.
+
+Keep this in mind as we continue to progress on this journey.
+
+What matters most is that you keep showing up, keep checking in, and keep dropping into conscious conversation with your breath.
+
+Building on yesterday, we keep our discipline but explore how we may “drop the doing” and _Find What Feels Good_.
+
+When we feel good in our bodies, when we feel good about ourselves on the mat, the way we experience our life off the mat and with others can shift drastically.
+
+Lucky Day 13 invites you to let go of any quest for mastery or your desire to _get it right_, and instead focus on what it feels like in your body and on your soul’s journey as you breathe and move through your practice today.
 --
-Gently dropping your ties to the exterior and taking time for yourself is not selfish. 
- 
-**When you arrive on the mat remember you are there to experience your body, and your breath. You are there to snuggle up to your truth, what feels like home, what feels honest.**
- 
-You may work today to release stress or worries, allowing yourself to be present in this process for the short time we are on our mat. This is our shortest session yet, at 18 minutes.
- 
-Take the time to drop in. 
- 
-YOU ARE DOING GREAT!
- 
-Yours, 
+While we want to continue to be mindful and disciplined about our alignment and action - **when we begin to allow ourselves to make intuitive decisions based on how we feel** - our experience on the mat can really feel like one that serves and supports the real you.
+
+You may begin to observe this practice show up off the mat too.
+
+Perhaps you may notice less interest in adhering to others’ ideas of what you could, or should, be doing - grounded in listening to and embodying what feels like yourself, what feels good.
+
+_You feeling it?_
+
+I am so honored and happy to be on this journey with you. Thank you so much for sharing your practice with me.
+
+Sincerely,
 Adriene
- 
- 
-_I will follow my instincts, be myself for good or ill, and see what will be the upshot._
-_As long as I live, I'll hear waterfalls and birds and winds sing. I'll acquaint myself with the glaciers and wild gardens, and get as near the heart of the world as I can._
-_JOHN MUIR_
+
+
+PS: I am following along with the hashtag #ywaBreath and  [living for your comments on YouTube](https://www.youtube.com/c/yogawithadriene/videos) . So inspiring and so beautiful. Thank you!
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
