@@ -72,7 +72,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-01-12 06:59')
+  // ctx.now = new Date('2021-01-16 06:59')
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')
@@ -211,7 +211,10 @@ async function replyToday(ctx: BotContext) {
     .readFile(`calendars/${month}.json`, 'utf8')
     .then((txt: any) => JSON.parse(txt))
     .then((json: any) =>
-      _.filter(json, { day }).map((v: any) => ({
+      _.filter(json, { day })
+      // filter out dummy entries without id and url
+      .filter((v: any) => (v.id || v.url)?.length > 0)
+      .map((v: any) => ({
         ...v,
         month,
       }))
