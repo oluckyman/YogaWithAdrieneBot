@@ -18,43 +18,68 @@ const titles = [
   'A new layer of sensory experience on the mat', // 11
   'Awareness of this conversation can be life changing', // 12
   'The most important aspect to focus on', // 13
+  'A fun and therapeutic session for you', // 14
 ]
 const letter = `
 Dear Elias,
 
-The most important aspect to focus on when it comes to the home yoga practice in particular, is not that of perfect timing, ideal energy levels, or fancy gear.
+We focus on creating sensation and space in the body, learning to breathe and move with efficiency, mindfulness, and even sometimes joy - so that when we step off the mat we can continue that practice.
 
-**It is that you are taking the time to check in each day to connect to your self and your source.**
+This way we may proceed to learn and _live_ with more ease.
 
-**To me, this is a beautiful, complete, and highly productive act of self love and self care.**
+This way we have proper energy in the tank to _serve others_ more fully.
 
-Each day is going to look and feel a little different.
+Your day 14 practice is a fun and **therapeutic session** with full conscious breath to guide the way.
 
-Keep this in mind as we continue to progress on this journey.
+We are approaching the halfway mark!
 
-What matters most is that you keep showing up, keep checking in, and keep dropping into conscious conversation with your breath.
+If you would like, take some time to write about how you are feeling (physically, mentally, and emotionally) after experiencing the first 14 days of this 30 Day BREATH Journey.
 
-Building on yesterday, we keep our discipline but explore how we may “drop the doing” and _Find What Feels Good_.
-
-When we feel good in our bodies, when we feel good about ourselves on the mat, the way we experience our life off the mat and with others can shift drastically.
-
-Lucky Day 13 invites you to let go of any quest for mastery or your desire to _get it right_, and instead focus on what it feels like in your body and on your soul’s journey as you breathe and move through your practice today.
 --
-While we want to continue to be mindful and disciplined about our alignment and action - **when we begin to allow ourselves to make intuitive decisions based on how we feel** - our experience on the mat can really feel like one that serves and supports the real you.
 
-You may begin to observe this practice show up off the mat too.
+Don’t forget! If you would like, **take some time to write a few words down** before you begin tomorrow’s practice!
 
-Perhaps you may notice less interest in adhering to others’ ideas of what you could, or should, be doing - grounded in listening to and embodying what feels like yourself, what feels good.
+Here are four writing prompts that may help you:
 
-_You feeling it?_
+**So far my experience is best described as….**
 
-I am so honored and happy to be on this journey with you. Thank you so much for sharing your practice with me.
+**I am learning to honor…**
 
-Sincerely,
+**I am learning to celebrate....**
+
+**I felt/I am feeling…**
+
+
+I hope you have a beautiful Day 14.
+
+This is your time, this is your practice. Take up space, darling. You are so worthy of it all.
+
+I will see you tomorrow.
+
+Love,
 Adriene
 
 
-PS: I am following along with the hashtag #ywaBreath and  [living for your comments on YouTube](https://www.youtube.com/c/yogawithadriene/videos) . So inspiring and so beautiful. Thank you!
+_When I moved from one house to another_
+_there were many things I had no room for._
+_What does one do? I rented a storage_
+_space. And filled it. Years passed._
+_Occasionally I went there and looked in,_
+_but nothing happened, not a single_
+_twinge of the heart._
+_As I grew older the things I cared_
+_about grew fewer, but were more_
+_important. So one day I undid the lock_
+_and called the trash man. He took_
+_everything._
+_I felt like the little donkey when_
+_his burden is finally lifted. Things!_
+_Burn them, burn them! Make a beautiful_
+_fire! More room in your heart for love,_
+_for the trees! For the birds who own_
+_nothing– the reason they can fly._
+
+_STORAGE by MARY OLIVER_
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
