@@ -411,7 +411,7 @@ bot.hears(MENU.calendar, replyCalendar)
 
 // setupJourneys(bot)
 
-const praiseRegExp = '(?<praise>[🙏❤️🧡💛💚💙💜👍❤️😍🥰😘]|thank)'
+const praiseRegExp = '(?<praise>[🙌🙏❤️🧡💛💚💙💜👍❤️😍🥰😘]|thank)'
 const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет)'
 // eslint-disable-next-line no-misleading-character-class
 const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')

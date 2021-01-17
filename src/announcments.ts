@@ -19,67 +19,81 @@ const titles = [
   'Awareness of this conversation can be life changing', // 12
   'The most important aspect to focus on', // 13
   'A fun and therapeutic session for you', // 14
+  '', // 15
+  'I choose to show up for myself for the next 15 days.', // 15
 ]
 const letter = `
 Dear Elias,
-
-We focus on creating sensation and space in the body, learning to breathe and move with efficiency, mindfulness, and even sometimes joy - so that when we step off the mat we can continue that practice.
-
-This way we may proceed to learn and _live_ with more ease.
-
-This way we have proper energy in the tank to _serve others_ more fully.
-
-Your day 14 practice is a fun and **therapeutic session** with full conscious breath to guide the way.
-
-We are approaching the halfway mark!
-
-If you would like, take some time to write about how you are feeling (physically, mentally, and emotionally) after experiencing the first 14 days of this 30 Day BREATH Journey.
-
---
-
-Don’t forget! If you would like, **take some time to write a few words down** before you begin tomorrow’s practice!
-
-Here are four writing prompts that may help you:
-
-**So far my experience is best described as….**
-
-**I am learning to honor…**
-
-**I am learning to celebrate....**
-
-**I felt/I am feeling…**
-
-
-I hope you have a beautiful Day 14.
-
-This is your time, this is your practice. Take up space, darling. You are so worthy of it all.
-
-I will see you tomorrow.
-
-Love,
+ 
+The discipline of showing up, 
+ 
+The practice of drawing your attention inward. 
+ 
+This is what we are committed to. 
+ 
+We are slowing things down today as we begin the second half of this journey.
+ 
+I will introduce some foundational elements for the next wave of this journey, as well as offer practice of a new technique called **breath ratio**.
+ 
+Breath ratios are breath patterns set to counts. They are a wonderful tool for expanding your awareness and ability to control your breath.
+ 
+They are also full of transformative potential and wonderful to pull out of your tool kit when you are feeling mentally, physically, or emotionally stressed or lost.  
+ 
+They can be short, or long, but they do require a bit of focus and yes you guessed it…. discipline.
+- - - -
+If you need to write the following out on a napkin, mirror, or in your journal today  - 
+ 
+Do it. 
+ 
+**I choose to show up for myself for the next 15 days.**
+ 
+As we focus on the discipline of yoga today, remember to take your time settling in each time you come to the mat. This is productive. Returning to your breath and to your body with careful attention and deep presence is not meant to be done with a flip of a switch or just by pressing play.
+ 
+_Remember this is a practice, this is a process. We are here to learn._
+ 
+Whatever you are bringing to the mat today, it's all good.
+ 
+This whole session is low to the ground with a nice therapeutic breath for the arms, shoulders, and wrists. As it is seated, do sit up on your blanket if you have one. If you need to do some or all this practice in a chair or on the edge of a couch, do it. 
+ 
+Our theme for today is discipline. An important one as we go deeper in our studies of yoga and as you continue to show up, gifting yourself with the opportunity for valuable self study and transformation. 
+ 
+This practice is one in which you are invited to come as you are. 
+ 
+All the things that you may see as distractions or things that are not working in your favor... **use it**. 
+ 
+Enjoy your time on the mat today! 
+ 
+It is a classroom, designed to support you and help you feel good. 
+ 
+Yours, 
 Adriene
+ 
+ 
+ 
+ 
+_This morning I watched the deer_
+_with beautiful lips touching the tips_
+_of the cranberries, setting their hooves down_
+_in the dampness carelessly, isn’t it after all_
+_the carpet of their house, their home, whose roof_
+_is the sky?_
+_Why, then, was I suddenly miserable?_
+_Well, this is nothing much._
+_This is the heaviness of the body watching the swallows_
+_gliding just under that roof._
+_This is the wish that the deer would not lift their heads_
+_and leap away, leaving me there alone._
+_This is the wish to touch their faces, their brown wrists—_
+_to sing some sparkling poem into_
+_the folds of their ears,_
+_then walk with them,_
+_over the hills_
+_and over the hills_
+_and into the impossible trees._
+ 
+_This Morning I Watched the Deer_
+_By MARY OLIVER_
 
-
-_When I moved from one house to another_
-_there were many things I had no room for._
-_What does one do? I rented a storage_
-_space. And filled it. Years passed._
-_Occasionally I went there and looked in,_
-_but nothing happened, not a single_
-_twinge of the heart._
-_As I grew older the things I cared_
-_about grew fewer, but were more_
-_important. So one day I undid the lock_
-_and called the trash man. He took_
-_everything._
-_I felt like the little donkey when_
-_his burden is finally lifted. Things!_
-_Burn them, burn them! Make a beautiful_
-_fire! More room in your heart for love,_
-_for the trees! For the birds who own_
-_nothing– the reason they can fly._
-
-_STORAGE by MARY OLIVER_
 `
 const announcments: BotMiddleware = async (ctx, next) => {
   await next()
