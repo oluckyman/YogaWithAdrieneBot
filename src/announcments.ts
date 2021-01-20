@@ -147,9 +147,9 @@ const theLetterHide: BotMiddleware = async (ctx) => {
 }
 
 const useAnnouncments = (bot: Bot): void => {
-  bot.use(announcments)
-  bot.action('cb:the_letter', theLetterShow)
-  bot.action('cb:the_letter_hide', theLetterHide)
+  // bot.use(announcments)
+  // bot.action('cb:the_letter', theLetterShow)
+  // bot.action('cb:the_letter_hide', theLetterHide)
 }
 
 // const announcments_May_Monthly_Calendar: BotMiddleware = async (ctx, next) => {
