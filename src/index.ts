@@ -360,7 +360,8 @@ function nowWatchingMessage(nowWatching: number) {
   // keep only one instance of rare emoji
   rare.forEach((emoji) => {
     const indexes = emojisArr.map((e, i) => (e === emoji ? i : -1)).filter((i) => i !== -1)
-    const toReplace = _.sampleSize(indexes, indexes.length - 1)
+    // Replace all rare emojies with the normal, except the rare cases
+    const toReplace = Math.random() < 0.1 ? _.sampleSize(indexes, indexes.length - 1) : indexes
     toReplace.forEach((index) => {
       emojisArr[index] = _.sample(yogi1)
     })
