@@ -326,7 +326,7 @@ async function replyToday(ctx: BotContext) {
     return reportError({ ctx, where: '/today: the video link', error: e })
   }
 }
-bot.hears('▶️ Today’s yoga video', replyToday) // for old buttons, remove later
+
 bot.hears(MENU.today, replyToday)
 bot.command('/today', (ctx: any) => {
   const { text } = ctx.update.message
@@ -344,6 +344,9 @@ bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx: any) => {
   // ctx.editMessageReplyMarkup() // remove the button
   return replyToday(ctx)
 })
+// Understand when people ask for today's yoga by typing in the chat
+const todayMessage = /^\s*today/iu
+bot.hears(todayMessage, replyToday)
 
 function shortUrl(id: string) {
   return `youtu.be/${id}`
