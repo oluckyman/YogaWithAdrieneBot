@@ -72,7 +72,7 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-01-16 06:59')
+  // ctx.now = new Date('2021-02-16 06:59')
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')
@@ -212,12 +212,12 @@ async function replyToday(ctx: BotContext) {
     .then((txt: any) => JSON.parse(txt))
     .then((json: any) =>
       _.filter(json, { day })
-      // filter out dummy entries without id and url
-      .filter((v: any) => (v.id || v.url)?.length > 0)
-      .map((v: any) => ({
-        ...v,
-        month,
-      }))
+        // filter out dummy entries without id and url
+        .filter((v: any) => (v.id || v.url)?.length > 0)
+        .map((v: any) => ({
+          ...v,
+          month,
+        }))
     )
     .catch((e) => {
       console.error('Failed to get videos', e)
@@ -356,15 +356,15 @@ function shortUrl(id: string) {
 //
 function nowWatchingMessage(nowWatching: number) {
   const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😌😌😌😌😌😌😊😊😊😊😊😊😬😴']
-  const rare = [...'🦄👽🤖😇', /* ...'🎅🤶⛄' */]
+  const rare = [...'🦄👽🤖😇' /* ...'🎅🤶⛄' */]
   // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
   const yogi = [...yogi1, ...rare]
   const emojisArr = _.range(nowWatching).map(() => _.sample(yogi))
   // keep only one instance of rare emoji
-  rare.forEach((emoji) => {
-    const indexes = emojisArr.map((e, i) => (e === emoji ? i : -1)).filter((i) => i !== -1)
+  rare.forEach((unicorn) => {
+    const where = emojisArr.map((e, i) => (e === unicorn ? i : -1)).filter((i) => i !== -1)
     // Replace all rare emojies with the normal, except the rare cases
-    const toReplace = Math.random() < 0.1 ? _.sampleSize(indexes, indexes.length - 1) : indexes
+    const toReplace = Math.random() < 0.1 ? _.sampleSize(where, where.length - 1) : where
     toReplace.forEach((index) => {
       emojisArr[index] = _.sample(yogi1)
     })

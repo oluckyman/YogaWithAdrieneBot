@@ -6,26 +6,28 @@ import type { BotMiddleware } from './models/bot'
 const calendarImageUrl = (now: Date) =>
   (({
     1: 'https://user-images.githubusercontent.com/642673/103418679-02d7c100-4b90-11eb-81ac-57247cfe8522.png',
-    5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
-    6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
-    7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
-    8: 'https://yogawithadriene.com/wp-content/uploads/2020/07/YWA-August-2020-Yoga-calendar.png',
-    9: 'https://yogawithadriene.com/wp-content/uploads/2020/08/YWA-September-2020-Yoga-Calendar-1.png',
-    10: 'https://yogawithadriene.com/wp-content/uploads/2020/09/Oct.-2020-Yoga-Calendar-.png',
-    11: 'https://yogawithadriene.com/wp-content/uploads/2020/10/YWA-Nov.-2020-Yoga-Calendar-1.png',
-    12: 'https://yogawithadriene.com/wp-content/uploads/2020/11/Dec.-2020-Yoga-Calendar.png',
+    2: 'https://yogawithadriene.com/wp-content/uploads/2021/01/February-2021-calendar.png',
+    // 5: 'https://yogawithadriene.com/wp-content/uploads/2020/04/May-2020-Yoga-Calendar.png',
+    // 6: 'https://yogawithadriene.com/wp-content/uploads/2020/05/June-2020-yoga-calendar.png',
+    // 7: 'https://yogawithadriene.com/wp-content/uploads/2020/06/YWA-July-2020-Yoga-calendar.png',
+    // 8: 'https://yogawithadriene.com/wp-content/uploads/2020/07/YWA-August-2020-Yoga-calendar.png',
+    // 9: 'https://yogawithadriene.com/wp-content/uploads/2020/08/YWA-September-2020-Yoga-Calendar-1.png',
+    // 10: 'https://yogawithadriene.com/wp-content/uploads/2020/09/Oct.-2020-Yoga-Calendar-.png',
+    // 11: 'https://yogawithadriene.com/wp-content/uploads/2020/10/YWA-Nov.-2020-Yoga-Calendar-1.png',
+    // 12: 'https://yogawithadriene.com/wp-content/uploads/2020/11/Dec.-2020-Yoga-Calendar.png',
   } as Record<number, string>)[now.getMonth() + 1])
 const calendarYouTubeUrl = (now: Date) =>
   (({
     1: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzJ4NSTesh4xRWg4ZWNz5s4',
-    5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
-    6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
-    7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
-    8: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwbGrEZWxUbSmjdpEzRT1TC',
-    9: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwJ37AOvztr5NA0LUciJqoD',
-    10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyfM2YN1BndQWyKAWIXdvLz',
-    11: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw8oSuJnpkem3axd29j7NOi',
-    12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwfYsbU4iBdXHorpVjkLx4d',
+    2: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzytwJuOoFMlOtDFjo7MwXZY',
+    // 5: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy0o-rTUNVczfgF5AjNyCPH',
+    // 6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwubANxngKF0Jx-4fa1QqHk',
+    // 7: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx9mKxS05DdOY14ahXxJxTV',
+    // 8: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwbGrEZWxUbSmjdpEzRT1TC',
+    // 9: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwJ37AOvztr5NA0LUciJqoD',
+    // 10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyfM2YN1BndQWyKAWIXdvLz',
+    // 11: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw8oSuJnpkem3axd29j7NOi',
+    // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwfYsbU4iBdXHorpVjkLx4d',
   } as Record<number, string>)[now.getMonth() + 1])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
