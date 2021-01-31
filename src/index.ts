@@ -16,7 +16,7 @@ import getNowWatching from './nowWatching'
 import longPractice from './longPractice'
 import replyCalendar from './calendar'
 // import { setupJourneys } from './journeys'
-import { pauseForA, reportError, isAdmin } from './utils'
+import { pauseForA, reportError, isAdmin, getDaysInMonth } from './utils'
 import { getLiveJourneyVideos } from './today'
 import type { Video } from './today'
 
@@ -72,10 +72,14 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-02-16 06:59')
+  // ctx.now = new Date('2021-02-01 07:59')
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')
+
+  // During the January journey Jan 1st is the Day 0
+  ctx.state.journeyDayShift = ctx.now.getMonth() === 0 ? 1 : 0
+
   return next()
 })
 
@@ -202,7 +206,7 @@ async function replyToday(ctx: BotContext) {
   ctx.state.command = 'today'
 
   const month = timeFormat('%m')(ctx.now)
-  const day = ctx.state.day || ctx.now.getDate() - 1 // XXX: journey day shift!
+  const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
   // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
@@ -226,6 +230,11 @@ async function replyToday(ctx: BotContext) {
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
+    // TODO: REFACTOR IT IN FEB:
+    // - it should respect the custom day number
+    // - it should get video from the channel, when there is no one in the playlist
+    // - it should do both above at the same time
+
     // Load current journey videos from YouTube channel
     console.info("getting the today's video in YouTube channel")
     const currentJourneyVideos = await getLiveJourneyVideos(ctx.now)
@@ -347,6 +356,20 @@ bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx: any) => {
 // Understand when people ask for today's yoga by typing in the chat
 const todayMessage = /^\s*today/iu
 bot.hears(todayMessage, replyToday)
+// Understand number as a day in the month
+const dayNumberMessage = /^\d+/
+bot.hears(dayNumberMessage, (ctx) => {
+  const daysInMonth = getDaysInMonth(ctx.now) - ctx.state.journeyDayShift
+  const desiredDay = +(ctx.update.message?.text || 0)
+  if (desiredDay && desiredDay <= daysInMonth) {
+    ctx.state.day = desiredDay
+    return replyToday(ctx)
+  }
+  const msg = `Type a number from \`1\` to \`${daysInMonth}\`, if you want a specific day of the */calendar*`
+  return ctx.replyWithMarkdown(msg).then(() => {
+    ctx.state.success = true
+  })
+})
 
 function shortUrl(id: string) {
   return `youtu.be/${id}`
@@ -398,7 +421,7 @@ function nowWatchingMessage(nowWatching: number) {
 
 function preVideoMessage() {
   const messages = [
-    ['💬 Spend time _practicing_ yoga rather than _scrolling it'],
+    ['💬 Spend time _practicing_ yoga rather than _scrolling it_'],
     ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],

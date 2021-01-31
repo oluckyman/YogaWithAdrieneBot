@@ -7,6 +7,7 @@ export interface BotContext extends Context {
     day?: number
     logQueue?: string[]
     success?: boolean
+    journeyDayShift: number
   }
   now: Date
   firestore: Firestore
