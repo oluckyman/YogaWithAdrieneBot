@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import dayjs from 'dayjs'
+import writtenNumber from 'written-number'
 import { Firestore, Timestamp } from '@google-cloud/firestore'
 
 const pad = (num: number) => `${num}`.padStart(2, '0')
@@ -89,4 +90,48 @@ function applyKernel(points: any, w: any) {
 function gaussianSmoothing(values: number[], n: number) {
   const r = 2 / n
   return applyKernel(values, (d: any) => Math.exp(-((r * d) ** 2)))
+}
+
+// Show who's practicing right now
+//
+export function nowWatchingMessage(nowWatchingCount: number): string {
+  const yogi1 = [...'😝🤪😑😑😅😅🙃🙃🙃🙃🙃🙃🙃🙃😌😌😌😌😌😌😊😊😊😊😊😊😬😴']
+  const rare = [...'🦄👽🤖😇' /* ...'🎅🤶⛄' */]
+  // const yogi2 = [...'🤪😝😞🥵😑🙃😅😇☺️😊😌😡🥶😬🙄😴🥴🤢💩🤖👨🦄👽']
+  const yogi = [...yogi1, ...rare]
+  const emojisArr = _.range(nowWatchingCount).map(() => _.sample(yogi))
+  // keep only one instance of rare emoji
+  rare.forEach((unicorn) => {
+    const where = emojisArr.map((e, i) => (e === unicorn ? i : -1)).filter((i) => i !== -1)
+    // Replace all rare emojies with the normal, except the rare cases
+    const toReplace = Math.random() < 0.1 ? _.sampleSize(where, where.length - 1) : where
+    toReplace.forEach((index) => {
+      emojisArr[index] = _.sample(yogi1)
+    })
+  })
+  const emojis = emojisArr.join('')
+  const number = nowWatchingCount <= 10 ? writtenNumber(nowWatchingCount) : `${nowWatchingCount}`
+  const messages =
+    // eslint-disable-next-line no-nested-ternary
+    nowWatchingCount > 925
+      ? [
+          `*${number} people* started this video within the last minute`,
+          `*${number} folks* started this video within the last minute`,
+          `Practice in sync with *${number} people*`,
+          `Join *${number} brave souls*, they’ve just started`,
+        ]
+      : // eslint-disable-next-line no-nested-ternary
+      nowWatchingCount > 2
+      ? [
+          `${emojis}\n*${_.capitalize(number)} folks* started this video within the last minute`,
+          `${emojis}\nPractice in sync with *${number} people*`,
+          `${emojis}\nJoin *${number} brave souls*, they’ve just started`,
+        ]
+      : nowWatchingCount === 2
+      ? [`Make a trio with these *two*, they started within the last minute: ${emojis}`]
+      : [
+          '*One person* hit play within the last minute, make a duo!',
+          'Someone on the planet just started this video, keep them company!',
+        ]
+  return _.sample(messages) as string
 }

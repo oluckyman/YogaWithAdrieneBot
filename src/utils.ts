@@ -2,10 +2,18 @@ import { Extra } from 'telegraf'
 import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types'
 import type { BotContext } from './models/bot'
 
+export const MENU = {
+  today: '▶️ Today’s yoga',
+  calendar: '🗓 Calendar',
+  help: '💁 Help',
+}
+
 export function getDaysInMonth(now: Date): number {
   const date = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   return date.getDate()
 }
+
+export const oneOf = (messages: string[][]): string => _.sample(_.sample(messages)) as string
 
 export function pauseForA(sec: number): Promise<void> {
   return new Promise((r) => setTimeout(r, sec * 1000))
