@@ -4,6 +4,7 @@ import { Extra } from 'telegraf'
 import { promises as fs } from 'fs'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
+import { google } from 'googleapis'
 import type { Bot, BotContext } from './models/bot'
 import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf } from './utils'
 import getNowWatching, { nowWatchingMessage } from './nowWatching'
@@ -15,6 +16,8 @@ export interface Video {
   day: number
   // duration: number // is not used anywhere
 }
+const youtubeApiKey = process.env.YOUTUBE_API_KEY
+const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
 
 export default (bot: Bot): void => {
   bot.hears(MENU.today, replyToday)
@@ -45,8 +48,6 @@ export default (bot: Bot): void => {
   })
 }
 
-// async function getNewVideoFromYouTube(now: Date): Promise<Video | undefined> {}
-
 async function replyToday(ctx: BotContext) {
   // I use it in announcement middleware to react only on today commands
   ctx.state.command = 'today'
@@ -76,24 +77,20 @@ async function replyToday(ctx: BotContext) {
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.length === 0) {
-    // TODO: REFACTOR IT IN FEB:
-    // - it should respect the custom day number
-    // - it should get video from the channel, when there is no one in the playlist
-    // - it should do both above at the same time
-
     // Check the latest video on the channel
-    // console.info("checkig for the today's video in YouTube channel")
-    // const newVideo = await getNewVideoFromYouTube(ctx.now)
-    // if (newVideo) {
-    //   videos.push(newVideo)
-    // } else {
-    const message =
-      `Here should be a link to the video, but there isn’t 🤷\n` +
-      `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    return ctx.replyWithMarkdown(message).then(() => {
-      ctx.state.success = true
-    })
-    // }
+    console.info('no videos in JSON, checkig in YouTube channel')
+    const newVideo = await getVideoPublishedAt(ctx.now)
+    if (newVideo) {
+      console.info('got one', newVideo)
+      videos.push(newVideo)
+    } else {
+      const message =
+        `Here should be a link to the video, but there isn’t 🤷\n` +
+        `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
+      return ctx.replyWithMarkdown(message).then(() => {
+        ctx.state.success = true
+      })
+    }
 
     /* Keep it for the next year */
     // // Load current journey videos from YouTube channel
@@ -196,12 +193,42 @@ async function replyToday(ctx: BotContext) {
   }
 }
 
+async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
+  const publishedAfter = now.toISOString().substr(0, 10)
+  const publishedBefore = (() => {
+    const tom = new Date(now)
+    tom.setDate(now.getDate() + 1)
+    return tom
+  })()
+    .toISOString()
+    .substr(0, 10)
+  const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
+  const latestVideos = await youtube.search
+    .list({
+      channelId,
+      part: 'snippet',
+      maxResults: 1,
+      order: 'date',
+      publishedAfter: `${publishedAfter}T00:00:00Z`,
+      publishedBefore: `${publishedBefore}T00:00:00Z`,
+    })
+    .then(({ data }) => data.items ?? [])
+    .then((items) =>
+      items.map((i) => ({
+        id: i.id?.videoId as string,
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
+        day: now.getDate(),
+        title: i.snippet?.title,
+      }))
+    )
+  return latestVideos[0]
+}
+
 // export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {
 //   const year = now.getFullYear()
 //   const month = now.getMonth() + 1
 
-//   const youtubeApiKey = process.env.YOUTUBE_API_KEY
-//   const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
 //   const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
 //   const liveJourneyVideos = await youtube.search
 //     .list({
