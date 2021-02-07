@@ -108,6 +108,9 @@ bot.command('/start', async (ctx: any) => {
   // I use it in the logger to do verbose log for new users
   ctx.state.command = 'start'
 
+  // TODO: consider use these words (seen in an Adriene's letter):
+  // It's free and easy to follow. It takes out all the guess work 
+  // and welcomes you to make practice a priority.
   const greetings: [number, string][] = [
     [0.0, '👋 _Hello my darling friend!_'],
     [
