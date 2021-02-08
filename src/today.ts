@@ -41,8 +41,8 @@ export default (bot: Bot): void => {
       ctx.state.day = desiredDay
       return replyToday(ctx)
     }
-    const msg = `Type a number from \`1\` to \`${daysInMonth}\`, if you want a specific day of the */calendar*`
-    return ctx.replyWithMarkdown(msg).then(() => {
+    const msg = `Type a number from \`1\` to \`${daysInMonth}\` to get a day from the */calendar*`
+    return ctx.replyWithMarkdown(msg, Extra.notifications(false) as any).then(() => {
       ctx.state.success = true
     })
   })
