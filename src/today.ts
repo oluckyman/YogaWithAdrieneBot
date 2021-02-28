@@ -203,6 +203,8 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
     .toISOString()
     .substr(0, 10)
   const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
+  // console.log(`Now is ${now.toISOString()}`)
+  // console.log(`Looking what's published between ${publishedAfter}T00:00:00Z and ${publishedBefore}T00:00:00Z`)
   const latestVideos = await youtube.search
     .list({
       channelId,

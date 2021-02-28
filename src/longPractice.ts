@@ -76,7 +76,7 @@ const longPractice: BotMiddleware = async (ctx, next) => {
       dura = 'more than a hour'
     }
     await pauseForA(1)
-    const message = `👉 Note, tomorrow's video will be long: _${dura}_`
+    const message = `👉 Note, tomorrow's video will be _${dura}_`
     console.info(message)
     return ctx.replyWithMarkdown(message)
   } catch (e) {
