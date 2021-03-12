@@ -71,9 +71,9 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     if (dura <= 55) {
       dura = `${dura} minutes` // eslint-disable-line no-irregular-whitespace
     } else if (dura <= 70) {
-      dura = 'about a hour'
+      dura = 'about an hour'
     } else {
-      dura = 'more than a hour'
+      dura = 'more than an hour'
     }
     await pauseForA(1)
     const message = `👉 Note, tomorrow's video will be _${dura}_`
