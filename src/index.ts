@@ -156,7 +156,7 @@ const replyHelp = (ctx: BotContext) =>
 • <b>/feedback</b> is always welcome 💬
 • <b>/help</b> — <i>this message</i>📍
 
-👋 <i>Say hi to <a href="t.me/oluckyman">the author</a></i>
+If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluckyman">cheer me up 👋</a>.
 `,
       Extra.notifications(false).webPreview(false) as any
     )
