@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { promises as fs } from 'fs'
-import type { BotMiddleware } from './models/bot'
-import { pauseForA, reportError } from './utils'
+import { DocumentReference } from '@google-cloud/firestore'
+import type { BotContext, BotMiddleware } from './models/bot'
+import { getUser, pauseForA, reportError } from './utils'
 
 type VideoType = {
   year: number
@@ -55,15 +56,8 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     }
 
     // 3. Check if the user was notified today already
-    // TODO: add this check some day
-    // XXX: while there is no such check, prevent sending notification twice
-    // when there is two practices for a day
-    const part = ctx.match?.groups?.part
-    if (part) {
-      // user picked a specific video from the parts menu, it means he saw /today command
-      // and the longPractice note already
-      return
-    }
+    const shouldNotify = await shouldNotifyLongPractice(ctx, tomorrow)
+    if (!shouldNotify) return
 
     // 4. Notify
     //
@@ -85,4 +79,28 @@ const longPractice: BotMiddleware = async (ctx, next) => {
   }
 }
 
+async function shouldNotifyLongPractice(ctx: BotContext, date: Date) {
+  type UserData = {
+    id: number
+    long_practice_note: string | undefined
+  }
+  const user = getUser(ctx)
+  const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
+  const longPracticeDate = date.toISOString().substr(0, 10)
+  return userDoc.get().then(async (doc) => {
+    if (!doc.exists) {
+      console.info(`dunno this user ${user?.id}`)
+      return false
+    }
+    const { long_practice_note = '' } = doc.data() ?? {}
+    if (long_practice_note === longPracticeDate) {
+      console.info('Already received long practice note')
+      return false
+    }
+    await userDoc.update({
+      long_practice_note: longPracticeDate,
+    })
+    return true
+  })
+}
 export default longPractice
