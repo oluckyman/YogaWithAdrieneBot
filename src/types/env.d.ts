@@ -8,6 +8,7 @@ declare global {
       GOOGLE_APP_PROJECT_ID: string
       GOOGLE_APP_PRIVATE_KEY: string
       GOOGLE_APP_CLIENT_EMAIL: string
+      DASHBOT_API_KEY: string
     }
   }
 }
