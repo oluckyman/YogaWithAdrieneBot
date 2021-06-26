@@ -9,31 +9,43 @@ declare module 'dashbot' {
     }
      
     interface MessageForDashbot {
+        /** Raw message from/to user */
         text: string
         userId: string
-        intent?: object
-/*
-text – string – (required)
-userId – string – (required) – should be the SAME userId for both incoming and outgoing messages this is NOT the bot’s user ID
-intent – object – (optional)
-name – string
-inputs – array
-input – object
-name – string
-value – string
-images – array – (optional)
-image – object
-url – string
-buttons – array – (optional)
-button – object
-id – string
-label – string
-value – string
-postback – object (optional)
-buttonClick – object
-buttonId – string
-platformJson – object (optional) – send ALL of your platform-specific JSON here. It will be available for viewing in your transcripts.
-*/
+        /** The meaning of the message (e.g. command) */
+        intent?: DashbotIntent
+        /** Raw json as is to look into it for all the details */
+        platformJson?: object
+    }
+
+    /** Inent docs: https://www.dashbot.io/docs/facebook/intents */
+    interface DashbotIntent {
+        name: string
+        inputs: Array<{ name: string, value: string }>
+    }
+    interface DashbotIntentToday extends DashbotIntent {
+        name: 'today'
+        inputs: [{ name: 'day', value: string }]
+    }
+    interface DashbotIntentStart extends DashbotIntent {
+        name: 'start'
+        inputs: [{ name: 'ref', value: string }]
+    }
+    interface DashbotIntentCalendar extends DashbotIntent {
+        name: 'calendar'
+        inputs: []
+    }
+    interface DashbotIntentHelp extends DashbotIntent {
+        name: 'help'
+        inputs: []
+    }
+    interface DashbotIntentSmallTalk extends DashbotIntent {
+        name: 'smallTalk'
+        inputs: []
+    }
+    interface DashbotIntentNotHandled extends DashbotIntent {
+        name: 'NotHandled'
+        inputs: []
     }
 
     interface DashbotUniversal {

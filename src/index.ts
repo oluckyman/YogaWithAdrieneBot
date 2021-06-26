@@ -2,7 +2,6 @@ import _ from 'lodash'
 import dotenv from 'dotenv'
 import Telegraf, { Extra } from 'telegraf'
 import Firestore from '@google-cloud/firestore'
-import dashbotFactory from 'dashbot'
 import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import antispam from './antispam'
@@ -22,8 +21,6 @@ const firestore = new Firestore.Firestore({
     client_email: process.env.GOOGLE_APP_CLIENT_EMAIL,
   },
 })
-
-const dashbot = dashbotFactory(process.env.DASHBOT_API_KEY, { debug: true }).universal;
 
 const setFirstContact = ({ user }: any) => {
   const userDoc = firestore.collection('users').doc(`id${user.id}`)
@@ -77,24 +74,6 @@ bot.use((ctx, next) => {
 // Spam filter
 //
 bot.use(antispam)
-
-
-// Dashbot
-//
-bot.use((ctx, next) => {
-  next()
-  const user = ctx.update.message?.from?.id
-  const messageForDashbot = {
-    "text": 'testing dashbot',
-    "userId": '' + user,
-    "platformJson": ctx.update
-  };
-  // TODO:
-  // 1. Should call it from modules and commands below
-  // 2. Set it up for Start command
-  // 3. Set it up for fallback command
-  dashbot.logIncoming(messageForDashbot);
-})
 
 // Logger
 //
@@ -220,13 +199,13 @@ const thanksMessages = [
   [...'🙏'], // gestures
 ]
 const greetMessages = [[...'👋']]
-async function replySmallTalk(ctx: any) {
+async function replySmallTalk(ctx: BotContext) {
   ctx.state.command = 'smallTalk'
   await pauseForA(1)
   await ctx.replyWithChatAction('typing')
   await pauseForA(1)
   let messagesToReply = thanksMessages
-  if (ctx.match.groups.greet) {
+  if (ctx.match?.groups?.greet) {
     messagesToReply = greetMessages
   }
   const reply = oneOf(messagesToReply)
