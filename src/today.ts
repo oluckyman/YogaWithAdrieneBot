@@ -180,11 +180,15 @@ async function replyToday(ctx: BotContext) {
     } else {
       partSymbol = part ? getPart(+part) : ''
     }
-
-    const videoUrl = (v: Video & { url?: string }) => (v.url ? `${v.url}?from=YogaWithAdrieneBot` : shortUrl(v.id))
+    const utm = new URLSearchParams({
+      utm_source: 'YogaWithAdrieneBot',
+      utm_medium: 'telegram',
+      utm_campaign: 'calendar'
+    }).toString()
+    const videoUrl = (v: Video & { url?: string }) => (v.url ? `<b><a href="${v.url}?${utm}">Watch on FWFG</a></b>` : shortUrl(v.id))
     message = `${toEmoji(day)}${partSymbol} ${videoUrl(video)}`
     console.info(message)
-    return ctx.reply(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
+    return ctx.replyWithHTML(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
       ctx.state.success = true
     })
   } catch (e) {
