@@ -102,20 +102,20 @@ bot.command('/start', async (ctx: any) => {
   const greetings: [number, string][] = [
     [0.0, '👋 _Hello my darling friend!_'],
     [
-      2.2,
+      1.2,
       'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.',
     ],
     [
-      3.5,
+      1.5,
       'It gives you */today*’s yoga video from the */calendar* and shows how many people have started this video right now.',
     ],
-    [4.0, 'No distractions. No paradox of choice.'],
-    [3.0, '_Less_ is _more_.'],
-    [3.0, 'With _less_ friction there are _more_ chances your healthy habit will *thrive*.'],
-    [4.0, 'And there is always someone on the planet practicing with you.'],
-    [4.0, 'You will see.'],
-    [2.0, '*You’re not alone*.'],
-    [4.0, '_So, hop into something comfy, and let’s get started!_'],
+    [2.0, 'No distractions. No paradox of choice.'],
+    [1.0, '_Less_ is _more_.'],
+    [1.0, 'With _less_ friction there are _more_ chances your healthy habit will *thrive*.'],
+    [2.0, 'And there is always someone on the planet practicing with you.'],
+    [2.0, 'You will see.'],
+    [1.0, '*You’re not alone*.'],
+    [2.0, '_So, hop into something comfy, and let’s get started!_'],
     // [3.0, 'Send */today* command to get the video or just push the button'],
   ]
   const sendGreeting = async (i: any) => {
@@ -136,7 +136,7 @@ bot.command('/start', async (ctx: any) => {
     }
   }
   await ctx.replyWithChatAction('typing')
-  await pauseForA(1)
+  await pauseForA(0.5)
   await sendGreeting(0)
   // TODO: rewrite it to `await` chain and set `state.success` at the end
   return setFirstContact({
