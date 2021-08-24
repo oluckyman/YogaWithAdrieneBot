@@ -20,7 +20,7 @@ const dashbot = dashbotFactory(process.env.DASHBOT_API_KEY, { debug: true }).uni
 function logIncomingDashbot(ctx: BotContext) {
   const userId = `${getUser(ctx)?.id ?? -1}`
   const text = ctx.update.message?.text ?? ''
-  const command = ctx.state.command
+  const {command} = ctx.state
 
   const message: MessageForDashbot = {
     text,

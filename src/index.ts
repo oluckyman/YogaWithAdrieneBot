@@ -92,7 +92,7 @@ bot.use(longPractice)
 
 // /strat
 //
-bot.command('/start', async (ctx: any) => {
+bot.command('/start', async (ctx: BotContext) => {
   // I use it in the logger to do verbose log for new users
   ctx.state.command = 'start'
 
@@ -127,7 +127,7 @@ bot.command('/start', async (ctx: any) => {
       message,
       Extra.markdown().markup((m: any) =>
         isLastMessage ? m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
-      )
+      ).notifications(false)
     )
     if (delaySec !== undefined) {
       await ctx.replyWithChatAction('typing')
