@@ -86,6 +86,11 @@ const replyCalendar: BotMiddleware = async (ctx) => {
   // }
   // Monthly Calendar
   //
+
+  if (!calendarImageUrl(ctx.now) || !calendarYouTubeUrl(ctx.now)) {
+    return noCalendarMessage('No calendar image or playlist URL')
+  }
+
   return ctx
     .replyWithPhoto(
       calendarImageUrl(ctx.now),
@@ -110,18 +115,22 @@ const replyCalendar: BotMiddleware = async (ctx) => {
       return ctx
     })
     .catch(async (e) => {
-      console.error('Failed to show calendar', e)
-      await reportError({
-        ctx,
-        where: '/calendar',
-        error: e,
-        silent: true,
-      })
-      await ctx.replyWithMarkdown(
-        'Oh, calendar is not working now. Sorry for that. Check out https://yogawithadriene.com/calendar/'
-      )
-      return ctx
+      return noCalendarMessage(e)
     })
+
+  async function noCalendarMessage(e: any) {
+    console.error('Failed to show calendar', e)
+    await reportError({
+      ctx,
+      where: '/calendar',
+      error: e,
+      silent: true,
+    })
+    await ctx.replyWithMarkdown(
+      'Oh, the calendar is not working now. Sorry for that. Check out https://yogawithadriene.com/calendar/'
+    )
+    return ctx
+  }
 }
 
 export default replyCalendar
