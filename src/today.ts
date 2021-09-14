@@ -283,6 +283,7 @@ function preVideoMessage() {
     ['🐍 _Long healthy neck_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
+    [...'❤️'].map((e) => `${e} _One day at a time_`),
     [...'🐌🐢'].map((e) => `${e} _Little goes a long way_`),
   ]
   return oneOf(messages)
