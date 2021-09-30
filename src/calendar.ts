@@ -14,7 +14,7 @@ const calendarImageUrl = (now: Date) =>
     7: 'https://s37280.pcdn.co/wp-content/uploads/2021/06/July-2021-calendar-YWA-blog.png',
     8: 'https://s37280.pcdn.co/wp-content/uploads/2021/07/August-2021-yoga-calendar-blog-post.png',
     9: 'https://s37280.pcdn.co/wp-content/uploads/2021/08/Sept.-2021-yoga-calendar-YWA-blog-.png',
-    // 10: 'https://yogawithadriene.com/wp-content/uploads/2020/09/Oct.-2020-Yoga-Calendar-.png',
+    10: 'https://s37280.pcdn.co/wp-content/uploads/2021/09/October-2021-yoga-calendar-792-x-612-px.png',
     // 11: 'https://yogawithadriene.com/wp-content/uploads/2020/10/YWA-Nov.-2020-Yoga-Calendar-1.png',
     // 12: 'https://yogawithadriene.com/wp-content/uploads/2020/11/Dec.-2020-Yoga-Calendar.png',
   } as Record<number, string>)[now.getMonth() + 1])
@@ -29,7 +29,7 @@ const calendarYouTubeUrl = (now: Date) =>
     7: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyHpzW6OBlJcSHKTZlHZqbS',
     8: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzzvk__Ho2hVcWFBa8JcR65s',
     9: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw_r8Vz1TYQ2Jm3YMMgu9n7',
-    // 10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyfM2YN1BndQWyKAWIXdvLz',
+    10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzjC8bTZV9jrvfQNveSSZvb',
     // 11: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw8oSuJnpkem3axd29j7NOi',
     // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwfYsbU4iBdXHorpVjkLx4d',
   } as Record<number, string>)[now.getMonth() + 1])
