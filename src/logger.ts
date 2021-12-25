@@ -63,7 +63,7 @@ function logIncomingDashbot(ctx: BotContext) {
     dashbot.logIncoming(message)
   } catch (e) {
     console.error('🐛 Error dashbot logging', e)
-    return reportError({ ctx, where: 'logging middleware', error: e, silent: true })
+    return reportError({ ctx, where: 'logging middleware', error: `${e}`, silent: true })
   }
 }
 
@@ -142,7 +142,7 @@ const logger: BotMiddleware = async (ctx, next) => {
     }
   } catch (e) {
     console.error('🐛 Error logging', e)
-    return reportError({ ctx, where: 'logging middleware', error: e, silent: true })
+    return reportError({ ctx, where: 'logging middleware', error: `${e}`, silent: true })
   }
 }
 
