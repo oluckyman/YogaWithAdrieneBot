@@ -1,6 +1,7 @@
 import type { BotMiddleware } from '../models/bot'
 import { isAdmin } from '../utils'
 import logDashbot from './dashbot'
+import logAmplitude from './amplitude'
 import logTelegram from './telegram'
 
 const logger: BotMiddleware = async (ctx, next) => {
@@ -19,9 +20,14 @@ const logger: BotMiddleware = async (ctx, next) => {
   logDashbot(ctx)
 
   //
+  // Amplitude
+  //
+  logAmplitude(ctx)
+
+  //
   // Telegram channel log
   //
-  logTelegram(ctx)
+  await logTelegram(ctx)
 }
 
 export default logger

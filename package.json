@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "deploy": "node dist/index.js",
-    "start": "concurrently -k -n TSC,HER -c blue,green \"npm run tsc:watch\" \"npm run local\"",
+    "start": "rm -rd dist; concurrently -k -n TSC,HER -c blue,green \"npm run tsc:watch\" \"sleep 7; npm run local\"",
     "tsc:watch": "tsc -w",
     "local": "nodemon --watch dist --exec \"heroku local\" --signal SIGTERM",
     "lint": "eslint ."
@@ -19,6 +19,7 @@
     "node": "12.x"
   },
   "dependencies": {
+    "@amplitude/node": "^1.9.1",
     "@google-cloud/firestore": "^3.7.4",
     "bluebird": "^3.7.2",
     "d3-time-format": "^2.2.3",
