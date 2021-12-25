@@ -170,8 +170,9 @@ If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluc
 bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
 
-bot.command('/feedback', (ctx: any) =>
-  ctx
+bot.command('/feedback', (ctx: any) => {
+  ctx.state.command = 'feedback'
+  return ctx
     .replyWithMarkdown(
       `
 Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
@@ -180,7 +181,7 @@ Write _or tell or show_ what’s on your mind in the chat, and I’ll consider i
     .then(() => {
       ctx.state.success = true
     })
-)
+})
 
 useToday(bot)
 
