@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import * as Amplitude from '@amplitude/node'
 import type { BotContext } from '../models/bot'
 import { getUser } from '../utils'
@@ -16,6 +17,9 @@ function logEvent(ctx: BotContext): void {
     event_properties: {
       success: state.success,
       day: state.day,
+      raw_update: state.command ?
+        undefined :
+        _.omit(ctx.update, ['message.date', 'message.from', 'message.chat', 'message.message_id', 'update_id'])
     }
   });
 
