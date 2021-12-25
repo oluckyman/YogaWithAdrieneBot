@@ -5,15 +5,17 @@ import { getUser } from '../utils'
 const client = Amplitude.init(`${process.env.AMPLITUDE_API_KEY}`)
 
 function logEvent(ctx: BotContext): void {
-  const userId = `${getUser(ctx)?.id ?? -1}`
+  const user = getUser(ctx)
+  const userId = `${user?.id ?? -1}`
+  const {state} = ctx
 
   client.logEvent({
-    event_type: 'Amplitude test',
+    event_type: state.command || 'unknown',
     user_id: userId,
+    user_properties: user,
     event_properties: {
-      keyString: 'valueString',
-      keyInt: 11,
-      keyBool: true
+      success: state.success,
+      day: state.day,
     }
   });
 
