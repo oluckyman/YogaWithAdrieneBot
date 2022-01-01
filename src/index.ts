@@ -60,11 +60,12 @@ bot.use((ctx, next) => {
   ctx.firestore = firestore
 
   ctx.now = new Date()
-  // ctx.now = new Date('2021-11-02 08:01')
+  // ctx.now = new Date('2022-01-01 08:01')
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')
 
+  // FYI: The videos will be released every day in January at 5 AM EST (11 AM in Spain)
   // During the January journey Jan 1st is the Day 0
   ctx.state.journeyDayShift = ctx.now.getMonth() === 0 ? 1 : 0
 
@@ -170,7 +171,7 @@ If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluc
 bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
 
-bot.command('/feedback', (ctx: any) => {
+bot.command('/feedback', (ctx: BotContext) => {
   ctx.state.command = 'feedback'
   return ctx
     .replyWithMarkdown(
