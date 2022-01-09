@@ -20,7 +20,7 @@ const calendarImageUrl = (now: Date) =>
   } as Record<number, string>)[now.getMonth() + 1])
 const calendarYouTubeUrl = (now: Date) =>
   (({
-    1: 'https://www.youtube.com/c/yogawithadriene', // TODO: Put real playlist when it appears
+    1: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzyp5P3Vcuv5qCHQOC8W6grN',
     // 2: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzytwJuOoFMlOtDFjo7MwXZY',
     // 3: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxcg6NNoi7bocbVEkZIfUDl',
     // 4: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxacv05UIXE8n1dyzQUDwyu',
