@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import YAML from 'json-to-pretty-yaml'
 import type { Firestore } from '@google-cloud/firestore'
 import { Update } from 'telegraf/typings/telegram-types'
