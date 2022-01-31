@@ -6,7 +6,7 @@ import type { BotMiddleware } from './models/bot'
 const calendarImageUrl = (now: Date) =>
   (({
     1: 'https://user-images.githubusercontent.com/642673/147842239-5c76c910-9564-484c-9cf6-83091f3258ce.png',
-    // 2: 'https://yogawithadriene.com/wp-content/uploads/2021/01/February-2021-calendar.png',
+    2: 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
     // 3: 'https://yogawithadriene.com/wp-content/uploads/2021/02/March-2021-calendar.png',
     // 4: 'https://yogawithadriene.com/wp-content/uploads/2021/03/April-2021-calendar.png',
     // 5: 'https://s37280.pcdn.co/wp-content/uploads/2021/04/May-2021-yoga-calendar-blog.png',
@@ -21,7 +21,7 @@ const calendarImageUrl = (now: Date) =>
 const calendarYouTubeUrl = (now: Date) =>
   (({
     1: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzyp5P3Vcuv5qCHQOC8W6grN',
-    // 2: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzytwJuOoFMlOtDFjo7MwXZY',
+    2: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxyew3G11NEFpemvwrxQKCh',
     // 3: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxcg6NNoi7bocbVEkZIfUDl',
     // 4: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxacv05UIXE8n1dyzQUDwyu',
     // 5: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwzXDHE1GqrciUPc9O6zkJG',
