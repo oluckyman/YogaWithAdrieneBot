@@ -31,7 +31,7 @@
     "lodash": "^4.17.20",
     "number-to-emoji": "^1.0.0",
     "request": "^2.88.2",
-    "telegraf": "^3.38.0",
+    "telegraf": "3.38.x",
     "written-number": "^0.9.1"
   },
   "devDependencies": {

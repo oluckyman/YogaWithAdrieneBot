@@ -75,7 +75,7 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     return ctx.replyWithMarkdown(message)
   } catch (e) {
     console.error('🐛 In long practice logic', e)
-    return reportError({ ctx, where: 'long practice middleware', error: e, silent: true })
+    return reportError({ ctx, where: 'long practice middleware', error: `${e}`, silent: true })
   }
 }
 

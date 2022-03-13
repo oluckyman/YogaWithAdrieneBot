@@ -47,7 +47,7 @@ const announcments: BotMiddleware = async (ctx, next) => {
           await reportError({
             ctx,
             where: `psst message: user: ${user?.first_name}`,
-            error: e,
+            error: `${e}`,
             silent: true,
           })
         }
@@ -62,7 +62,7 @@ const announcments: BotMiddleware = async (ctx, next) => {
     return reportError({
       ctx,
       where: 'announcement middleware',
-      error: e,
+      error: `${e}`,
       silent: true,
     })
   }
