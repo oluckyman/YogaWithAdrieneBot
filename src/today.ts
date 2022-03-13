@@ -5,6 +5,7 @@ import { promises as fs } from 'fs'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
 import { google } from 'googleapis'
+import { ExtraPhoto } from 'telegraf/typings/telegram-types'
 import type { Bot, BotContext } from './models/bot'
 import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf } from './utils'
 import getNowWatching, { nowWatchingMessage } from './nowWatching'
@@ -16,6 +17,16 @@ export interface Video {
   day: number
   // duration: number // is not used anywhere
 }
+
+interface FWFGVideo {
+  url: string
+  thumbnailUrl: string
+  title: string
+  year: number
+  month: number
+  day: number
+}
+
 const youtubeApiKey = process.env.YOUTUBE_API_KEY
 const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
 
@@ -58,7 +69,7 @@ async function replyToday(ctx: BotContext) {
   // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos: Video[] = await fs
+  const videos: (Video | FWFGVideo)[] = await fs
     .readFile(`calendars/${month}.json`, 'utf8')
     .then((txt) => JSON.parse(txt))
     .then((json) =>
@@ -123,7 +134,7 @@ async function replyToday(ctx: BotContext) {
       videosList = videosFromJson
         .map((v) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
         .join('\n')
-      message = `FWFG video today\n${videosList}`
+      message = videosList
       buttons = (m: any) =>
         videosFromJson.map((v, i) => m.callbackButton(isFWFG(v) ? '🖤 FWFG' : '❤️ YouTube', `cb:today_${day}_${i}`))
     } else {
@@ -144,7 +155,7 @@ async function replyToday(ctx: BotContext) {
   }
   // Send the video and pre-video message
   const video = _.filter(videos, (v, i) => !part || i === +part)[0]
-  const nowWatching = isFWFG(video) ? 0 : await getNowWatching(ctx.firestore, video)
+  const nowWatching = isFWFG(video) ? 0 : await getNowWatching(ctx.firestore, video as Video)
   let message
   if (nowWatching) {
     message = nowWatchingMessage(nowWatching)
@@ -180,13 +191,28 @@ async function replyToday(ctx: BotContext) {
     } else {
       partSymbol = part ? getPart(+part) : ''
     }
-    const utm = new URLSearchParams({
-      utm_source: 'YogaWithAdrieneBot',
-      utm_medium: 'telegram',
-      utm_campaign: 'calendar'
-    }).toString()
-    const videoUrl = (v: Video & { url?: string }) => (v.url ? `<b><a href="${v.url}?${utm}">Watch on FWFG</a></b>` : shortUrl(v.id))
-    message = `${toEmoji(day)}${partSymbol} ${videoUrl(video)}`
+    if (isFWFG(video)) {
+      const fwfgVideo = video as FWFGVideo
+      const utm = new URLSearchParams({
+        utm_source: 'YogaWithAdrieneBot',
+        utm_medium: 'telegram',
+        utm_campaign: 'calendar'
+      }).toString()
+      const videoUrl = `${fwfgVideo.url}?${utm}`
+      message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
+      console.info(message)
+      return ctx.replyWithPhoto(`${fwfgVideo.thumbnailUrl}?rnd=${Math.random()}`, (Extra
+        .caption(`${toEmoji(day)}${partSymbol} <b><a href="${videoUrl}">${fwfgVideo.title}</a></b>`)
+        .notifications(false)
+        .HTML()
+        .markup(menuKeboard)) as unknown as ExtraPhoto)
+        .then(() => {
+          ctx.state.success = true
+        })
+    }
+    const ytVideo = video as Video
+    const videoUrl = shortUrl(ytVideo.id)
+    message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
     console.info(message)
     return ctx.replyWithHTML(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
       ctx.state.success = true
@@ -264,8 +290,8 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
 // }
 
 // Consider videos without id as FWFG videos
-function isFWFG(v: { id: string }) {
-  return !v.id
+function isFWFG(v: Video | FWFGVideo) {
+  return !('id' in v)
 }
 
 // Returns a part symbol
