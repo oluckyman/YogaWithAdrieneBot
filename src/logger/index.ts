@@ -1,6 +1,6 @@
 import type { BotMiddleware } from '../models/bot'
 import { isAdmin } from '../utils'
-import logDashbot from './dashbot'
+// import logDashbot from './dashbot'
 import logAmplitude from './amplitude'
 import logTelegram from './telegram'
 
@@ -17,7 +17,7 @@ const logger: BotMiddleware = async (ctx, next) => {
   //
   // Dashbot
   //
-  logDashbot(ctx)
+  // logDashbot(ctx)
 
   //
   // Amplitude

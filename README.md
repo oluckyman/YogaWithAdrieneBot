@@ -26,3 +26,8 @@ npm start
 ```
 
 
+### Changelog
+
+2022-03-13
+
+- Remove dashbot as it causes build errors with grpc dependency
