@@ -38,7 +38,7 @@ const longPractice: BotMiddleware = async (ctx, next) => {
       .readFile(`calendars/${month}.json`, 'utf8')
       .then((txt: any) => JSON.parse(txt))
       .then((json: CalendarType) => _.filter(json, { day }))
-      .then((parts) => _.minBy(parts, 'duration'))
+      .then((parts) => _.maxBy(parts, 'duration'))
       .catch(() => {
         /* do nothing, the check below will handle empty video */
       })
