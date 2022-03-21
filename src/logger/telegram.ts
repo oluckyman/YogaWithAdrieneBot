@@ -30,7 +30,7 @@ async function logEvent(ctx: BotContext): Promise<void> {
             'date',
             'text',
             ctx.update.message?.from?.id === ctx.update.message?.chat.id ? 'chat' : '',
-            _.get(ctx.update.message, 'entities.type') === 'bot_command' ? 'entities' : '',
+            ctx.update.message?.entities?.[0].type === 'bot_command' ? 'entities' : '',
           ])
           const html = YAML.stringify(payload)
           const name = username ? `@${username}` : first_name
