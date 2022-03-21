@@ -53,6 +53,22 @@ async function logEvent(ctx: BotContext): Promise<void> {
           disable_notification: true,
           parse_mode: 'HTML',
         })
+      } else if ((ctx.update as any).my_chat_member?.new_chat_member) {
+        // `my_chat_member` is new API. TODO: need to migrate to Telegraf 4
+        const updateAny = ctx.update as any
+        const oldStatus = updateAny.my_chat_member.old_chat_member.status
+        const newStatus = updateAny.my_chat_member.new_chat_member.status
+        const status =
+          oldStatus === 'member' && newStatus === 'kicked'
+            ? 'stopped ✋'
+            : oldStatus === 'kicked' && newStatus === 'member'
+            ? 'restarted 🤗'
+            : `${oldStatus} → ${newStatus}`
+        const { username, first_name } = updateAny.my_chat_member.from
+        await ctx.telegram.sendMessage(toChat, `<b>@${username || first_name}</b> ${status}`, {
+          disable_notification: true,
+          parse_mode: 'HTML',
+        })
       } else {
         const html = YAML.stringify(ctx.update)
         await ctx.telegram.sendMessage(toChat, `It's not a message🤔\n${html}`, { disable_notification: true })
