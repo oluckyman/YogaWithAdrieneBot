@@ -44,10 +44,10 @@ export default (bot: Bot): void => {
   bot.hears(todayMessage, replyToday)
 
   // Understand number as a day in the month
-  const dayNumberMessage = /^\d+/
+  const dayNumberMessage = /(^\d+)|(^day \d+)/i
   bot.hears(dayNumberMessage, (ctx) => {
     const daysInMonth = getDaysInMonth(ctx.now) - ctx.state.journeyDayShift
-    const desiredDay = +(ctx.update.message?.text || 0)
+    const desiredDay = +(ctx.update.message?.text?.match(/.*?(?<day>\d+)/)?.groups?.day || 0)
     if (desiredDay && desiredDay <= daysInMonth) {
       ctx.state.day = desiredDay
       return replyToday(ctx)
@@ -196,16 +196,19 @@ async function replyToday(ctx: BotContext) {
       const utm = new URLSearchParams({
         utm_source: 'YogaWithAdrieneBot',
         utm_medium: 'telegram',
-        utm_campaign: 'calendar'
+        utm_campaign: 'calendar',
       }).toString()
       const videoUrl = `${fwfgVideo.url}?${utm}`
       message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
       console.info(message)
-      return ctx.replyWithPhoto(`${fwfgVideo.thumbnailUrl}?rnd=${Math.random()}`, (Extra
-        .caption(`${toEmoji(day)}${partSymbol} <b><a href="${videoUrl}">${fwfgVideo.title}</a></b>`)
-        .notifications(false)
-        .HTML()
-        .markup(menuKeboard)) as unknown as ExtraPhoto)
+      return ctx
+        .replyWithPhoto(
+          `${fwfgVideo.thumbnailUrl}?rnd=${Math.random()}`,
+          Extra.caption(`${toEmoji(day)}${partSymbol} <b><a href="${videoUrl}">${fwfgVideo.title}</a></b>`)
+            .notifications(false)
+            .HTML()
+            .markup(menuKeboard) as unknown as ExtraPhoto
+        )
         .then(() => {
           ctx.state.success = true
         })
