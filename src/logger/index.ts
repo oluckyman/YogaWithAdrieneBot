@@ -25,7 +25,7 @@ const logger: BotMiddleware = async (ctx, next) => {
   logAmplitude(ctx)
 
   //
-  // Telegram channel log
+  // Telegram channel log + Firebase log
   //
   await logTelegram(ctx)
 }

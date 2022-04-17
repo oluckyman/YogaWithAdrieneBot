@@ -38,13 +38,10 @@ async function logEvent(ctx: BotContext): Promise<void> {
             disable_notification: true,
             parse_mode: 'HTML',
           })
-          return
-        }
-        if (!ctx.state.command) {
+        } else if (!ctx.state.command) {
           // User said something which is not a command,
           // log the user id and message id, so I can answer
           await ctx.telegram.sendMessage(toChat, `💬 ${fromChat} ${messageId}`, { disable_notification: true })
-          return
         }
       } else if (ctx.update.callback_query) {
         const { username, first_name } = ctx.update.callback_query.from
