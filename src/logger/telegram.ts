@@ -72,9 +72,9 @@ async function logEvent(ctx: BotContext): Promise<void> {
       }
       const otherLogs = (ctx.state.logQueue || []).join('\n')
       if (otherLogs) ctx.telegram.sendMessage(toChat, otherLogs, { disable_notification: true })
-      await logFirestore(ctx.firestore)(ctx.update)
       // console.info('Response time: %sms', ms)
     }
+    await logFirestore(ctx.firestore)(ctx.update)
   } catch (e) {
     console.error('🐛 Error logging', e)
     await reportError({ ctx, where: 'logging middleware', error: `${e}`, silent: true })

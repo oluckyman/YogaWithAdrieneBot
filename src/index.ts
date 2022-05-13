@@ -157,7 +157,7 @@ const replyHelp = (ctx: BotContext) =>
 • <b>/feedback</b> is always welcome 💬
 • <b>/help</b> — <i>this message</i>📍
 
-If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluckyman">cheer me up 👋</a>.
+If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluckyman">cheer me up 👋</a>
 `,
       Extra.notifications(false).webPreview(false) as any
     )
@@ -176,7 +176,7 @@ bot.command('/feedback', (ctx: BotContext) => {
   return ctx
     .replyWithMarkdown(
       `
-Write _or tell or show_ what’s on your mind in the chat, and I’ll consider it as feedback. You can do it anytime.
+Write _or tell or show_ what’s on your mind, and I’ll consider it as feedback. You can do it anytime here in the chat.
 `
     )
     .then(() => {
