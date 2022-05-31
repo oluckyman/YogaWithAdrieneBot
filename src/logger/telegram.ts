@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import YAML from 'json-to-pretty-yaml'
 import type { Firestore } from '@google-cloud/firestore'
-import { Update } from 'telegraf/typings/telegram-types'
+import { Update } from 'telegraf/typings/telegram-types.d'
 import { isAdmin, reportError } from '../utils'
 import type { BotContext } from '../models/bot'
 
@@ -56,6 +56,7 @@ async function logEvent(ctx: BotContext): Promise<void> {
         const oldStatus = updateAny.my_chat_member.old_chat_member.status
         const newStatus = updateAny.my_chat_member.new_chat_member.status
         const status =
+          // eslint-disable-next-line no-nested-ternary
           oldStatus === 'member' && newStatus === 'kicked'
             ? 'stopped ✋'
             : oldStatus === 'kicked' && newStatus === 'member'

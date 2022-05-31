@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Extra } from 'telegraf'
-import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types'
+import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types.d'
 import type { BotContext } from './models/bot'
 
 export const MENU = {

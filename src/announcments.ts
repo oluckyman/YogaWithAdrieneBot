@@ -1,4 +1,4 @@
-import { Extra } from 'telegraf'
+// import { Extra } from 'telegraf'
 import { DocumentReference } from '@google-cloud/firestore'
 import type { Bot, BotMiddleware } from './models/bot'
 import { pauseForA, getUser, reportError } from './utils'

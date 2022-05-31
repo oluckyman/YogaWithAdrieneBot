@@ -1,15 +1,15 @@
 import { Extra } from 'telegraf'
-import { ExtraPhoto } from 'telegraf/typings/telegram-types'
+import { ExtraPhoto } from 'telegraf/typings/telegram-types.d'
 import { reportError } from './utils'
 import type { BotMiddleware } from './models/bot'
 
 const calendarImageUrl = (now: Date) =>
   ((
     {
-      1: 'https://user-images.githubusercontent.com/642673/147842239-5c76c910-9564-484c-9cf6-83091f3258ce.png',
-      2: 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
-      3: 'https://s37280.pcdn.co/wp-content/uploads/2022/02/MARCH-2022-YOGA-CALENDAR-FWFG-Version-792-%C3%97-612-px.png',
-      4: 'https://s37280.pcdn.co/wp-content/uploads/2022/03/APRIL-2022-YOGA-CALENDAR-YWA-version-792-%C3%97-612-px.png',
+      '2022-01': 'https://user-images.githubusercontent.com/642673/147842239-5c76c910-9564-484c-9cf6-83091f3258ce.png',
+      '2022-02': 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
+      '2022-03': 'https://s37280.pcdn.co/wp-content/uploads/2022/02/MARCH-2022-YOGA-CALENDAR-FWFG-Version-792-%C3%97-612-px.png',
+      '2022-04': 'https://s37280.pcdn.co/wp-content/uploads/2022/03/APRIL-2022-YOGA-CALENDAR-YWA-version-792-%C3%97-612-px.png',
       '2022-05': 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2380946/settings_images/eYEHyIVxSj6fAldPMAYy_May_2022_Yoga_Calendar_-_FLOW.png',
       '2022-06': 'https://user-images.githubusercontent.com/642673/171200033-9d872cb2-3469-401e-b54d-89117f088aa9.png',
       // 7: 'https://s37280.pcdn.co/wp-content/uploads/2021/06/July-2021-calendar-YWA-blog.png',
@@ -18,15 +18,15 @@ const calendarImageUrl = (now: Date) =>
       // 10: 'https://s37280.pcdn.co/wp-content/uploads/2021/09/October-2021-yoga-calendar-792-x-612-px.png',
       // 11: 'https://s37280.pcdn.co/wp-content/uploads/2021/10/November-2021-yoga-calendar.png',
       // 12: 'https://s37280.pcdn.co/wp-content/uploads/2021/11/BALANCE-December-2021-yoga-calendar-1080-x-1080-px-1024x1024.png',
-    } as Record<number, string>
+    } as Record<string, string>
   )[now.toISOString().substring(0, 7)])
 const calendarYouTubeUrl = (now: Date) =>
   ((
     {
-      1: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzyp5P3Vcuv5qCHQOC8W6grN',
-      2: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxyew3G11NEFpemvwrxQKCh',
-      3: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzxP2THkbEIIMnGHvYg9uGhU',
-      4: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzPMQfXSBQWOJ_pAceAvkOq',
+      '2022-01': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzyp5P3Vcuv5qCHQOC8W6grN',
+      '2022-02': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxyew3G11NEFpemvwrxQKCh',
+      '2022-03': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzxP2THkbEIIMnGHvYg9uGhU',
+      '2022-04': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzPMQfXSBQWOJ_pAceAvkOq',
       '2022-05': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwV0hJTsAaV0k-9cu_yfaiy',
       '2022-06': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwNH_udMpOfAoerkI2RARGf',
       // 7: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyHpzW6OBlJcSHKTZlHZqbS',
@@ -35,7 +35,7 @@ const calendarYouTubeUrl = (now: Date) =>
       // 10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzjC8bTZV9jrvfQNveSSZvb',
       // 11: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzDCd9xCgPLKsIuTV7tZgac',
       // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzcTsiPyFR8m_gLnaUm0vw8',
-    } as Record<number, string>
+    } as Record<string, string>
   )[now.toISOString().substring(0, 7)])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
