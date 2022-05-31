@@ -10,8 +10,8 @@ const calendarImageUrl = (now: Date) =>
       2: 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
       3: 'https://s37280.pcdn.co/wp-content/uploads/2022/02/MARCH-2022-YOGA-CALENDAR-FWFG-Version-792-%C3%97-612-px.png',
       4: 'https://s37280.pcdn.co/wp-content/uploads/2022/03/APRIL-2022-YOGA-CALENDAR-YWA-version-792-%C3%97-612-px.png',
-      5: 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2380946/settings_images/eYEHyIVxSj6fAldPMAYy_May_2022_Yoga_Calendar_-_FLOW.png',
-      // 6: 'https://s37280.pcdn.co/wp-content/uploads/2021/05/June-2021-yoga-calendar-YWA-blog.png',
+      '2022-05': 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2380946/settings_images/eYEHyIVxSj6fAldPMAYy_May_2022_Yoga_Calendar_-_FLOW.png',
+      '2022-06': 'https://user-images.githubusercontent.com/642673/171200033-9d872cb2-3469-401e-b54d-89117f088aa9.png',
       // 7: 'https://s37280.pcdn.co/wp-content/uploads/2021/06/July-2021-calendar-YWA-blog.png',
       // 8: 'https://s37280.pcdn.co/wp-content/uploads/2021/07/August-2021-yoga-calendar-blog-post.png',
       // 9: 'https://s37280.pcdn.co/wp-content/uploads/2021/08/Sept.-2021-yoga-calendar-YWA-blog-.png',
@@ -19,7 +19,7 @@ const calendarImageUrl = (now: Date) =>
       // 11: 'https://s37280.pcdn.co/wp-content/uploads/2021/10/November-2021-yoga-calendar.png',
       // 12: 'https://s37280.pcdn.co/wp-content/uploads/2021/11/BALANCE-December-2021-yoga-calendar-1080-x-1080-px-1024x1024.png',
     } as Record<number, string>
-  )[now.getMonth() + 1])
+  )[now.toISOString().substring(0, 7)])
 const calendarYouTubeUrl = (now: Date) =>
   ((
     {
@@ -27,8 +27,8 @@ const calendarYouTubeUrl = (now: Date) =>
       2: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzxyew3G11NEFpemvwrxQKCh',
       3: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzxP2THkbEIIMnGHvYg9uGhU',
       4: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzPMQfXSBQWOJ_pAceAvkOq',
-      5: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwV0hJTsAaV0k-9cu_yfaiy',
-      // 6: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzxXJI-Iwz8oQ9jneHhnA40a',
+      '2022-05': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwV0hJTsAaV0k-9cu_yfaiy',
+      '2022-06': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzwNH_udMpOfAoerkI2RARGf',
       // 7: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyHpzW6OBlJcSHKTZlHZqbS',
       // 8: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzzvk__Ho2hVcWFBa8JcR65s',
       // 9: 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzw_r8Vz1TYQ2Jm3YMMgu9n7',
@@ -36,7 +36,7 @@ const calendarYouTubeUrl = (now: Date) =>
       // 11: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzDCd9xCgPLKsIuTV7tZgac',
       // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzcTsiPyFR8m_gLnaUm0vw8',
     } as Record<number, string>
-  )[now.getMonth() + 1])
+  )[now.toISOString().substring(0, 7)])
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 const replyCalendar: BotMiddleware = async (ctx) => {

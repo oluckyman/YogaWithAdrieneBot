@@ -63,6 +63,7 @@ async function replyToday(ctx: BotContext) {
   // I use it in announcement middleware to react only on today commands
   ctx.state.command = 'today'
 
+  const year = timeFormat('%Y')(ctx.now)
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
@@ -70,7 +71,7 @@ async function replyToday(ctx: BotContext) {
   console.info('replyToday', { month, day, part })
 
   const videos: (Video | FWFGVideo)[] = await fs
-    .readFile(`calendars/${month}.json`, 'utf8')
+    .readFile(`calendars/${year}-${month}.json`, 'utf8')
     .then((txt) => JSON.parse(txt))
     .then((json) =>
       _.filter(json, { day })

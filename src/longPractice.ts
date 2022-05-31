@@ -30,12 +30,13 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     // TODO: extract into a common module and cover with tests
     const tomorrow = new Date(ctx.now)
     tomorrow.setDate(tomorrow.getDate() + 1)
+    const year = timeFormat('%Y')(tomorrow)
     const month = timeFormat('%m')(tomorrow)
     const day = tomorrow.getDate() - ctx.state.journeyDayShift
 
     // TODO: cache parsed month playlist
     const video = await fs
-      .readFile(`calendars/${month}.json`, 'utf8')
+      .readFile(`calendars/${year}-${month}.json`, 'utf8')
       .then((txt: any) => JSON.parse(txt))
       .then((json: CalendarType) => _.filter(json, { day }))
       .then((parts) => _.maxBy(parts, 'duration'))
