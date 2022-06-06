@@ -88,7 +88,7 @@ async function replyToday(ctx: BotContext) {
     })
   const isFWFGDay = _.some(videos, isFWFG)
 
-  if (videos.length === 0) {
+  if (videos.filter(v => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
     console.info('no videos in JSON, checkig in YouTube channel')
     const newVideo = await getVideoPublishedAt(ctx.now)
