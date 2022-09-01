@@ -133,9 +133,7 @@ const replyCalendar: BotMiddleware = async (ctx) => {
       error: e,
       silent: true,
     })
-    await ctx.replyWithMarkdown(
-      'Oh, the calendar is not working now. Sorry for that. Check out https://yogawithadriene.com/calendar/'
-    )
+    await ctx.replyWithMarkdown('https://yogawithadriene.com/calendar/')
     return ctx
   }
 }
