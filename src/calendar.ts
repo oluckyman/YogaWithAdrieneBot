@@ -18,7 +18,7 @@ const calendarImageUrl = (now: Date) =>
       '2022-07': 'https://user-images.githubusercontent.com/642673/176765140-04b0a1f3-d45f-4730-93c2-e6c926edbdfa.png',
       '2022-08': 'https://user-images.githubusercontent.com/642673/182041648-a57166ee-0149-4aef-b4c8-5a37ebc0d905.png',
       '2022-09': 'https://user-images.githubusercontent.com/642673/187859837-797f256c-6cfd-4bbd-bafe-737f208e3925.png',
-      // 10: 'https://s37280.pcdn.co/wp-content/uploads/2021/09/October-2021-yoga-calendar-792-x-612-px.png',
+      '2022-10': 'https://user-images.githubusercontent.com/642673/193360482-4723cdd7-b0f1-4cd2-8a69-3395c4899c82.png',
       // 11: 'https://s37280.pcdn.co/wp-content/uploads/2021/10/November-2021-yoga-calendar.png',
       // 12: 'https://s37280.pcdn.co/wp-content/uploads/2021/11/BALANCE-December-2021-yoga-calendar-1080-x-1080-px-1024x1024.png',
     } as Record<string, string>
@@ -35,7 +35,7 @@ const calendarYouTubeUrl = (now: Date) =>
       '2022-07': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzy-WzVHwASw98pbrQ-X1qU3',
       '2022-08': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzz94AKMlazzOotWUCRaEtdq',
       '2022-09': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzYEr8rJOs1yrdguY4pTOyv',
-      // 10: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzjC8bTZV9jrvfQNveSSZvb',
+      '2022-10': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyzAQS01ugd8xDQH6KU4V4v',
       // 11: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzDCd9xCgPLKsIuTV7tZgac',
       // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzcTsiPyFR8m_gLnaUm0vw8',
     } as Record<string, string>
