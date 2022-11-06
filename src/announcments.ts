@@ -39,7 +39,7 @@ const announcments: BotMiddleware = async (ctx, next) => {
         try {
           await pauseForA(1)
           await ctx.replyWithMarkdown(
-            `👋 Hey, ${first_name}\nYou can get a video for any day of the month. Just type the day number in the chat. E.g. "\`17\`"`,
+            `👋 Hey, ${first_name}\nYou can get a video for any day of the month. Just type the day number in the chat. E.g. "\`17\`"`
             // Extra.notifications(false) as any
           )
           ctx.state.logQueue = [...(ctx.state.logQueue || []), `${first_name} got the secret`]

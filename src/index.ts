@@ -126,9 +126,11 @@ bot.command('/start', async (ctx: BotContext) => {
     const isLastMessage = i === greetings.length - 1
     await ctx.reply(
       message,
-      Extra.markdown().markup((m: any) =>
-        isLastMessage ? m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
-      ).notifications(false)
+      Extra.markdown()
+        .markup((m: any) =>
+          isLastMessage ? m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
+        )
+        .notifications(false)
     )
     if (delaySec !== undefined) {
       await ctx.replyWithChatAction('typing')

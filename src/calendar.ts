@@ -121,9 +121,7 @@ const replyCalendar: BotMiddleware = async (ctx) => {
       ctx.state.success = true
       return ctx
     })
-    .catch(async (e) => {
-      return noCalendarMessage(e)
-    })
+    .catch(async (e) => noCalendarMessage(e))
 
   async function noCalendarMessage(e: any) {
     console.error('Failed to show calendar', e)

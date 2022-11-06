@@ -8,7 +8,7 @@ const client = Amplitude.init(`${process.env.AMPLITUDE_API_KEY}`)
 function logEvent(ctx: BotContext): void {
   const user = getUser(ctx)
   const userId = `${user?.id ?? -1}`
-  const {state} = ctx
+  const { state } = ctx
 
   client.logEvent({
     event_type: state.command || 'unknown',
@@ -17,14 +17,13 @@ function logEvent(ctx: BotContext): void {
     event_properties: {
       success: state.success,
       day: state.day,
-      raw_update: state.command ?
-        undefined :
-        _.omit(ctx.update, ['message.date', 'message.from', 'message.chat', 'message.message_id', 'update_id'])
-    }
-  });
+      raw_update: state.command
+        ? undefined
+        : _.omit(ctx.update, ['message.date', 'message.from', 'message.chat', 'message.message_id', 'update_id']),
+    },
+  })
 
-  client.flush();
+  client.flush()
 }
-
 
 export default logEvent
