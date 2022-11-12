@@ -242,29 +242,4 @@ bot.telegram.setMyCommands([
   },
 ])
 
-const { PORT = 5000, HOST, WEBHOOK_SECRET, NODE_ENV = 'production' } = process.env
-
-if (NODE_ENV === 'production') {
-  bot.launch({
-    webhook: {
-      domain: `https://${HOST}/${WEBHOOK_SECRET}`,
-      port: +PORT,
-    },
-  })
-  console.info('Launch webhook 🚀')
-
-  // Prevent app from sleeping
-  // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-  const request = require('request')
-  const ping = () =>
-    request(`https://${HOST}/ping`, (error: any, response: any, body: any) => {
-      if (error) console.info('error:', error)
-      if (body) console.info('body:', body)
-      setTimeout(ping, 1000 * 60 * 25)
-    })
-  console.info('Ping myself 👈')
-  ping()
-} else {
-  bot.launch()
-  console.info('Launch polling 🚀')
-}
+export default bot

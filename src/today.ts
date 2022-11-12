@@ -30,7 +30,7 @@ interface FWFGVideo {
 const youtubeApiKey = process.env.YOUTUBE_API_KEY
 const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
 
-export default (bot: Bot): void => {
+export default function today(bot: Bot): void {
   bot.hears(MENU.today, replyToday)
   bot.command('/today', replyToday)
   bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx) => {
