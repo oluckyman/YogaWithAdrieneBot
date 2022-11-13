@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start:next": "next start",
+    "start": "nodemon --watch src --watch pages --ext js,ts --exec \"npm run dev\" --signal SIGTERM",
     "lint": "next lint"
   },
   "dependencies": {

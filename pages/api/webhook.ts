@@ -4,6 +4,13 @@ import bot from '../../src/index'
 const { HOST, WEBHOOK_SECRET } = process.env
 
 export default async function webhookHandler(req: NextApiRequest, res: NextApiResponse) {
+  // For local development
+  if (req.query.dev === 'true' && process.env.NODE_ENV === 'development' && !HOST) {
+    await bot.launch()
+    res.status(200).send('OK')
+    return
+  }
+
   try {
     // Retrieve the POST request body that gets sent from Telegram
     const { body, query } = req
