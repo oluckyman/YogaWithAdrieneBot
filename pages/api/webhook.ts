@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import bot from '../../src/index'
 
-const { VERCEL_URL: HOST, WEBHOOK_SECRET } = process.env
+const { HOST, WEBHOOK_SECRET } = process.env
 
 export default async function webhookHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
