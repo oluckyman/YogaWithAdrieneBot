@@ -25,6 +25,7 @@
     "lodash": "^4.17.20",
     "next": "^13.0.3",
     "number-to-emoji": "^1.0.0",
+    "path": "^0.12.7",
     "request": "^2.88.2",
     "telegraf": "3.38.x",
     "written-number": "^0.9.1"

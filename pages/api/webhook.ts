@@ -43,3 +43,7 @@ export default async function webhookHandler(req: NextApiRequest, res: NextApiRe
     HOST,
   })
 }
+
+export const config = {
+  unstable_includeFiles: ['calendars/*'],
+}

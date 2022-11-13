@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { Extra } from 'telegraf'
 import { promises as fs } from 'fs'
+import path from 'path'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
 import { google } from 'googleapis'
@@ -71,7 +72,7 @@ async function replyToday(ctx: BotContext) {
   console.info('replyToday', { month, day, part })
 
   const videos: (Video | FWFGVideo)[] = await fs
-    .readFile(`calendars/${year}-${month}.json`, 'utf8')
+    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
     .then((txt) => JSON.parse(txt))
     .then((json) =>
       _.filter(json, { day })

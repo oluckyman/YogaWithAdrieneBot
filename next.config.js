@@ -11,5 +11,6 @@ module.exports = (phase) => {
     console.info(`Fetching ${hookUrl}`)
     fetch(hookUrl).then((res) => console.info('Got webhook status:', res.status))
   }
+  // TODO: consider initiating the webhook in production from here
   return nextConfig
 }
