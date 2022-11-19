@@ -5,12 +5,12 @@ import { getUser } from '../utils'
 
 const client = Amplitude.init(`${process.env.AMPLITUDE_API_KEY}`)
 
-function logEvent(ctx: BotContext): void {
+async function logEvent(ctx: BotContext): Promise<void> {
   const user = getUser(ctx)
   const userId = `${user?.id ?? -1}`
   const { state } = ctx
 
-  client.logEvent({
+  await client.logEvent({
     event_type: state.command || 'unknown',
     user_id: userId,
     user_properties: user,
@@ -23,7 +23,7 @@ function logEvent(ctx: BotContext): void {
     },
   })
 
-  client.flush()
+  await client.flush()
 }
 
 export default logEvent

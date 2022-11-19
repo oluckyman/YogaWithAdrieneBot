@@ -13,15 +13,17 @@ const logger: BotMiddleware = async (ctx, next) => {
 
   await next()
 
-  //
-  // Amplitude
-  //
-  logAmplitude(ctx)
+  await Promise.all([
+    //
+    // Amplitude
+    //
+    logAmplitude(ctx),
 
-  //
-  // Telegram channel log + Firebase log
-  //
-  await logTelegram(ctx)
+    //
+    // Telegram channel log + Firebase log
+    //
+    logTelegram(ctx),
+  ])
 }
 
 export default logger
