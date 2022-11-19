@@ -1,6 +1,12 @@
 module.exports = {
-  extends: ['airbnb-base', 'prettier', 'plugin:@typescript-eslint/recommended', 'plugin:import/typescript'],
-  plugins: ['@typescript-eslint'],
+  extends: [
+    'airbnb-base',
+    'eslint-config-prettier',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
+    'plugin:@next/next/recommended',
+  ],
+  plugins: ['@typescript-eslint', 'eslint-plugin-prettier'],
   env: {
     node: true,
     es2020: true,
@@ -11,6 +17,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'prettier/prettier': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
     'import/extensions': ['error', 'ignorePackages', { js: 'never', ts: 'never' }],
     'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],

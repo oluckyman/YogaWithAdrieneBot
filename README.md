@@ -1,12 +1,17 @@
 # [Yoga With Adriene Bot](http://t.me/YogaWithAdrieneBot?start=github)
 
 ## Run locally
-The bot sets up webhook on heroku but for local development uses long polling.  
-Runs `heroku local` and watches the changes.
+
+```
+npm start
+```
+
+It start watching source code and starts next dev server.
+On each change it restarts the whole server.
+When the server starts, it uses hack from `next.config.js`: on the build stage it runs webhook to start itself in long polling mode. This way we do not need tunnels like `ngrok`.
 
 ### Requirements
 
-- [heroku-cli](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
 - `.env` file with secrets:
   ```
   BOT_TOKEN=<test bot token>
@@ -19,14 +24,12 @@ Runs `heroku local` and watches the changes.
   GOOGLE_APP_CLIENT_EMAIL=<...>
   ```
 
-Having above requirements, run this to start the bot locally
-
-```
-npm start
-```
-
-
 ### Changelog
+
+2022-11-19
+
+- Migrated from heroku to vercel
+
 
 2022-03-13
 

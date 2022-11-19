@@ -5,9 +5,8 @@ import { Update } from 'telegraf/typings/telegram-types.d'
 import { isAdmin, reportError } from '../utils'
 import type { BotContext } from '../models/bot'
 
-const logFirestore = (firestore: Firestore) => (update: Update) => {
-  return firestore.collection('logs').add({ json: JSON.stringify(update), date: new Date() })
-}
+const logFirestore = (firestore: Firestore) => (update: Update) =>
+  firestore.collection('logs').add({ json: JSON.stringify(update), date: new Date() })
 
 async function logEvent(ctx: BotContext): Promise<void> {
   // TODO consider tracking response time by storing initial time in the context
