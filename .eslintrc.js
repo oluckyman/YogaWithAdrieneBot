@@ -4,6 +4,7 @@ module.exports = {
     'eslint-config-prettier',
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
+    'plugin:@next/next/recommended',
   ],
   plugins: ['@typescript-eslint', 'eslint-plugin-prettier'],
   env: {
