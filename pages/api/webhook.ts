@@ -7,6 +7,7 @@ export default async function webhookHandler(req: NextApiRequest, res: NextApiRe
   // For local development
   if (req.query.dev === 'true' && process.env.NODE_ENV === 'development' && !HOST) {
     await bot.launch()
+    console.info('Launch polling 🚀')
     res.status(200).send('OK')
     return
   }

@@ -5,6 +5,7 @@ const nextConfig = {
 }
 
 module.exports = (phase) => {
+  // For local development on localhost
   if (phase === 'phase-development-server') {
     // Call the webhook to initiate the bot and lunch polling
     const hookUrl = 'http://localhost:3000/api/webhook?dev=true'
