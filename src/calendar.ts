@@ -20,6 +20,7 @@ const calendarImageUrl = (now: Date) =>
       '2022-09': 'https://user-images.githubusercontent.com/642673/187859837-797f256c-6cfd-4bbd-bafe-737f208e3925.png',
       '2022-10': 'https://user-images.githubusercontent.com/642673/193360482-4723cdd7-b0f1-4cd2-8a69-3395c4899c82.png',
       '2022-11': 'https://user-images.githubusercontent.com/642673/199069127-9cc12074-3735-49f1-802d-917a199500f9.png',
+      '2022-12': 'https://user-images.githubusercontent.com/642673/204926527-9d599450-3a1a-42f6-8d0d-9046cf8ff70e.png',
       // 12: 'https://s37280.pcdn.co/wp-content/uploads/2021/11/BALANCE-December-2021-yoga-calendar-1080-x-1080-px-1024x1024.png',
     } as Record<string, string>
   )[now.toISOString().substring(0, 7)])
@@ -37,6 +38,7 @@ const calendarYouTubeUrl = (now: Date) =>
       '2022-09': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzYEr8rJOs1yrdguY4pTOyv',
       '2022-10': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyzAQS01ugd8xDQH6KU4V4v',
       '2022-11': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzzxnt1jXd_4IRKWL9LU5Nuz',
+      '2022-12': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzhGGZw93tundCv24fq6Y2P',
       // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzcTsiPyFR8m_gLnaUm0vw8',
     } as Record<string, string>
   )[now.toISOString().substring(0, 7)])
