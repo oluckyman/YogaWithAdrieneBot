@@ -135,7 +135,7 @@ async function replyToday(ctx: BotContext) {
     let buttons: any
     if (isFWFGDay) {
       videosList = videosFromJson
-        .map((v) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
+        .map((v) => `${isFWFG(v) ? '🖤 <b>FWFG</b> membership\n' : '❤️ <b>YouTube</b> alternative\n'}${v.title}`)
         .join('\n')
       message = videosList
       buttons = (m: any) =>
@@ -148,7 +148,7 @@ async function replyToday(ctx: BotContext) {
     }
     console.info(message)
     return ctx
-      .replyWithMarkdown(
+      .replyWithHTML(
         message,
         Extra.notifications(false).markup((m: any) => m.inlineKeyboard(buttons(m)))
       )
