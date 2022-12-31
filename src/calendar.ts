@@ -6,22 +6,21 @@ import type { BotMiddleware } from './models/bot'
 const calendarImageUrl = (now: Date) =>
   ((
     {
-      '2022-01': 'https://user-images.githubusercontent.com/642673/147842239-5c76c910-9564-484c-9cf6-83091f3258ce.png',
-      '2022-02': 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
-      '2022-03':
-        'https://s37280.pcdn.co/wp-content/uploads/2022/02/MARCH-2022-YOGA-CALENDAR-FWFG-Version-792-%C3%97-612-px.png',
-      '2022-04':
-        'https://s37280.pcdn.co/wp-content/uploads/2022/03/APRIL-2022-YOGA-CALENDAR-YWA-version-792-%C3%97-612-px.png',
-      '2022-05':
-        'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2380946/settings_images/eYEHyIVxSj6fAldPMAYy_May_2022_Yoga_Calendar_-_FLOW.png',
-      '2022-06': 'https://user-images.githubusercontent.com/642673/171200033-9d872cb2-3469-401e-b54d-89117f088aa9.png',
-      '2022-07': 'https://user-images.githubusercontent.com/642673/176765140-04b0a1f3-d45f-4730-93c2-e6c926edbdfa.png',
-      '2022-08': 'https://user-images.githubusercontent.com/642673/182041648-a57166ee-0149-4aef-b4c8-5a37ebc0d905.png',
-      '2022-09': 'https://user-images.githubusercontent.com/642673/187859837-797f256c-6cfd-4bbd-bafe-737f208e3925.png',
-      '2022-10': 'https://user-images.githubusercontent.com/642673/193360482-4723cdd7-b0f1-4cd2-8a69-3395c4899c82.png',
-      '2022-11': 'https://user-images.githubusercontent.com/642673/199069127-9cc12074-3735-49f1-802d-917a199500f9.png',
+      '2023-01': 'https://user-images.githubusercontent.com/642673/210156844-2c366265-cd07-4ee4-8ecb-5b616d1e8148.png',
+      // '2022-02': 'https://s37280.pcdn.co/wp-content/uploads/2022/01/FEBRUARY-2022-CALENDAR-792-x-612-px.png',
+      // '2022-03':
+      //   'https://s37280.pcdn.co/wp-content/uploads/2022/02/MARCH-2022-YOGA-CALENDAR-FWFG-Version-792-%C3%97-612-px.png',
+      // '2022-04':
+      //   'https://s37280.pcdn.co/wp-content/uploads/2022/03/APRIL-2022-YOGA-CALENDAR-YWA-version-792-%C3%97-612-px.png',
+      // '2022-05':
+      //   'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2380946/settings_images/eYEHyIVxSj6fAldPMAYy_May_2022_Yoga_Calendar_-_FLOW.png',
+      // '2022-06': 'https://user-images.githubusercontent.com/642673/171200033-9d872cb2-3469-401e-b54d-89117f088aa9.png',
+      // '2022-07': 'https://user-images.githubusercontent.com/642673/176765140-04b0a1f3-d45f-4730-93c2-e6c926edbdfa.png',
+      // '2022-08': 'https://user-images.githubusercontent.com/642673/182041648-a57166ee-0149-4aef-b4c8-5a37ebc0d905.png',
+      // '2022-09': 'https://user-images.githubusercontent.com/642673/187859837-797f256c-6cfd-4bbd-bafe-737f208e3925.png',
+      // '2022-10': 'https://user-images.githubusercontent.com/642673/193360482-4723cdd7-b0f1-4cd2-8a69-3395c4899c82.png',
+      // '2022-11': 'https://user-images.githubusercontent.com/642673/199069127-9cc12074-3735-49f1-802d-917a199500f9.png',
       '2022-12': 'https://user-images.githubusercontent.com/642673/204926527-9d599450-3a1a-42f6-8d0d-9046cf8ff70e.png',
-      // 12: 'https://s37280.pcdn.co/wp-content/uploads/2021/11/BALANCE-December-2021-yoga-calendar-1080-x-1080-px-1024x1024.png',
     } as Record<string, string>
   )[now.toISOString().substring(0, 7)])
 const calendarYouTubeUrl = (now: Date) =>
@@ -39,9 +38,11 @@ const calendarYouTubeUrl = (now: Date) =>
       '2022-10': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyzAQS01ugd8xDQH6KU4V4v',
       '2022-11': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzzxnt1jXd_4IRKWL9LU5Nuz',
       '2022-12': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzhGGZw93tundCv24fq6Y2P',
-      // 12: 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzcTsiPyFR8m_gLnaUm0vw8',
+      '2023-01': '',
     } as Record<string, string>
-  )[now.toISOString().substring(0, 7)])
+  )[now.toISOString().substring(0, 7)] ||
+  // if no playlist, fallback to the channel
+  'https://www.youtube.com/@yogawithadriene/playlists')
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 const replyCalendar: BotMiddleware = async (ctx) => {
