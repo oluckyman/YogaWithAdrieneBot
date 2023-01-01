@@ -92,7 +92,7 @@ async function replyToday(ctx: BotContext) {
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
     console.info('no videos in JSON, checkig in YouTube channel')
-    const requestedDay = new Date(`${year}-${month}-${day}`)
+    const requestedDay = new Date(`${year}-${month}-${day + ctx.state.journeyDayShift}`)
     const newVideo = await getVideoPublishedAt(requestedDay)
     if (newVideo) {
       console.info('got one', newVideo)
