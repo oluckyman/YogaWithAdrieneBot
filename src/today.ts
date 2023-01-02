@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { Extra } from 'telegraf'
 import { promises as fs } from 'fs'
+import { sql } from 'slonik'
 import path from 'path'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
@@ -68,31 +69,15 @@ async function replyToday(ctx: BotContext) {
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
-  // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos: (Video | FWFGVideo)[] = await fs
-    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
-    .then((txt) => JSON.parse(txt))
-    .then((json) =>
-      _.filter(json, { day })
-        // filter out dummy entries without id and url
-        .filter((v) => (v.id || v.url)?.length > 0)
-        .map((v) => ({
-          ...v,
-          month,
-        }))
-    )
-    .catch((e) => {
-      console.error('Failed to get videos', e)
-      return []
-    })
+  const videos = await getVideosFromPlaylist(ctx, year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
     console.info('no videos in JSON, checkig in YouTube channel')
-    const requestedDay = new Date(`${year}-${month}-${day}`)
+    const requestedDay = new Date(`${year}-${month}-${day + ctx.state.journeyDayShift}`)
     const newVideo = await getVideoPublishedAt(requestedDay)
     if (newVideo) {
       console.info('got one', newVideo)
@@ -135,7 +120,7 @@ async function replyToday(ctx: BotContext) {
     let buttons: any
     if (isFWFGDay) {
       videosList = videosFromJson
-        .map((v) => `${isFWFG(v) ? '🖤 *FWFG* membership\n' : '❤️ *YouTube* alternative\n'}${v.title}`)
+        .map((v) => `${isFWFG(v) ? '🖤 <b>FWFG</b> membership\n' : '❤️ <b>YouTube</b> alternative\n'}${v.title}`)
         .join('\n')
       message = videosList
       buttons = (m: any) =>
@@ -148,7 +133,7 @@ async function replyToday(ctx: BotContext) {
     }
     console.info(message)
     return ctx
-      .replyWithMarkdown(
+      .replyWithHTML(
         message,
         Extra.notifications(false).markup((m: any) => m.inlineKeyboard(buttons(m)))
       )
@@ -263,6 +248,75 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
   return latestVideos[0]
 }
 
+type PlaylistRow = {
+  year: number
+  month: number
+  day: number
+  video_id: string
+  title: string
+  duration: number
+  fwfg_url: string
+  fwfg_thumbnail_url: string
+}
+
+async function getVideosFromPlaylist(
+  ctx: BotContext,
+  year: string,
+  month: string,
+  day: number
+): Promise<(Video | FWFGVideo)[]> {
+  const playlistVideos: (Video | FWFGVideo)[] = await ctx.postgres
+    .query(sql.unsafe`SELECT * from playlist where year = ${+year} and month = ${+month} and day = ${day}`)
+    .then((res) => res.rows)
+    .then((rows: PlaylistRow[]) =>
+      rows.map((row) => ({
+        // convert playlist row to Video or FWFGVideo
+        ...(row.fwfg_url
+          ? {
+              url: row.fwfg_url,
+              thumbnailUrl: row.fwfg_thumbnail_url,
+            }
+          : {
+              id: row.video_id,
+            }),
+        title: row.title,
+        duration: row.duration,
+        year: row.year,
+        month: row.month,
+        day: row.day,
+      }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos from Database', e)
+      return []
+    })
+
+  if (playlistVideos.length > 0) {
+    console.info('Got videos from Database', playlistVideos)
+    return playlistVideos
+  }
+
+  // Fallback to JSON
+  //
+  const jsonVideos = await fs
+    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
+    .then((txt) => JSON.parse(txt))
+    .then((json) =>
+      _.filter(json, { day })
+        // filter out dummy entries without id and url
+        .filter((v) => (v.id || v.url)?.length > 0)
+        .map((v) => ({
+          ...v,
+          month,
+        }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos from JSON', e)
+      return []
+    })
+  return jsonVideos
+}
+
 // export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {
 //   const year = now.getFullYear()
 //   const month = now.getMonth() + 1
@@ -313,6 +367,7 @@ function preVideoMessage() {
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
+    ['🙃 _A downward dog a day, keeps the doctor away_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
     [...'❤️'].map((e) => `${e} _One day at a time_`),

@@ -25,6 +25,7 @@ export default async function webhookHandler(req: NextApiRequest, res: NextApiRe
     }
 
     if (query.secret === WEBHOOK_SECRET) {
+      console.info('Processing webhook request …')
       await bot.handleUpdate(body)
     }
   } catch (error) {

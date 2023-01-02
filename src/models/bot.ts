@@ -1,5 +1,7 @@
 import type { Firestore } from '@google-cloud/firestore'
-import Telegraf, { Context, Middleware } from 'telegraf'
+import type { DatabasePool } from 'slonik'
+import type Telegraf from 'telegraf'
+import type { Context, Middleware } from 'telegraf'
 
 export interface BotContext extends Context {
   state: {
@@ -11,6 +13,7 @@ export interface BotContext extends Context {
   }
   now: Date
   firestore: Firestore
+  postgres: DatabasePool
 }
 
 export type BotMiddleware = Middleware<BotContext>
