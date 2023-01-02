@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { Extra } from 'telegraf'
 import { promises as fs } from 'fs'
+import { sql } from 'slonik'
 import path from 'path'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
@@ -70,7 +71,7 @@ async function replyToday(ctx: BotContext) {
   const part = _.get(ctx, 'match.groups.part')
   console.info('replyToday', { month, day, part })
 
-  const videos = await getVideosFromPlaylist(year, month, day)
+  const videos = await getVideosFromPlaylist(ctx, year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
@@ -247,8 +248,57 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
   return latestVideos[0]
 }
 
-async function getVideosFromPlaylist(year: string, month: string, day: number): Promise<(Video | FWFGVideo)[]> {
-  return fs
+type PlaylistRow = {
+  year: number
+  month: number
+  day: number
+  video_id: string
+  title: string
+  duration: number
+  fwfg_url: string
+  fwfg_thumbnail_url: string
+}
+
+async function getVideosFromPlaylist(
+  ctx: BotContext,
+  year: string,
+  month: string,
+  day: number
+): Promise<(Video | FWFGVideo)[]> {
+  const playlistVideos: (Video | FWFGVideo)[] = await ctx.postgres
+    .query(sql.unsafe`SELECT * from playlist where year = ${+year} and month = ${+month} and day = ${day}`)
+    .then((res) => res.rows)
+    .then((rows: PlaylistRow[]) =>
+      rows.map((row) => ({
+        // convert playlist row to Video or FWFGVideo
+        ...(row.fwfg_url
+          ? {
+              url: row.fwfg_url,
+              thumbnailUrl: row.fwfg_thumbnail_url,
+            }
+          : {
+              id: row.video_id,
+            }),
+        title: row.title,
+        duration: row.duration,
+        year: row.year,
+        month: row.month,
+        day: row.day,
+      }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos from Database', e)
+      return []
+    })
+
+  if (playlistVideos.length > 0) {
+    console.info('Got videos from Database', playlistVideos)
+    return playlistVideos
+  }
+
+  // Fallback to JSON
+  //
+  const jsonVideos = await fs
     .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
     .then((txt) => JSON.parse(txt))
     .then((json) =>
@@ -261,9 +311,10 @@ async function getVideosFromPlaylist(year: string, month: string, day: number): 
         }))
     )
     .catch((e) => {
-      console.error('Failed to get videos', e)
+      console.error('Failed to get videos from JSON', e)
       return []
     })
+  return jsonVideos
 }
 
 // export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {

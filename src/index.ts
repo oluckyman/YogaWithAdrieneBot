@@ -2,6 +2,7 @@ import _ from 'lodash'
 import dotenv from 'dotenv'
 import Telegraf, { Extra } from 'telegraf'
 import Firestore from '@google-cloud/firestore'
+import { createPool } from 'slonik'
 import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import antispam from './antispam'
@@ -14,6 +15,7 @@ import { MENU, pauseForA, reportError, isAdmin, oneOf } from './utils'
 import useToday from './today'
 
 dotenv.config()
+
 const firestore = new Firestore.Firestore({
   projectId: process.env.GOOGLE_APP_PROJECT_ID,
   credentials: {
@@ -47,7 +49,7 @@ function convertTZ(date: Date, tzString: string) {
   return new Date(date.toLocaleString('en-US', { timeZone: tzString }))
 }
 
-bot.use((ctx, next) => {
+bot.use(async (ctx, next) => {
   // TODO: figure out how to put database into bot context properly
   // For now just injecting it here
   /* from https://telegraf.js.org/#/?id=extending-context
@@ -58,6 +60,7 @@ bot.use((ctx, next) => {
   }
   */
   ctx.firestore = firestore
+  ctx.postgres = await createPool(process.env.DATABASE_URL)
 
   ctx.now = new Date()
   // ctx.now = new Date('2023-01-01 08:01')

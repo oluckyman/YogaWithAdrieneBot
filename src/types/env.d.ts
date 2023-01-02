@@ -12,6 +12,7 @@ declare global {
       YOUTUBE_API_KEY: string
       HOST: string
       WEBHOOK_SECRET: string
+      DATABASE_URL: string
     }
   }
 }
