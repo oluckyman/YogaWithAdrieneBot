@@ -38,7 +38,7 @@ const calendarYouTubeUrl = (now: Date) =>
       '2022-10': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzyzAQS01ugd8xDQH6KU4V4v',
       '2022-11': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzzxnt1jXd_4IRKWL9LU5Nuz',
       '2022-12': 'https://www.youtube.com/playlist?list=PLui6Eyny-UzzhGGZw93tundCv24fq6Y2P',
-      '2023-01': '',
+      '2023-01': 'https://www.youtube.com/playlist?list=PLui6Eyny-Uzx-IzGg48K4aHGyBwtPh7Sw',
     } as Record<string, string>
   )[now.toISOString().substring(0, 7)] ||
   // if no playlist, fallback to the channel
