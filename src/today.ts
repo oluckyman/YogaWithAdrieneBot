@@ -313,6 +313,7 @@ function preVideoMessage() {
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
+    ['🙃 _A downward dog a day, keeps the doctor away_'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
     [...'❤️'].map((e) => `${e} _One day at a time_`),
