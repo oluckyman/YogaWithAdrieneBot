@@ -68,25 +68,9 @@ async function replyToday(ctx: BotContext) {
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
-  // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos: (Video | FWFGVideo)[] = await fs
-    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
-    .then((txt) => JSON.parse(txt))
-    .then((json) =>
-      _.filter(json, { day })
-        // filter out dummy entries without id and url
-        .filter((v) => (v.id || v.url)?.length > 0)
-        .map((v) => ({
-          ...v,
-          month,
-        }))
-    )
-    .catch((e) => {
-      console.error('Failed to get videos', e)
-      return []
-    })
+  const videos = await getVideosFromPlaylist(year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
@@ -261,6 +245,25 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
       }))
     )
   return latestVideos[0]
+}
+
+async function getVideosFromPlaylist(year: string, month: string, day: number): Promise<(Video | FWFGVideo)[]> {
+  return fs
+    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
+    .then((txt) => JSON.parse(txt))
+    .then((json) =>
+      _.filter(json, { day })
+        // filter out dummy entries without id and url
+        .filter((v) => (v.id || v.url)?.length > 0)
+        .map((v) => ({
+          ...v,
+          month,
+        }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos', e)
+      return []
+    })
 }
 
 // export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {
