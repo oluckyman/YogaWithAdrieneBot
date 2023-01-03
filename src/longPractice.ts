@@ -34,7 +34,7 @@ const longPractice: BotMiddleware = async (ctx, next) => {
     const month = timeFormat('%m')(tomorrow)
     const day = tomorrow.getDate() - ctx.state.journeyDayShift
 
-    // TODO: cache parsed month playlist
+    // TODO: it should read from DB
     const video = await fs
       .readFile(`calendars/${year}-${month}.json`, 'utf8')
       .then((txt: any) => JSON.parse(txt))

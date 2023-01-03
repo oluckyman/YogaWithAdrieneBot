@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { Extra } from 'telegraf'
 import { promises as fs } from 'fs'
+import { sql } from 'slonik'
 import path from 'path'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
@@ -66,33 +67,17 @@ async function replyToday(ctx: BotContext) {
 
   const year = timeFormat('%Y')(ctx.now)
   const month = timeFormat('%m')(ctx.now)
-  const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
+  const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
-  // const [month, day] = ['05', 22]
   console.info('replyToday', { month, day, part })
 
-  const videos: (Video | FWFGVideo)[] = await fs
-    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
-    .then((txt) => JSON.parse(txt))
-    .then((json) =>
-      _.filter(json, { day })
-        // filter out dummy entries without id and url
-        .filter((v) => (v.id || v.url)?.length > 0)
-        .map((v) => ({
-          ...v,
-          month,
-        }))
-    )
-    .catch((e) => {
-      console.error('Failed to get videos', e)
-      return []
-    })
+  const videos = await getVideosFromPlaylist(ctx, year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
     console.info('no videos in JSON, checkig in YouTube channel')
-    const requestedDay = new Date(`${year}-${month}-${day + ctx.state.journeyDayShift}`)
+    const requestedDay = new Date(Date.UTC(+year, +month - 1, day + ctx.state.journeyDayShift))
     const newVideo = await getVideoPublishedAt(requestedDay)
     if (newVideo) {
       console.info('got one', newVideo)
@@ -229,18 +214,18 @@ async function replyToday(ctx: BotContext) {
   }
 }
 
-async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
-  const publishedAfter = now.toISOString().substr(0, 10)
+async function getVideoPublishedAt(date: Date): Promise<Video | undefined> {
+  const publishedAfter = date.toISOString().substring(0, 10)
   const publishedBefore = (() => {
-    const tom = new Date(now)
-    tom.setDate(now.getDate() + 1)
+    const tom = new Date(date)
+    tom.setDate(date.getDate() + 1)
     return tom
   })()
     .toISOString()
-    .substr(0, 10)
+    .substring(0, 10)
   const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
-  // console.log(`Now is ${now.toISOString()}`)
-  // console.log(`Looking what's published between ${publishedAfter}T00:00:00Z and ${publishedBefore}T00:00:00Z`)
+  console.info(`Now: ${date.toISOString()}`)
+  console.info(`Looking what's published between ${publishedAfter}T00:00:00Z and ${publishedBefore}T00:00:00Z`)
   const latestVideos = await youtube.search
     .list({
       channelId,
@@ -254,13 +239,82 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
     .then((items) =>
       items.map((i) => ({
         id: i.id?.videoId as string,
-        month: now.getMonth() + 1,
-        year: now.getFullYear(),
-        day: now.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+        day: date.getDate(),
         title: i.snippet?.title,
       }))
     )
   return latestVideos[0]
+}
+
+type PlaylistRow = {
+  year: number
+  month: number
+  day: number
+  video_id: string
+  title: string
+  duration: number
+  fwfg_url: string
+  fwfg_thumbnail_url: string
+}
+
+async function getVideosFromPlaylist(
+  ctx: BotContext,
+  year: string,
+  month: string,
+  day: number
+): Promise<(Video | FWFGVideo)[]> {
+  const playlistVideos: (Video | FWFGVideo)[] = await ctx.postgres
+    .query(sql.unsafe`SELECT * from playlist where year = ${+year} and month = ${+month} and day = ${day}`)
+    .then((res) => res.rows)
+    .then((rows: PlaylistRow[]) =>
+      rows.map((row) => ({
+        // convert playlist row to Video or FWFGVideo
+        ...(row.fwfg_url
+          ? {
+              url: row.fwfg_url,
+              thumbnailUrl: row.fwfg_thumbnail_url,
+            }
+          : {
+              id: row.video_id,
+            }),
+        title: row.title,
+        duration: row.duration,
+        year: row.year,
+        month: row.month,
+        day: row.day,
+      }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos from Database', e)
+      return []
+    })
+
+  if (playlistVideos.length > 0) {
+    console.info('Got videos from Database', playlistVideos)
+    return playlistVideos
+  }
+
+  // Fallback to JSON
+  //
+  const jsonVideos = await fs
+    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
+    .then((txt) => JSON.parse(txt))
+    .then((json) =>
+      _.filter(json, { day })
+        // filter out dummy entries without id and url
+        .filter((v) => (v.id || v.url)?.length > 0)
+        .map((v) => ({
+          ...v,
+          month,
+        }))
+    )
+    .catch((e) => {
+      console.error('Failed to get videos from JSON', e)
+      return []
+    })
+  return jsonVideos
 }
 
 // export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {
