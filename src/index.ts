@@ -46,7 +46,9 @@ bot.catch(async (err: string, ctx: BotContext) => {
 })
 
 function convertTZ(date: Date, tzString: string) {
-  return new Date(date.toLocaleString('en-US', { timeZone: tzString }))
+  return new Date(
+    +new Date(date.toLocaleString('en-US', { timeZone: tzString })) - date.getTimezoneOffset() * 60 * 1000
+  )
 }
 
 bot.use(async (ctx, next) => {
@@ -63,10 +65,13 @@ bot.use(async (ctx, next) => {
   ctx.postgres = await createPool(process.env.DATABASE_URL)
 
   ctx.now = new Date()
-  // ctx.now = new Date('2023-01-01 08:01')
+  // ctx.now = new Date('2023-01-03 06:56')
+  // ctx.now = new Date('2023-01-03 07:01')
+  console.info('Server', ctx.now)
 
   // Use Texas Central timezone: this is the official YWA time
   ctx.now = convertTZ(ctx.now, 'America/Chicago')
+  console.info('Austin', ctx.now)
 
   // FYI: The videos will be released every day in January at 5 AM EST (11 AM in Spain)
   // During the January journey Jan 1st is the Day 0

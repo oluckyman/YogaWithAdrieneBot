@@ -22,6 +22,7 @@ When the server starts, it uses hack from `next.config.js`: on the build stage i
   GOOGLE_APP_PROJECT_ID=<...>
   GOOGLE_APP_PRIVATE_KEY=<...>
   GOOGLE_APP_CLIENT_EMAIL=<...>
+  DATABASE_URL=<...>
   ```
 
 ### Changelog

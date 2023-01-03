@@ -67,7 +67,7 @@ async function replyToday(ctx: BotContext) {
 
   const year = timeFormat('%Y')(ctx.now)
   const month = timeFormat('%m')(ctx.now)
-  const day = ctx.state.day || ctx.now.getDate() - ctx.state.journeyDayShift
+  const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
   console.info('replyToday', { month, day, part })
 
@@ -77,7 +77,7 @@ async function replyToday(ctx: BotContext) {
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
     console.info('no videos in JSON, checkig in YouTube channel')
-    const requestedDay = new Date(`${year}-${month}-${day + ctx.state.journeyDayShift}`)
+    const requestedDay = new Date(Date.UTC(+year, +month - 1, day + ctx.state.journeyDayShift))
     const newVideo = await getVideoPublishedAt(requestedDay)
     if (newVideo) {
       console.info('got one', newVideo)
@@ -214,18 +214,18 @@ async function replyToday(ctx: BotContext) {
   }
 }
 
-async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
-  const publishedAfter = now.toISOString().substr(0, 10)
+async function getVideoPublishedAt(date: Date): Promise<Video | undefined> {
+  const publishedAfter = date.toISOString().substring(0, 10)
   const publishedBefore = (() => {
-    const tom = new Date(now)
-    tom.setDate(now.getDate() + 1)
+    const tom = new Date(date)
+    tom.setDate(date.getDate() + 1)
     return tom
   })()
     .toISOString()
-    .substr(0, 10)
+    .substring(0, 10)
   const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
-  // console.log(`Now is ${now.toISOString()}`)
-  // console.log(`Looking what's published between ${publishedAfter}T00:00:00Z and ${publishedBefore}T00:00:00Z`)
+  console.info(`Now: ${date.toISOString()}`)
+  console.info(`Looking what's published between ${publishedAfter}T00:00:00Z and ${publishedBefore}T00:00:00Z`)
   const latestVideos = await youtube.search
     .list({
       channelId,
@@ -239,9 +239,9 @@ async function getVideoPublishedAt(now: Date): Promise<Video | undefined> {
     .then((items) =>
       items.map((i) => ({
         id: i.id?.videoId as string,
-        month: now.getMonth() + 1,
-        year: now.getFullYear(),
-        day: now.getDate(),
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+        day: date.getDate(),
         title: i.snippet?.title,
       }))
     )
