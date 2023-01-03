@@ -17,6 +17,7 @@ export default async function webhookHandler(req: NextApiRequest, res: NextApiRe
     const { body, query } = req
 
     if (query.setWebhook === 'true') {
+      // NOTE: To test on vercel you push to `dev` branch with predefined HOST defined in Vercel envarement variables)
       const webhookUrl = `https://${HOST}/api/webhook?secret=${WEBHOOK_SECRET}`
 
       // Would be nice to somehow do this in a build file or something
