@@ -1,6 +1,6 @@
 import { sql } from 'slonik'
-import type { BotContext } from './models/bot'
-import type { FWFGVideo, Video } from './types'
+import type { BotContext } from '../models/bot'
+import type { FWFGVideo, Video } from '../types'
 
 type PlaylistRow = {
   year: number
