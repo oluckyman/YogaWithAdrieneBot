@@ -66,7 +66,8 @@ bot.use(async (ctx, next) => {
 
   ctx.now = new Date()
   // ctx.now = new Date('2023-01-03 06:56')
-  // ctx.now = new Date('2023-01-03 07:01')
+  // ctx.now = new Date('2022-12-31 07:01')
+
   console.info('Server', ctx.now)
 
   // Use Texas Central timezone: this is the official YWA time

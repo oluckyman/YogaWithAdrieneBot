@@ -51,7 +51,7 @@ async function replyToday(ctx: BotContext) {
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
-  console.info('replyToday', { month, day, part })
+  console.info('===> replyToday', { month, day, part })
 
   const videos = await getVideosFromPlaylist(ctx, year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
@@ -72,24 +72,6 @@ async function replyToday(ctx: BotContext) {
         ctx.state.success = true
       })
     }
-
-    /* Keep it for the next year */
-    // // Load current journey videos from YouTube channel
-    // console.info("getting the today's video in YouTube channel")
-    // const currentJourneyVideos = await getLiveJourneyVideos(ctx.now)
-    // const year = ctx.now.getFullYear()
-    // const todaysVideo = currentJourneyVideos.find((v) => v.day === day && v.month === +month && v.year === year)
-    // console.info('got', { todaysVideo })
-    // if (todaysVideo) {
-    //   videos.push(todaysVideo)
-    // } else {
-    //   const message =
-    //     `Here should be a link to the video, but there isn’t 🤷\n` +
-    //     `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    //   return ctx.replyWithMarkdown(message).then(() => {
-    //     ctx.state.success = true
-    //   })
-    // }
   }
 
   if (!part && videos.length > 1) {

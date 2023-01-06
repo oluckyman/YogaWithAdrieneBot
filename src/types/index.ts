@@ -3,7 +3,7 @@ export interface Video {
   year: number
   month: number
   day: number
-  // duration: number // is not used anywhere
+  duration?: number // used in long practice, but not in reply today
 }
 
 export interface FWFGVideo {
@@ -13,4 +13,5 @@ export interface FWFGVideo {
   year: number
   month: number
   day: number
+  duration: number
 }

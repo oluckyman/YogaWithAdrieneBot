@@ -1,20 +1,9 @@
 import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
-import { promises as fs } from 'fs'
 import { DocumentReference } from '@google-cloud/firestore'
-import type { BotContext, BotMiddleware } from './models/bot'
 import { getUser, pauseForA, reportError } from './utils'
-
-type VideoType = {
-  year: number
-  month: number
-  day: number
-  title: string
-  duration: number
-}
-type YouTubeVideoType = VideoType & { id: string }
-type FwfgVideoType = VideoType & { url: string }
-type CalendarType = Array<YouTubeVideoType | FwfgVideoType>
+import { getVideosFromPlaylist } from './today/playlist'
+import type { BotContext, BotMiddleware } from './models/bot'
 
 const longPractice: BotMiddleware = async (ctx, next) => {
   await next()
@@ -27,25 +16,21 @@ const longPractice: BotMiddleware = async (ctx, next) => {
 
     // 2. If there is a long practice tomorrow
     //
-    // TODO: extract into a common module and cover with tests
     const tomorrow = new Date(ctx.now)
     tomorrow.setDate(tomorrow.getDate() + 1)
     const year = timeFormat('%Y')(tomorrow)
     const month = timeFormat('%m')(tomorrow)
     const day = tomorrow.getDate() - ctx.state.journeyDayShift
 
-    // TODO: it should read from DB
-    const video = await fs
-      .readFile(`calendars/${year}-${month}.json`, 'utf8')
-      .then((txt: any) => JSON.parse(txt))
-      .then((json: CalendarType) => _.filter(json, { day }))
-      .then((parts) => _.maxBy(parts, 'duration'))
+    console.info('===> longPractice tomorrow', { year, month, day })
+
+    const video = await getVideosFromPlaylist(ctx, year, month, day)
+      .then((videos) => _.maxBy(videos, 'duration'))
       .catch(() => {
         /* do nothing, the check below will handle empty video */
       })
 
     if (!video) {
-      // TODO: handle this case some day
       console.error('Cannot find tomorrow’s video')
       return
     }
@@ -87,7 +72,7 @@ async function shouldNotifyLongPractice(ctx: BotContext, date: Date) {
   }
   const user = getUser(ctx)
   const userDoc = ctx.firestore.collection('users').doc(`id${user?.id}`) as DocumentReference<UserData>
-  const longPracticeDate = date.toISOString().substr(0, 10)
+  const longPracticeDate = date.toISOString().substring(0, 10)
   return userDoc.get().then(async (doc) => {
     if (!doc.exists) {
       console.info(`dunno this user ${user?.id}`)
