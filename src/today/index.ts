@@ -1,33 +1,15 @@
 import _ from 'lodash'
 import { timeFormat } from 'd3-time-format'
 import { Extra } from 'telegraf'
-import { promises as fs } from 'fs'
-import { sql } from 'slonik'
-import path from 'path'
 import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
 import { google } from 'googleapis'
 import { ExtraPhoto } from 'telegraf/typings/telegram-types.d'
-import type { Bot, BotContext } from './models/bot'
-import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf } from './utils'
+import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf } from '../utils'
+import type { Bot, BotContext } from '../models/bot'
+import type { FWFGVideo, Video } from '../types'
 import getNowWatching, { nowWatchingMessage } from './nowWatching'
-
-export interface Video {
-  id: string
-  year: number
-  month: number
-  day: number
-  // duration: number // is not used anywhere
-}
-
-interface FWFGVideo {
-  url: string
-  thumbnailUrl: string
-  title: string
-  year: number
-  month: number
-  day: number
-}
+import { getVideosFromPlaylist } from './playlist'
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY
 const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
@@ -69,14 +51,14 @@ async function replyToday(ctx: BotContext) {
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
-  console.info('replyToday', { month, day, part })
+  console.info('===> replyToday', { month, day, part })
 
   const videos = await getVideosFromPlaylist(ctx, year, month, day)
   const isFWFGDay = _.some(videos, isFWFG)
 
   if (videos.filter((v) => !isFWFG(v)).length === 0) {
     // Check the latest video on the channel
-    console.info('no videos in JSON, checkig in YouTube channel')
+    console.info('No videos in the playlist, checkig in YouTube channel')
     const requestedDay = new Date(Date.UTC(+year, +month - 1, day + ctx.state.journeyDayShift))
     const newVideo = await getVideoPublishedAt(requestedDay)
     if (newVideo) {
@@ -90,24 +72,6 @@ async function replyToday(ctx: BotContext) {
         ctx.state.success = true
       })
     }
-
-    /* Keep it for the next year */
-    // // Load current journey videos from YouTube channel
-    // console.info("getting the today's video in YouTube channel")
-    // const currentJourneyVideos = await getLiveJourneyVideos(ctx.now)
-    // const year = ctx.now.getFullYear()
-    // const todaysVideo = currentJourneyVideos.find((v) => v.day === day && v.month === +month && v.year === year)
-    // console.info('got', { todaysVideo })
-    // if (todaysVideo) {
-    //   videos.push(todaysVideo)
-    // } else {
-    //   const message =
-    //     `Here should be a link to the video, but there isn’t 🤷\n` +
-    //     `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-    //   return ctx.replyWithMarkdown(message).then(() => {
-    //     ctx.state.success = true
-    //   })
-    // }
   }
 
   if (!part && videos.length > 1) {
@@ -247,107 +211,6 @@ async function getVideoPublishedAt(date: Date): Promise<Video | undefined> {
     )
   return latestVideos[0]
 }
-
-type PlaylistRow = {
-  year: number
-  month: number
-  day: number
-  video_id: string
-  title: string
-  duration: number
-  fwfg_url: string
-  fwfg_thumbnail_url: string
-}
-
-async function getVideosFromPlaylist(
-  ctx: BotContext,
-  year: string,
-  month: string,
-  day: number
-): Promise<(Video | FWFGVideo)[]> {
-  const playlistVideos: (Video | FWFGVideo)[] = await ctx.postgres
-    .query(sql.unsafe`SELECT * from playlist where year = ${+year} and month = ${+month} and day = ${day}`)
-    .then((res) => res.rows)
-    .then((rows: PlaylistRow[]) =>
-      rows.map((row) => ({
-        // convert playlist row to Video or FWFGVideo
-        ...(row.fwfg_url
-          ? {
-              url: row.fwfg_url,
-              thumbnailUrl: row.fwfg_thumbnail_url,
-            }
-          : {
-              id: row.video_id,
-            }),
-        title: row.title,
-        duration: row.duration,
-        year: row.year,
-        month: row.month,
-        day: row.day,
-      }))
-    )
-    .catch((e) => {
-      console.error('Failed to get videos from Database', e)
-      return []
-    })
-
-  if (playlistVideos.length > 0) {
-    console.info('Got videos from Database', playlistVideos)
-    return playlistVideos
-  }
-
-  // Fallback to JSON
-  //
-  const jsonVideos = await fs
-    .readFile(path.join(process.cwd(), 'calendars', `${year}-${month}.json`), 'utf8')
-    .then((txt) => JSON.parse(txt))
-    .then((json) =>
-      _.filter(json, { day })
-        // filter out dummy entries without id and url
-        .filter((v) => (v.id || v.url)?.length > 0)
-        .map((v) => ({
-          ...v,
-          month,
-        }))
-    )
-    .catch((e) => {
-      console.error('Failed to get videos from JSON', e)
-      return []
-    })
-  return jsonVideos
-}
-
-// export async function getLiveJourneyVideos(now: Date): Promise<Video[]> {
-//   const year = now.getFullYear()
-//   const month = now.getMonth() + 1
-
-//   const youtube = google.youtube({ version: 'v3', auth: youtubeApiKey })
-//   const liveJourneyVideos = await youtube.search
-//     .list({
-//       channelId,
-//       part: 'snippet',
-//       maxResults: 31,
-//       order: 'date',
-//       publishedAfter: '2021-01-02T00:00:00Z',
-//     })
-//     .then(({ data }) => data.items ?? [])
-//     .then((items) =>
-//       items
-//         .map((i) => ({
-//           id: i.id?.videoId,
-//           month,
-//           year,
-//           day: i.snippet?.title?.replace(/Day (\d+).*/, '$1'),
-//           title: i.snippet?.title,
-//         }))
-//         .filter((i) => i.id)
-//         .filter((i) => i.day)
-//         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//         .map((i) => ({ ...i, id: i.id!, day: +i.day! }))
-//     )
-
-//   return liveJourneyVideos
-// }
 
 // Consider videos without id as FWFG videos
 function isFWFG(v: Video | FWFGVideo) {

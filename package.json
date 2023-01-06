@@ -19,25 +19,20 @@
     "d3-time-format": "^2.2.3",
     "dayjs": "^1.8.28",
     "dotenv": "^8.2.0",
-    "fs": "0.0.1-security",
     "googleapis": "^49.0.0",
     "json-to-pretty-yaml": "^1.2.2",
     "lodash": "^4.17.20",
     "next": "^13.0.3",
     "number-to-emoji": "^1.0.0",
-    "path": "^0.12.7",
-    "request": "^2.88.2",
     "slonik": "^33.0.6",
     "telegraf": "3.38.x",
     "written-number": "^0.9.1"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.0.4",
-    "@types/bluebird": "^3.5.33",
     "@types/d3-time-format": "^3.0.0",
     "@types/lodash": "^4.14.164",
-    "@types/node": "^12.19.3",
-    "@types/react": "18.0.25",
+    "@types/react": "18.0.26",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "eslint": "^7.12.1",
@@ -46,7 +41,6 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.3",
-    "prettier": "^2.7.1",
-    "typescript": "^4.8.4"
+    "prettier": "^2.7.1"
   }
 }
