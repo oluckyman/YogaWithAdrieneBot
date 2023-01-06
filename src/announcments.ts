@@ -33,7 +33,7 @@ const announcments: BotMiddleware = async (ctx, next) => {
       const secretThreshold = 3
       // 2. see if the doc has yogi field and message was not sent
       if (calendar_command_count !== secretThreshold) {
-        console.info(`${first_name} used Calendar ${calendar_command_count} of ${secretThreshold} to by notified`)
+        console.info(`${first_name} used Calendar ${calendar_command_count} of ${secretThreshold} to be notified`)
       } else {
         console.info(`Yep, tell the secret command`)
         try {
