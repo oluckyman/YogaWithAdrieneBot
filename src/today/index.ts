@@ -225,13 +225,14 @@ function getPart(i: number) {
 
 function preVideoMessage() {
   const messages = [
-    ['💬 Spend time _practicing_ yoga rather than _scrolling it_'],
+    ['💬 Spend time _practicing_ yoga rather than _scrolling through it_'],
     ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
     ['🙃 _A downward dog a day, keeps the doctor away_'],
     ['✅ _Checking in is the hardest part_'],
+    ['🙏 You will say _namaste_ to yourself'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
     [...'❤️'].map((e) => `${e} _One day at a time_`),
