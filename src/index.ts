@@ -5,6 +5,7 @@ import { createPool } from 'slonik'
 import logger from './logger'
 import antispam from './antispam'
 import chat from './chat'
+import gpt from './gpt'
 import useAnnouncments from './announcments'
 import longPractice from './longPractice'
 import replyStart from './start'
@@ -75,6 +76,10 @@ bot.use(logger)
 // Chat
 //
 bot.use(chat)
+
+// GPT-3
+//
+bot.use(gpt)
 
 // Tomorrow’s long practice notice
 //
