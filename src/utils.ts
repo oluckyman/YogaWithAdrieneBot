@@ -9,6 +9,12 @@ export const MENU = {
   help: '💁 Help',
 }
 
+export function convertTZ(date: Date, tzString: string) {
+  return new Date(
+    +new Date(date.toLocaleString('en-US', { timeZone: tzString })) - date.getTimezoneOffset() * 60 * 1000
+  )
+}
+
 export function getDaysInMonth(now: Date): number {
   const date = new Date(now.getFullYear(), now.getMonth() + 1, 0)
   return date.getDate()

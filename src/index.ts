@@ -1,18 +1,17 @@
-import _ from 'lodash'
 import dotenv from 'dotenv'
 import Telegraf, { Extra } from 'telegraf'
 import Firestore from '@google-cloud/firestore'
 import { createPool } from 'slonik'
-import type { Bot, BotContext } from './models/bot'
 import logger from './logger'
 import antispam from './antispam'
 import chat from './chat'
 import useAnnouncments from './announcments'
 import longPractice from './longPractice'
+import replyStart from './start'
 import replyCalendar from './calendar'
-// import { setupJourneys } from './journeys'
-import { MENU, pauseForA, reportError, isAdmin, oneOf } from './utils'
 import useToday from './today'
+import { MENU, pauseForA, reportError, isAdmin, oneOf, convertTZ } from './utils'
+import type { Bot, BotContext } from './models/bot'
 
 dotenv.config()
 
@@ -24,18 +23,6 @@ const firestore = new Firestore.Firestore({
   },
 })
 
-const setFirstContact = ({ user }: any) => {
-  const userDoc = firestore.collection('users').doc(`id${user.id}`)
-  return userDoc.get().then((doc: any) => {
-    if (!doc.exists) {
-      return userDoc.set({
-        ...user,
-        first_contact_at: new Date(),
-      })
-    }
-  })
-}
-
 const bot: Bot = new Telegraf(process.env.BOT_TOKEN)
 
 bot.catch(async (err: string, ctx: BotContext) => {
@@ -44,12 +31,6 @@ bot.catch(async (err: string, ctx: BotContext) => {
   console.error(`⚠️ ${ctx.updateType}`, err)
   return reportError({ ctx, where: 'Unhandled', error: err, silent })
 })
-
-function convertTZ(date: Date, tzString: string) {
-  return new Date(
-    +new Date(date.toLocaleString('en-US', { timeZone: tzString })) - date.getTimezoneOffset() * 60 * 1000
-  )
-}
 
 bot.use(async (ctx, next) => {
   // TODO: figure out how to put database into bot context properly
@@ -102,59 +83,7 @@ bot.use(longPractice)
 
 // /strat
 //
-bot.command('/start', async (ctx: BotContext) => {
-  // I use it in the logger to do verbose log for new users
-  ctx.state.command = 'start'
-
-  // TODO: consider use these words (seen in an Adriene's letter):
-  // It's free and easy to follow. It takes out all the guess work
-  // and welcomes you to make practice a priority.
-  const greetings: [number, string][] = [
-    [0.0, '👋 _Hello my darling friend!_'],
-    [
-      1.2,
-      'This bot is designed to */help* you maintain your *daily* yoga practice and feel a sense of unity with others.',
-    ],
-    [
-      1.5,
-      'It gives you */today*’s yoga video from the */calendar* and shows how many people have started this video right now.',
-    ],
-    // [2.0, 'No distractions. No paradox of choice.'],
-    // [1.0, '_Less_ is _more_.'],
-    // [1.0, 'With _less_ friction there are _more_ chances your healthy habit will *thrive*.'],
-    // [2.0, 'And there is always someone on the planet practicing with you.'],
-    // [2.0, 'You will see.'],
-    // [1.0, '*You’re not alone*.'],
-    // [2.0, '_So, hop into something comfy, and let’s get started!_'],
-    // [3.0, 'Send */today* command to get the video or just push the button'],
-  ]
-  const sendGreeting = async (i: any) => {
-    if (i >= greetings.length) return
-    const message = greetings[i][1]
-    const delaySec = _.get(greetings, [i + 1, 0])
-    const isLastMessage = i === greetings.length - 1
-    await ctx.reply(
-      message,
-      Extra.markdown()
-        .markup((m: any) =>
-          isLastMessage ? m.inlineKeyboard([m.callbackButton('▶️ Get today’s yoga video', 'cb:today')]) : m
-        )
-        .notifications(false)
-    )
-    if (delaySec !== undefined) {
-      await ctx.replyWithChatAction('typing')
-      await pauseForA(delaySec)
-      await sendGreeting(i + 1)
-    }
-  }
-  await ctx.replyWithChatAction('typing')
-  await pauseForA(0.5)
-  await sendGreeting(0)
-  // TODO: rewrite it to `await` chain and set `state.success` at the end
-  return setFirstContact({
-    user: _.get(ctx.update, 'message.from'),
-  })
-})
+bot.command('/start', replyStart)
 
 const replyHelp = (ctx: BotContext) =>
   ctx
