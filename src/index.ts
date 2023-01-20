@@ -11,7 +11,8 @@ import replyStart from './start'
 import replyCalendar from './calendar'
 import useToday from './today'
 import replyHelp from './help'
-import { MENU, pauseForA, reportError, isAdmin, oneOf, convertTZ } from './utils'
+import { replySmallTalk, smallTalkMessage } from './smallTalk'
+import { MENU, reportError, convertTZ } from './utils'
 import type { Bot, BotContext } from './models/bot'
 
 dotenv.config()
@@ -75,20 +76,25 @@ bot.use(logger)
 //
 bot.use(chat)
 
+// Tomorrow’s long practice notice
+//
+bot.use(longPractice)
+
 // Annoncements
 //
-// bot.use(announcments)
 useAnnouncments(bot)
-
-bot.use(longPractice)
 
 // /strat
 //
 bot.command('/start', replyStart)
 
+// /help
+//
 bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
 
+// /feedback
+//
 bot.command('/feedback', (ctx: BotContext) => {
   ctx.state.command = 'feedback'
   return ctx
@@ -102,45 +108,21 @@ Write _or tell or show_ what’s on your mind, and I’ll consider it as feedbac
     })
 })
 
+// Today
+//
 useToday(bot)
 
+// Calendar
+//
 bot.command('/calendar', replyCalendar)
 bot.hears(MENU.calendar, replyCalendar)
 
-// setupJourneys(bot)
-
-const praiseRegExp = '(?<praise>[🙌🙏❤️🧡💛💚💙💜👍❤️😍🥰😘💖]|thank|thanx|love|namaste)'
-const greetRegExp = '(?<greet>^hi|hello|hey|hola|привет|ciao)'
-// eslint-disable-next-line no-misleading-character-class
-const smallTalkMessage = new RegExp(`${praiseRegExp}|${greetRegExp}`, 'iu')
-const thanksMessages = [
-  [...'😌☺️😉'], // smiles
-  [...'🥰💚🤗'], // love
-  [...'🙏'], // gestures
-]
-const greetMessages = [[...'👋']]
-async function replySmallTalk(ctx: BotContext) {
-  ctx.state.command = 'smallTalk'
-  await pauseForA(1)
-  await ctx.replyWithChatAction('typing')
-  await pauseForA(1)
-  let messagesToReply = thanksMessages
-  if (ctx.match?.groups?.greet) {
-    messagesToReply = greetMessages
-  }
-  const reply = oneOf(messagesToReply)
-  // show how the message looks in botlog
-  if (!isAdmin(ctx)) {
-    // eslint-disable-next-line require-atomic-updates
-    ctx.state.logQueue = [...(ctx.state.logQueue || []), reply]
-    console.info(reply)
-  }
-  return ctx.replyWithMarkdown(reply).then(() => {
-    ctx.state.success = true
-  })
-}
+// Small talk
+//
 bot.hears(smallTalkMessage, replySmallTalk)
 
+// Set commands
+//
 bot.telegram.setMyCommands([
   {
     command: 'today',
@@ -149,8 +131,6 @@ bot.telegram.setMyCommands([
   {
     command: 'calendar',
     description: 'Review the month’s calendar',
-    // }, {
-    //   command: 'feedback', description: 'Ask a question or share an idea'
   },
   {
     command: 'help',

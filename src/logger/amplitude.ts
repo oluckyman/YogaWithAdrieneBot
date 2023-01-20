@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import * as Amplitude from '@amplitude/node'
-import type { BotContext } from '../models/bot'
 import { getUser } from '../utils'
+import type { BotContext } from '../models/bot'
 
 const client = Amplitude.init(`${process.env.AMPLITUDE_API_KEY}`)
 

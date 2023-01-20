@@ -13,7 +13,6 @@ const announcments: BotMiddleware = async (ctx, next) => {
     }
     console.info(`Checking if I should tell about day number command?`)
 
-    // TODO: need a bullet-proof get-user method
     const user = getUser(ctx)
 
     // 1. get user doc by user.id
