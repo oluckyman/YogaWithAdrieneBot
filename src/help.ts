@@ -10,7 +10,6 @@ export default function replyHelp(ctx: BotContext) {
 <b>Commands</b>
 • <b>/today</b>’s video from the calendar ▶️
 • <b>/calendar</b> of the month and YouTube playlist 🗓
-• <b>/feedback</b> is always welcome 💬
 • <b>/help</b> — <i>this message</i>📍
 
 If the bot doesn’t work, it means I dropped the daily yoga, <a href="t.me/oluckyman">cheer me up 👋</a>

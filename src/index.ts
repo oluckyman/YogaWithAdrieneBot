@@ -93,21 +93,6 @@ bot.command('/start', replyStart)
 bot.hears(MENU.help, replyHelp)
 bot.command('/help', replyHelp)
 
-// /feedback
-//
-bot.command('/feedback', (ctx: BotContext) => {
-  ctx.state.command = 'feedback'
-  return ctx
-    .replyWithMarkdown(
-      `
-Write _or tell or show_ what’s on your mind, and I’ll consider it as feedback. You can do it anytime here in the chat.
-`
-    )
-    .then(() => {
-      ctx.state.success = true
-    })
-})
-
 // Today
 //
 useToday(bot)
