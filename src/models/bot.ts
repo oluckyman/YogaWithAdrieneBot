@@ -3,9 +3,11 @@ import type { DatabasePool } from 'slonik'
 import type Telegraf from 'telegraf'
 import type { Context, Middleware } from 'telegraf'
 
+export type Command = 'start' | 'today' | 'calendar' | 'help' | 'smallTalk'
+
 export interface BotContext extends Context {
   state: {
-    command?: 'today' | 'calendar' | 'start' | 'help' | 'smallTalk'
+    command?: Command
     day?: number
     logQueue?: string[]
     success?: boolean

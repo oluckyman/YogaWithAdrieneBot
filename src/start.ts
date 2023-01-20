@@ -16,9 +16,6 @@ const setFirstContact = (ctx: BotContext, { user }: any) => {
 }
 
 const replyStart: BotMiddleware = async (ctx: BotContext) => {
-  // I use it in the logger to do verbose log for new users
-  ctx.state.command = 'start'
-
   // TODO: consider use these words (seen in an Adriene's letter):
   // It's free and easy to follow. It takes out all the guess work
   // and welcomes you to make practice a priority.
@@ -57,10 +54,7 @@ const replyStart: BotMiddleware = async (ctx: BotContext) => {
   await pauseForA(0.5)
   await sendGreeting(0)
 
-  // TODO: rewrite it to `await` chain and set `state.success` at the end
-  return setFirstContact(ctx, {
-    user: _.get(ctx.update, 'message.from'),
-  })
+  await setFirstContact(ctx, { user: _.get(ctx.update, 'message.from') })
 }
 
 export default replyStart

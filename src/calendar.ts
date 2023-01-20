@@ -46,8 +46,6 @@ const calendarYouTubeUrl = (now: Date) =>
 const calendarYWAUrl = 'https://yogawithadriene.com/calendar/'
 
 const replyCalendar: BotMiddleware = async (ctx) => {
-  ctx.state.command = 'calendar'
-
   // // Check if user is on a Journey?
   // //
   // const user = getUser(ctx)
@@ -92,7 +90,6 @@ const replyCalendar: BotMiddleware = async (ctx) => {
   //           )
   //         )
   //     )
-  //     .then(() => (ctx.state.success = true))
   // }
   // Monthly Calendar
   //
@@ -120,10 +117,6 @@ const replyCalendar: BotMiddleware = async (ctx) => {
           // XXX: I don't know what I'm doing here
         ) as unknown as ExtraPhoto
     )
-    .then(() => {
-      ctx.state.success = true
-      return ctx
-    })
     .catch(async (e) => noCalendarMessage(e))
 
   async function noCalendarMessage(e: any) {

@@ -13,7 +13,6 @@ const thanksMessages = [
 const greetMessages = [[...'👋']]
 
 export async function replySmallTalk(ctx: BotContext) {
-  ctx.state.command = 'smallTalk'
   await pauseForA(1)
   await ctx.replyWithChatAction('typing')
   await pauseForA(1)
@@ -28,7 +27,5 @@ export async function replySmallTalk(ctx: BotContext) {
     ctx.state.logQueue = [...(ctx.state.logQueue || []), reply]
     console.info(reply)
   }
-  return ctx.replyWithMarkdown(reply).then(() => {
-    ctx.state.success = true
-  })
+  return ctx.replyWithMarkdown(reply)
 }

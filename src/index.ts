@@ -12,7 +12,7 @@ import replyCalendar from './calendar'
 import useToday from './today'
 import replyHelp from './help'
 import { replySmallTalk, smallTalkMessage } from './smallTalk'
-import { MENU, reportError, convertTZ } from './utils'
+import { MENU, reportError, convertTZ, commandHandler } from './utils'
 import type { Bot, BotContext } from './models/bot'
 
 dotenv.config()
@@ -86,12 +86,12 @@ useAnnouncments(bot)
 
 // /strat
 //
-bot.command('/start', replyStart)
+bot.command('/start', commandHandler('start')(replyStart))
 
 // /help
 //
-bot.hears(MENU.help, replyHelp)
-bot.command('/help', replyHelp)
+bot.hears(MENU.help, commandHandler('help')(replyHelp))
+bot.command('/help', commandHandler('help')(replyHelp))
 
 // Today
 //
@@ -99,12 +99,12 @@ useToday(bot)
 
 // Calendar
 //
-bot.command('/calendar', replyCalendar)
-bot.hears(MENU.calendar, replyCalendar)
+bot.command('/calendar', commandHandler('calendar')(replyCalendar))
+bot.hears(MENU.calendar, commandHandler('calendar')(replyCalendar))
 
 // Small talk
 //
-bot.hears(smallTalkMessage, replySmallTalk)
+bot.hears(smallTalkMessage, commandHandler('smallTalk')(replySmallTalk))
 
 // Set commands
 //

@@ -1,12 +1,24 @@
 import _ from 'lodash'
 import { Extra } from 'telegraf'
 import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types.d'
-import type { BotContext } from './models/bot'
+import type { BotContext, BotMiddleware, Command } from './models/bot'
 
 export const MENU = {
   today: '▶️ Today’s yoga',
   calendar: '🗓 Calendar',
   help: '💁 Help',
+}
+
+export const commandHandler = (command: Command) => (handler: BotMiddleware) => {
+  if (typeof handler !== 'function') {
+    throw new Error('Handler must be a function')
+  }
+  const wrapper: BotMiddleware = async (ctx, next) => {
+    ctx.state.command = command
+    await handler(ctx, next)
+    ctx.state.success = true
+  }
+  return wrapper
 }
 
 export function convertTZ(date: Date, tzString: string) {
