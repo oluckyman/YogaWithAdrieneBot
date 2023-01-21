@@ -23,6 +23,7 @@
     "json-to-pretty-yaml": "^1.2.2",
     "lodash": "^4.17.20",
     "next": "^13.0.3",
+    "next-api-handler": "^0.4.3",
     "number-to-emoji": "^1.0.0",
     "slonik": "^33.0.6",
     "telegraf": "3.38.x",
