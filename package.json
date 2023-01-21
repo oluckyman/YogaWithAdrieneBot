@@ -25,6 +25,7 @@
     "next": "^13.0.3",
     "next-api-handler": "^0.4.3",
     "number-to-emoji": "^1.0.0",
+    "openai": "^3.1.0",
     "slonik": "^33.0.6",
     "telegraf": "3.38.x",
     "written-number": "^0.9.1"
@@ -39,7 +40,8 @@
     "eslint": "^7.12.1",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.3",
     "prettier": "^2.7.1"
