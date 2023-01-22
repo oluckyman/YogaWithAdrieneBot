@@ -1,12 +1,30 @@
 import _ from 'lodash'
 import { Extra } from 'telegraf'
 import { ExtraReplyMessage, Message, User } from 'telegraf/typings/telegram-types.d'
-import type { BotContext } from './models/bot'
+import type { BotContext, BotMiddleware, Command } from './models/bot'
 
 export const MENU = {
   today: '▶️ Today’s yoga',
   calendar: '🗓 Calendar',
   help: '💁 Help',
+}
+
+export const commandHandler = (command: Command) => (handler: BotMiddleware) => {
+  if (typeof handler !== 'function') {
+    throw new Error('Handler must be a function')
+  }
+  const wrapper: BotMiddleware = async (ctx, next) => {
+    ctx.state.command = command
+    await handler(ctx, next)
+    ctx.state.success = true
+  }
+  return wrapper
+}
+
+export function convertTZ(date: Date, tzString: string) {
+  return new Date(
+    +new Date(date.toLocaleString('en-US', { timeZone: tzString })) - date.getTimezoneOffset() * 60 * 1000
+  )
 }
 
 export function getDaysInMonth(now: Date): number {
@@ -58,3 +76,9 @@ export async function reportError({
   // eslint-disable-next-line consistent-return
   return ctx.replyWithMarkdown('_…if it’s working 😅_')
 }
+
+// lodash/fp analog
+export const pick =
+  <T, K extends keyof T>(keys: K[]) =>
+  (obj: T) =>
+    keys.reduce((acc, key) => ({ ...acc, [key]: obj[key] }), {} as Pick<T, K>)

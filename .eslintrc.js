@@ -16,6 +16,14 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['@', './src']],
+        extensions: ['.js', '.ts', '.jsx', '.tsx'],
+      },
+    },
+  },
   rules: {
     'prettier/prettier': 'error',
     '@typescript-eslint/no-explicit-any': 'off',

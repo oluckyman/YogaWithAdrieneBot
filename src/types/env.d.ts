@@ -13,6 +13,9 @@ declare global {
       HOST: string
       WEBHOOK_SECRET: string
       DATABASE_URL: string
+      OPENAI_API_KEY: string
+      PINECONE_API_KEY: string
+      PINECONE_BASE_URL: string
     }
   }
 }

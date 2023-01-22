@@ -5,48 +5,58 @@ import writtenNumber from 'written-number'
 import { toEmoji } from 'number-to-emoji'
 import { google } from 'googleapis'
 import { ExtraPhoto } from 'telegraf/typings/telegram-types.d'
-import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf } from '../utils'
-import type { Bot, BotContext } from '../models/bot'
-import type { FWFGVideo, Video } from '../types'
+import { MENU, getDaysInMonth, pauseForA, isAdmin, oneOf, commandHandler } from '../utils'
 import getNowWatching, { nowWatchingMessage } from './nowWatching'
 import { getVideosFromPlaylist } from './playlist'
+import type { Bot, BotContext } from '../models/bot'
+import type { FWFGVideo, Video } from '../types'
 
 const youtubeApiKey = process.env.YOUTUBE_API_KEY
 const channelId = 'UCFKE7WVJfvaHW5q283SxchA'
 
 export default function today(bot: Bot): void {
-  bot.hears(MENU.today, replyToday)
-  bot.command('/today', replyToday)
-  bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx) => {
-    ctx.state.day = +(ctx.match?.groups?.day || 0)
-    ctx.answerCbQuery('Getting the video for you…')
-    return replyToday(ctx)
-  })
+  const command = commandHandler('today')
+
+  // Today command
+  //
+  bot.hears(MENU.today, command(replyToday))
+  bot.command('/today', command(replyToday))
+
+  // Today's part
+  //
+  bot.action(
+    /cb:today(?:_(?<day>\d+)_(?<part>\d+))?/,
+    command((ctx) => {
+      ctx.state.day = +(ctx.match?.groups?.day || 0)
+      ctx.answerCbQuery('Getting the video for you…')
+      return replyToday(ctx)
+    })
+  )
 
   // Understand when people ask for today's yoga by typing in the chat
+  //
   const todayMessage = /^\s*today/iu
-  bot.hears(todayMessage, replyToday)
+  bot.hears(todayMessage, command(replyToday))
 
   // Understand number as a day in the month
+  //
   const dayNumberMessage = /(^\d+)|(^day \d+)/i
-  bot.hears(dayNumberMessage, (ctx) => {
-    const daysInMonth = getDaysInMonth(ctx.now) - ctx.state.journeyDayShift
-    const desiredDay = +(ctx.update.message?.text?.match(/.*?(?<day>\d+)/)?.groups?.day || 0)
-    if (desiredDay && desiredDay <= daysInMonth) {
-      ctx.state.day = desiredDay
-      return replyToday(ctx)
-    }
-    const msg = `Type a number from \`1\` to \`${daysInMonth}\` to get a day from the */calendar*`
-    return ctx.replyWithMarkdown(msg, Extra.notifications(false) as any).then(() => {
-      ctx.state.success = true
+  bot.hears(
+    dayNumberMessage,
+    command((ctx) => {
+      const daysInMonth = getDaysInMonth(ctx.now) - ctx.state.journeyDayShift
+      const desiredDay = +(ctx.update.message?.text?.match(/.*?(?<day>\d+)/)?.groups?.day || 0)
+      if (desiredDay && desiredDay <= daysInMonth) {
+        ctx.state.day = desiredDay
+        return replyToday(ctx)
+      }
+      const msg = `Type a number from \`1\` to \`${daysInMonth}\` to get a day from the */calendar*`
+      return ctx.replyWithMarkdown(msg, Extra.notifications(false) as any)
     })
-  })
+  )
 }
 
 async function replyToday(ctx: BotContext) {
-  // I use it in announcement middleware to react only on today commands
-  ctx.state.command = 'today'
-
   const year = timeFormat('%Y')(ctx.now)
   const month = timeFormat('%m')(ctx.now)
   const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
@@ -68,9 +78,7 @@ async function replyToday(ctx: BotContext) {
       const message =
         `Here should be a link to the video, but there isn’t 🤷\n` +
         `Check out the */calendar*. If the video is in the playlist it will appear here soon.`
-      return ctx.replyWithMarkdown(message).then(() => {
-        ctx.state.success = true
-      })
+      return ctx.replyWithMarkdown(message)
     }
   }
 
@@ -79,8 +87,8 @@ async function replyToday(ctx: BotContext) {
     // When there are many videos, we are sure they go from JSON, so extend the Video type
     const videosFromJson = videos as Array<Video & { title: string; duration: number }>
     // Ask which one to show now
-    let videosList
-    let message
+    let videosList: string
+    let message: string
     let buttons: any
     if (isFWFGDay) {
       videosList = videosFromJson
@@ -96,14 +104,10 @@ async function replyToday(ctx: BotContext) {
         videosFromJson.map((v, i) => m.callbackButton(`${getPart(i)} ${v.duration} min.`, `cb:today_${day}_${i}`))
     }
     console.info(message)
-    return ctx
-      .replyWithHTML(
-        message,
-        Extra.notifications(false).markup((m: any) => m.inlineKeyboard(buttons(m)))
-      )
-      .then(() => {
-        ctx.state.success = true
-      })
+    return ctx.replyWithHTML(
+      message,
+      Extra.notifications(false).markup((m: any) => m.inlineKeyboard(buttons(m)))
+    )
   }
   // Send the video and pre-video message
   const video = _.filter(videos, (v, i) => !part || i === +part)[0]
@@ -153,25 +157,19 @@ async function replyToday(ctx: BotContext) {
       const videoUrl = `${fwfgVideo.url}?${utm}`
       message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
       console.info(message)
-      return ctx
-        .replyWithPhoto(
-          `${fwfgVideo.thumbnailUrl}?rnd=${Math.random()}`,
-          Extra.caption(`${toEmoji(day)}${partSymbol} <b><a href="${videoUrl}">${fwfgVideo.title}</a></b>`)
-            .notifications(false)
-            .HTML()
-            .markup(menuKeboard) as unknown as ExtraPhoto
-        )
-        .then(() => {
-          ctx.state.success = true
-        })
+      return ctx.replyWithPhoto(
+        `${fwfgVideo.thumbnailUrl}?rnd=${Math.random()}`,
+        Extra.caption(`${toEmoji(day)}${partSymbol} <b><a href="${videoUrl}">${fwfgVideo.title}</a></b>`)
+          .notifications(false)
+          .HTML()
+          .markup(menuKeboard) as unknown as ExtraPhoto
+      )
     }
     const ytVideo = video as Video
     const videoUrl = shortUrl(ytVideo.id)
     message = `${toEmoji(day)}${partSymbol} ${videoUrl}`
     console.info(message)
-    return ctx.replyWithHTML(message, Extra.notifications(false).markup(menuKeboard)).then(() => {
-      ctx.state.success = true
-    })
+    return ctx.replyWithHTML(message, Extra.notifications(false).markup(menuKeboard))
   } catch (e) {
     console.error(`Error with video link: ${message}`, e)
     return reportError({ ctx, where: '/today: the video link', error: e })
@@ -225,13 +223,14 @@ function getPart(i: number) {
 
 function preVideoMessage() {
   const messages = [
-    ['💬 Spend time _practicing_ yoga rather than _scrolling it_'],
+    ['💬 Spend time _practicing_ yoga rather than _scrolling through it_'],
     ['💬 Give time to _YourSelf_ rather than to _YouTube_'],
     ['💬 _Let us postpone nothing. Let us balance life’s account every day_'],
     ['😌 _Find what feels good_'],
     ['🐍 _Long healthy neck_'],
     ['🙃 _A downward dog a day, keeps the doctor away_'],
     ['✅ _Checking in is the hardest part_'],
+    ['🙏 You will say _namaste_ to yourself'],
     ['🧘‍♀️ _Sukhasana_ – easy pose'],
     [...'🐌🐢'].map((e) => `${e} _One yoga at a time_`),
     [...'❤️'].map((e) => `${e} _One day at a time_`),

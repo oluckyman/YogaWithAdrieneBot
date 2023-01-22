@@ -49,6 +49,7 @@ export default async function webhookHandler(req: NextApiRequest, res: NextApiRe
   })
 }
 
+// TODO: remove this as I don't use calendars anymore
 export const config = {
   unstable_includeFiles: ['calendars/*'],
 }
