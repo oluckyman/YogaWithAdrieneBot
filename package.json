@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start:next": "next start",
-    "start": "nodemon --watch src --watch pages --ext js,ts --exec \"npm run dev\" --signal SIGTERM",
+    "start": "nodemon --watch src --watch pages --watch lib --ext js,ts --exec \"npm run dev\" --signal SIGTERM",
     "lint": "next lint"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
     "next-api-handler": "^0.4.3",
     "number-to-emoji": "^1.0.0",
     "openai": "^3.1.0",
+    "pinecone-client": "^1.0.1",
     "slonik": "^33.0.6",
     "telegraf": "3.38.x",
     "written-number": "^0.9.1"

@@ -76,3 +76,9 @@ export async function reportError({
   // eslint-disable-next-line consistent-return
   return ctx.replyWithMarkdown('_…if it’s working 😅_')
 }
+
+// lodash/fp analog
+export const pick =
+  <T, K extends keyof T>(keys: K[]) =>
+  (obj: T) =>
+    keys.reduce((acc, key) => ({ ...acc, [key]: obj[key] }), {} as Pick<T, K>)
