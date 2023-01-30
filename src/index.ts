@@ -65,7 +65,7 @@ bot.use(async (ctx, next) => {
   ctx.postgres = await createPool(process.env.DATABASE_URL)
 
   ctx.now = new Date()
-  // ctx.now = new Date('2023-01-03 06:56')
+  // ctx.now = new Date('2023-02-03 06:56')
   // ctx.now = new Date('2022-12-31 07:01')
 
   console.info('Server', ctx.now)
