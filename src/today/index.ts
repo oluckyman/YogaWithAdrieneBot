@@ -31,12 +31,13 @@ export default function today(bot: Bot): void {
   const dayNumberMessage = /(^\d+)|(^day \d+)/i
   bot.hears(dayNumberMessage, (ctx) => {
     const daysInMonth = getDaysInMonth(ctx.now) - ctx.state.journeyDayShift
-    const desiredDay = +(ctx.update.message?.text?.match(/.*?(?<day>\d+)/)?.groups?.day || 0)
-    if (desiredDay && desiredDay <= daysInMonth) {
+    const firstDay = 1 - ctx.state.journeyDayShift
+    const desiredDay = +(ctx.update.message?.text?.match(/.*?(?<day>\d+)/)?.groups?.day || -1)
+    if (firstDay <= desiredDay && desiredDay <= daysInMonth) {
       ctx.state.day = desiredDay
       return replyToday(ctx)
     }
-    const msg = `Type a number from \`1\` to \`${daysInMonth}\` to get a day from the */calendar*`
+    const msg = `Type a number from \`${firstDay}\` to \`${daysInMonth}\` to get a day from the */calendar*`
     return ctx.replyWithMarkdown(msg, Extra.notifications(false) as any).then(() => {
       ctx.state.success = true
     })
@@ -49,7 +50,7 @@ async function replyToday(ctx: BotContext) {
 
   const year = timeFormat('%Y')(ctx.now)
   const month = timeFormat('%m')(ctx.now)
-  const day = ctx.state.day || ctx.now.getUTCDate() - ctx.state.journeyDayShift
+  const day = ctx.state.day ?? ctx.now.getUTCDate() - ctx.state.journeyDayShift
   const part = _.get(ctx, 'match.groups.part')
   console.info('===> replyToday', { month, day, part })
 
