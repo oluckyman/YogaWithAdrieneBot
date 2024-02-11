@@ -18,7 +18,7 @@ export default function today(bot: Bot): void {
   bot.hears(MENU.today, replyToday)
   bot.command('/today', replyToday)
   bot.action(/cb:today(?:_(?<day>\d+)_(?<part>\d+))?/, (ctx) => {
-    ctx.state.day = +(ctx.match?.groups?.day || 0)
+    ctx.state.day = +ctx.match?.groups?.day || undefined
     ctx.answerCbQuery('Getting the video for you…')
     return replyToday(ctx)
   })
