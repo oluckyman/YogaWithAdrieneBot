@@ -76,7 +76,10 @@ bot.use(async (ctx, next) => {
 
   // FYI: The videos will be released every day in January at 5 AM EST (11 AM in Spain)
   // During the January journey Jan 1st is the Day 0
-  ctx.state.journeyDayShift = ctx.now.getMonth() === 0 ? 1 : 0
+  // ctx.state.journeyDayShift = ctx.now.getMonth() === 0 ? 1 : 0
+  // No more 30 days Journeys, so the shift is always zero.
+  // TODO: remove it in 2026
+  ctx.state.journeyDayShift = 0
 
   return next()
 })
